@@ -1,30 +1,38 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div id="app">
+    <h1>Agregar Usuario</h1>
+    <form @submit.prevent="addUser">
+      <input type="text" v-model="name" placeholder="Nombre" />
+      <button type="submit">Añadir Usuario</button>
+    </form>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script>
+export default {
+  data() {
+    return {
+      name: ''
+    };
+  },
+  methods: {
+    async addUser() {
+      try {
+        const { data, error } = await this.$supabase.from('Test').insert([{ nombre: this.name }]);
+        if (error) {
+          console.error(error.message);
+        } else {
+          console.log('Usuario añadido correctamente:', data);
+          this.name = '';
+        }
+      } catch (error) {
+        console.error('Error al añadir usuario:', error.message);
+      }
+    }
+  }
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+</script>
+
+<style>
+/* Estilos opcionales */
 </style>
