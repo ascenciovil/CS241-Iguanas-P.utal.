@@ -37,6 +37,7 @@
       }
     } catch (error) {
       console.error("Error al crear la cuenta:", error.message);
+
     }
   }
   </script>
