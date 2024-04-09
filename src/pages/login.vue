@@ -3,7 +3,8 @@
         <h1>Login</h1>
         <form @submit.prevent="login">
             <label for="email">Email:</label>
-            <input type="email" id="email" v-model="email" required>
+            <input type="email" id="email" v-model="email" required> 
+            <br>
             <label for="password">Password:</label>
             <input type="password" id="password" v-model="password" required>
             <button type="submit">Login</button>
@@ -43,4 +44,4 @@ export default {
 
 <style scoped>
 /* Add your custom styles here */
-</style>
+</style>./Login.vue
