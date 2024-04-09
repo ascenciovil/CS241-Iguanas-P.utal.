@@ -7,6 +7,7 @@
             <br>
             <label for="password">Password:</label>
             <input type="password" id="password" v-model="password" required>
+            <br>
             <button type="submit">Login</button>
         </form>
     </div>
@@ -44,4 +45,4 @@ export default {
 
 <style scoped>
 /* Add your custom styles here */
-</style>./Login.vue
+</style>./Login.vue./Login.vue

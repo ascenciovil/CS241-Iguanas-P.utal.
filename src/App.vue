@@ -3,7 +3,6 @@
 
   <nav>
     <RouterLink to="/login">Login</RouterLink> |
-    <RouterLink to="/PerfilUsario'">Editar perfil</RouterLink> |
     <RouterLink to="/Registro">Registro</RouterLink>
   </nav>
   <main>
