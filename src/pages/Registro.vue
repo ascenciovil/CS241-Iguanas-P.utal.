@@ -3,14 +3,16 @@
         <h1>Agregar Usuario</h1>
         <form @submit.prevent="createAccount">
             <div class="email">
-                <label for="email" class="emailLabel">Email:</label>
+                <label for="email">Email:</label>
                 <input type="email" id="email" v-model="email" required> 
             </div>
             <div class="password">
-                <label for="password" class="passwordLabel">Password:</label>
+                <label for="password">Password:</label>
                 <input type="password" id="password" v-model="password" required>
             </div>
-            <button type="submit" class="boton">Añadir Usuario</button>
+            <div class="boton">
+              <button type="submit">Añadir Usuario</button>
+            </div>
         </form>
     </body>
 </template>
@@ -50,7 +52,7 @@ async function createAccount() {
 body{
     background-color: #ebdeff;
     height: 100%;
-    padding-bottom: 2%;
+    padding-bottom: 12%;
     width: 100%;
 }
 h1{
@@ -62,11 +64,12 @@ h1{
 }
 form{
     position: relative;
-    left: 60%;
+    left: 55%;
     width: 40%;
     height: 300px;
     box-sizing: border-box;
-    border-radius: 10px;
+    margin-top: 9%;
+    border-radius: 50px;
     background-color: #00cccc;
     align-items: center;
 }
@@ -88,13 +91,26 @@ form{
     padding-right: 15px;
     padding-top: 10px;
     padding-bottom: 10px;
-    position: absolute;
+    position: relative;
 }
 div{
-    display: flex;
-    justify-content: space-between;
+    display:inline-block;
     width: 50%;
     margin-left: 25%;
     height: 8%;
+}
+input{
+    border-color: #ff7f27;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    padding-top: 10px;
+}
+label{
+    color: white;
+    font-size: 20px;
 }
 </style>
