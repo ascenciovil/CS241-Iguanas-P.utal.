@@ -1,50 +1,44 @@
 <template>
-  <body id="app">
-        <h1>Agregar Usuario</h1>
-        <form @submit.prevent="createAccount">
+    <body>
+        <h1>Edit Profile</h1>
+        <form @submit="saveProfile">
+            <div class="nombre">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" v-model="profile.name" required>
+            </div>
             <div class="email">
                 <label for="email">Email:</label>
-                <input type="email" id="email" v-model="email" required> 
+                <input type="email" id="email" v-model="profile.email" required>
             </div>
-            <div class="password">
-                <label for="password">Password:</label>
-                <input type="password" id="password" v-model="password" required>
+            <div class="email">
+                <label for="bio">Bio:</label>
+                <textarea id="bio" v-model="profile.bio"></textarea>
             </div>
             <div class="boton">
-              <button type="submit">Añadir Usuario</button>
+                <button type="submit">Guardar</button>
             </div>
         </form>
     </body>
 </template>
 
-<script setup>
-import {ref} from "vue";
-import { supabase } from "../clients/supabase";
-
-
-let email = ref("");
-let password = ref("");
-
-//crear cuenta
-// Crear cuenta
-async function createAccount() {
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email.value,
-      password: password.value
-    });
-    if (error) {
-      console.error("Error al crear la cuenta:", error.message);
-    } else {
-      console.log("Usuario creado correctamente:", data);
-      // Clear form fields after successful sign-up
-      email.value = "";
-      password.value = "";
+<script>
+export default {
+    data() {
+        return {
+            profile: {
+                name: '',
+                email: '',
+                bio: ''
+            }
+        };
+    },
+    methods: {
+        saveProfile() {
+            // Implement your save logic here
+            // You can access the updated profile data using this.profile
+        }
     }
-  } catch (error) {
-    console.error("Error al crear la cuenta:", error.message);
-  }
-}
+};
 </script>
 
 <style scoped>
@@ -52,7 +46,7 @@ async function createAccount() {
 body{
     background-color: #ebdeff;
     height: 100%;
-    padding-bottom: 12%;
+    padding-bottom: 9%;
     width: 100%;
 }
 h1{
@@ -64,21 +58,21 @@ h1{
 }
 form{
     position: relative;
-    left: 55%;
+    left: 5%;
     width: 40%;
-    height: 300px;
+    height: 400px;
     box-sizing: border-box;
-    margin-top: 9%;
+    margin-top: 6%;
     border-radius: 50px;
     background-color: #00cccc;
     align-items: center;
 }
-.email{
+.nombre{
     padding-top: 10%;
     padding-bottom: 4%;
     position: relative;
 }
-.password{
+.email{
     padding-top: 4%;
     padding-bottom: 4%;
     position: relative;
@@ -100,6 +94,16 @@ div{
     height: 8%;
 }
 input{
+    border-color: #ff7f27;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    padding-top: 10px;
+}
+textarea{
     border-color: #ff7f27;
     border-left: none;
     border-right: none;
