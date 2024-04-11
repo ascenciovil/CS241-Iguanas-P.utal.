@@ -1,6 +1,6 @@
 <template>
     <body>
-        <h1>Edit Profile</h1>
+        <h1>Editar perfil</h1>
         <form @submit="saveProfile">
             <div class="nombre">
                 <label for="name">Nombre:</label>
