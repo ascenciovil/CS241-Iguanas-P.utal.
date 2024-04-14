@@ -1,54 +1,46 @@
 <template>
-    <body>
-        <h1>Login</h1>
-        <form @submit.prevent="login">
-            <div class="email">
-                <label for="email">Email:</label>
-                <input type="email" id="email" v-model="email" required> 
-            </div>
-            <div class="password">
-                <label for="password">Password:</label>
-                <input type="password" id="password" v-model="password" required>
-            </div>
-            <div class="boton">
+    <body id="app">
+          <h1>Login</h1>
+          <form @submit.prevent="createAccount">
+              <div class="email">
+                  <label for="email">Email:</label>
+                  <input type="email" id="email" v-model="email" required> 
+              </div>
+              <div class="password">
+                  <label for="password">Contraseña:</label>
+                  <input type="password" id="password" v-model="password" required>
+              </div>
+              <div class="boton">
                 <button type="submit">Login</button>
-            </div>
-            <div class="link">
+              </div>
+              <div class="link">
                 <a>¿Olvidaste tu contraseña?</a>
             </div>
-        </form>
-    </body>
-</template>
+          </form>
+      </body>
+  </template>
 
-<script>
-import { createClient } from '@supabase/supabase-js';
+  <script setup>
+  import {ref} from "vue";
+  import { supabase } from "../clients/supabase";
 
-export default {
-    data() {
-        return {
-            email: '',
-            password: ''
-        };
-    },
-    methods: {
-        async login() {
-            const supabase = createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_API_KEY');
-            const { user, error } = await supabase.auth.signIn({
-                email: this.email,
-                password: this.password
-            });
+  let email = ref("");
+  let password = ref("");
 
-            if (error) {
-                console.error(error);
-                // Handle login error
-            } else {
-                console.log(user);
-                // Redirect to dashboard or perform other actions
-            }
-        }
+  //crear cuenta
+  // Crear cuenta
+  async function createAccount() {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value
+    });
+    if (error) {
+        console.error("Error al crear la cuenta:", error.message);
+    } else {
+        console.log(data);
     }
-};
-</script>
+  }
+  </script>
 
 <style scoped>
 /* Add your custom styles here */

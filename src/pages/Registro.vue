@@ -3,7 +3,7 @@
         <h1>Agregar Usuario</h1>
         <form @submit.prevent="createAccount">
             <div class="Nombre">
-                <label for="email">Nombre:</label>
+                <label for="Nombre">Nombre:</label>
                 <input type="text" id="nombre" v-model="nombre" required> 
             </div>
             <div class="email">
@@ -13,6 +13,10 @@
             <div class="password">
                 <label for="password">Contraseña:</label>
                 <input type="password" id="password" v-model="password" required>
+            </div>
+            <div class="Campus">
+                <label for="Campus">Campus:</label>
+                <input type="text" id="campus" v-model="campus" required> 
             </div>
             <div class="boton">
               <button type="submit">Añadir Usuario</button>
@@ -28,6 +32,7 @@ import { supabase } from "../clients/supabase";
 let email = ref("");
 let Nombre = ref ("");
 let password = ref("");
+let campus = ref("");
 
 //crear cuenta
 // Crear cuenta
@@ -35,7 +40,8 @@ async function createAccount() {
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
-      password: password.value
+      password: password.value,
+      campus: campus.value
     });
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
@@ -43,11 +49,12 @@ async function createAccount() {
       const userUID = data.user.id;
       const { data: userData, error: userError }=await supabase
           .from('usuarios')
-          .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID}]);
+          .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
       console.log("Usuario creado correctamente:", data);
       // Clear form fields after successful sign-up
       email.value = "";
       password.value = "";
+      campus.value= "";
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
