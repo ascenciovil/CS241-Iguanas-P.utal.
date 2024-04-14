@@ -2,12 +2,16 @@
   <body id="app">
         <h1>Agregar Usuario</h1>
         <form @submit.prevent="createAccount">
+            <div class="Nombre">
+                <label for="email">Nombre:</label>
+                <input type="text" id="nombre" v-model="nombre" required> 
+            </div>
             <div class="email">
                 <label for="email">Email:</label>
                 <input type="email" id="email" v-model="email" required> 
             </div>
             <div class="password">
-                <label for="password">Password:</label>
+                <label for="password">Contraseña:</label>
                 <input type="password" id="password" v-model="password" required>
             </div>
             <div class="boton">
@@ -21,8 +25,8 @@
 import {ref} from "vue";
 import { supabase } from "../clients/supabase";
 
-
 let email = ref("");
+let Nombre = ref ("");
 let password = ref("");
 
 //crear cuenta
@@ -36,6 +40,10 @@ async function createAccount() {
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
     } else {
+      const userUID = data.user.id;
+      const { data: userData, error: userError }=await supabase
+          .from('usuarios')
+          .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID}]);
       console.log("Usuario creado correctamente:", data);
       // Clear form fields after successful sign-up
       email.value = "";
