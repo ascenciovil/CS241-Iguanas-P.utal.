@@ -2,45 +2,84 @@
     <body>
         <h1>Editar perfil</h1>
         <form @submit="saveProfile">
-            <div class="nombre">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" v-model="profile.name" required>
+            <div class="Nombre">
+                <label for="Nombre">Nombre:</label>
+                <input type="text" id="nombre" v-model="nombre" required> 
             </div>
             <div class="email">
                 <label for="email">Email:</label>
-                <input type="email" id="email" v-model="profile.email" required>
+                <input type="email" id="email" v-model="email" required> 
             </div>
-            <div class="email">
-                <label for="bio">Bio:</label>
-                <textarea id="bio" v-model="profile.bio"></textarea>
+            <div class="password">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" v-model="password" required>
+            </div>
+            <div class="Campus">
+                <label for="Campus">Campus:</label>
+                <input type="text" id="campus" v-model="campus" required> 
             </div>
             <div class="boton">
-                <button type="submit">Guardar</button>
+                <button type="submit">Guardar Cambios</button>
             </div>
         </form>
     </body>
 </template>
 
 <script>
-export default {
-    data() {
-        return {
-            profile: {
-                name: '',
-                email: '',
-                bio: ''
-            }
-        };
-    },
-    methods: {
-        saveProfile() {
-            // Implement your save logic here
-            // You can access the updated profile data using this.profile
-        }
-    }
-};
-</script>
+import {ref} from "vue";
+import { supabase } from "../clients/supabase";
+let email = ref("");
+let Nombre = ref ("");
+let password = ref("");
+let campus = ref("");
 
+async function getProfile() {
+    try {
+      loading.value = true
+      const { user } = session.value
+  
+      const { data, error, status } = await supabase
+        .from('usuarios')
+        .select(`nombre, correo, campus`)
+        .eq('id', user.id)
+        .single()
+  
+      if (error && status !== 406) throw error
+  
+      if (data) {
+        nombre.value = data.nombre
+        correo.value = data.correo
+        campus.value = data.campus
+      }
+    } catch (error) {
+      alert(error.message)
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  async function updateProfile() {
+    try {
+      loading.value = true
+      const { user } = session.value
+  
+      const updates = {
+        id: user.id,
+        nombre: nombre.value,
+        correo: correo.value,
+        campus: campus.value
+      }
+  
+      const { error } = await supabase.from('usuarios').upsert(updates)
+  
+      if (error) throw error
+    } catch (error) {
+      alert(error.message)
+    } finally {
+      loading.value = false
+    }
+  }
+</script>
 <style scoped>
 /* Add your custom styles here */
 body{
