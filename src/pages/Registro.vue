@@ -28,6 +28,11 @@ let password = ref("");
 //crear cuenta
 // Crear cuenta
 async function createAccount() {
+  validarEmail(email.value);
+  if(validarEmail(email.value) == 0){
+    alert("No pertenece a la Universidad de Talca");
+    return;
+  }
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
@@ -43,6 +48,25 @@ async function createAccount() {
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
+  }
+}
+
+function validarEmail(email) {
+  const arrobaIndex = email.indexOf("@");
+  if(arrobaIndex <= 0 || arrobaIndex === email.length - 1) {
+    alert("Email no valido");
+    return false;
+  }
+  const [nombre, dominio] = email.split("@");
+  if (dominio == "alumnos.utalca.cl"){
+    //es estudiante
+    return 1;
+  } else if (dominio == "utalca.cl"){
+    //es funcionario
+    return 2;
+  } else {
+    //email no valido
+    return 0;
   }
 }
 </script>
