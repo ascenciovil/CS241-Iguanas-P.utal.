@@ -1,72 +1,76 @@
 <template>
-<!DOCTYPE html>
+  <!DOCTYPE html>
   
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8">
-    <title> Responsive Registration Form | CodingLab </title>
-    <link rel="stylesheet" href="style.css">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   </head>
-<body>
-  <div class="container">
-    <div class="title">Registro</div>
-    <div class="content">
-      <form action="#">
-        <div class="user-details">
-          <div class="input-box">
-            <span class="details">Nombre Completo</span>
-            <input type="text" placeholder="Ingresa tu nombre" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Nombre de usuario</span>
-            <input type="text" placeholder="Ingresa tu usuario" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Email</span>
-            <input type="text" placeholder="Ingresa tu Correo instuticional" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Numero de Telefono</span>
-            <input type="text" placeholder="Ingresa tu numero" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Contraseña</span>
-            <input type="text" placeholder="Ingresa tu contraseña" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Confirmar contraseña</span>
-            <input type="text" placeholder="Confirma tu contraseña" required>
-          </div>
+  <html lang="en" dir="ltr">
+    <head>
+      <meta charset="UTF-8">
+      <title> Responsive Registration Form | CodingLab </title>
+      <link rel="stylesheet" href="style.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+      <div class="container">
+        <div class="title">Registro</div>
+        <div class="content">
+          <form action="#">
+            <div class="user-details">
+              <div class="input-box">
+                <span class="details">Nombre Completo</span>
+                <input type="text" placeholder="Ingresa tu nombre" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Nombre de usuario</span>
+                <input type="text" placeholder="Ingresa tu usuario" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Email</span>
+                <input type="text" placeholder="Ingresa tu Correo instuticional" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Numero de Telefono</span>
+                <input type="text" placeholder="Ingresa tu numero" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Contraseña</span>
+                <input type="text" placeholder="Ingresa tu contraseña" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Confirmar contraseña</span>
+                <input type="text" placeholder="Confirma tu contraseña" required>
+              </div>
+            </div>
+            <div class="gender-details">
+              <input type="radio" name="gender" id="dot-1">
+              <input type="radio" name="gender" id="dot-2">
+              <input type="radio" name="gender" id="dot-3">
+              <span class="gender-title">Genero</span>
+              <div class="category">
+                <label for="dot-1">
+                  <span class="dot one"></span>
+                  <span class="gender">Masculino</span>
+                </label>
+                <label for="dot-2">
+                  <span class="dot two"></span>
+                  <span class="gender">Femenino</span>
+                </label>
+                <label for="dot-3">
+                  <span class="dot three"></span>
+                  <span class="gender">Prefiero no decirlo</span>
+                </label>
+              </div>
+            </div>
+            <div class="button">
+              <input type="submit" value="Registrarme">
+            </div>
+          </form>
         </div>
-        <div class="gender-details">
-          <input type="radio" name="gender" id="dot-1">
-          <input type="radio" name="gender" id="dot-2">
-          <input type="radio" name="gender" id="dot-3">
-          <span class="gender-title">Genero</span>
-          <div class="category">
-            <label for="dot-1">
-            <span class="dot one"></span>
-            <span class="gender">Masculino</span>
-          </label>
-          <label for="dot-2">
-            <span class="dot two"></span>
-            <span class="gender">Femenino</span>
-          </label>
-          <label for="dot-3">
-            <span class="dot three"></span>
-            <span class="gender">Prefiero no decirlo</span>
-            </label>
-          </div>
-        </div>
-        <div class="button">
-          <input type="submit" value="Registrarme">
-        </div>
-      </form>
-    </div>
-  </div>
-</body>
-</html>
+        <!-- Footer con imagen de banner -->
+        <footer>
+          <img src="../assets/img/footer.png" alt="Banner">
+        </footer>
+      </div>
+    </body>
+  </html>
 </template>
 
 
@@ -146,7 +150,7 @@ font-size: 60px; /* Aumenta el tamaño del texto */
 font-weight: 500;
 text-align: center; /* Alinea el texto al centro */
 position: absolute; /* Añade posicionamiento absoluto */
-top: 200px; /* Ajusta la posición verticalmente */
+top: 20%; /* Ajusta la posición verticalmente */
 left: 50%; /* Centra horizontalmente */
 transform: translateX(-50%); /* Centra horizontalmente */
 color: white; /* Cambia el color del texto a blanco */
@@ -275,5 +279,23 @@ form .category {
 .container .content .category {
   flex-direction: column;
 }
+}
+
+footer {
+  position: fixed; /* Lo fija en la parte inferior */
+  left: 0;
+  bottom: 0;
+  width: 100%; /* Ancho completo */
+  height: 20%;
+  background-color: #333; /* Color de fondo */
+  color: white; /* Color de texto */
+  text-align: center; /* Centrado horizontal */
+  padding: 10px 0; /* Espaciado interno */
+}
+
+footer img {
+  width: 100%; /* La imagen ocupa todo el ancho */
+  height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
+  max-height: 100%; /* La imagen no superará el 100% de la altura del footer */
 }
 </style>
