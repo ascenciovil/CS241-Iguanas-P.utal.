@@ -75,39 +75,78 @@
 
 
 <script setup>
-import {ref} from "vue";
+import { ref } from "vue";
 import { supabase } from "../clients/supabase";
 
 let email = ref("");
-let Nombre = ref ("");
+let Nombre = ref("");
 let password = ref("");
 let campus = ref("");
 
-//crear cuenta
-// Crear cuenta
-async function createAccount() {
-try {
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-    campus: campus.value
-  });
-  if (error) {
-    console.error("Error al crear la cuenta:", error.message);
+// Función para validar el dominio del correo electrónico
+function validarDominio(correo) {
+  var dominio = correo.split('@')[1];
+  if (dominio === "alumnos.utalca.cl" || dominio === "estudiante.utalca.cl") {
+    return "estudiante";
+  } else if (dominio === "utalca.cl" || dominio === "profesor.utalca.cl") {
+    return "profesor";
   } else {
-    const userUID = data.user.id;
-    const { data: userData, error: userError }=await supabase
-        .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
-    console.log("Usuario creado correctamente:", data);
-    // Clear form fields after successful sign-up
-    email.value = "";
-    password.value = "";
-    campus.value= "";
+    return "desconocido";
   }
-} catch (error) {
-  console.error("Error al crear la cuenta:", error.message);
 }
+
+// Función para manejar el envío del formulario
+async function handleSubmit() {
+  var correo = document.getElementById("email").value;
+  var tipoUsuario = validarDominio(correo);
+  createAccount(tipoUsuario);
+}
+
+//################################################################### SOLO PARA VERIFICAR 
+// Función para mostrar mensaje según el tipo de usuario
+function mostrarMensajeTipoUsuario(tipoUsuario) {
+  var message = "";
+  switch (tipoUsuario) {
+    case "estudiante":
+      message = "¡Bienvenido estudiante!";
+      break;
+    case "profesor":
+      message = "¡Bienvenido profesor!";
+      break;
+    default:
+      message = "Tipo de usuario desconocido";
+  }
+  console.log(message); // Mostrar el mensaje en la consola
+}
+
+// Función para crear una cuenta
+async function createAccount(tipoUsuario) {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+      campus: campus.value
+    });
+    if (error) {
+      console.error("Error al crear la cuenta:", error.message);
+    } else {
+      const userUID = data.user.id;
+      const { data: userData, error: userError } = await supabase
+        .from('usuarios')
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value }]);
+      console.log("Usuario creado correctamente:", data);
+
+      // Mostrar mensaje de bienvenida en la consola según el tipo de usuario
+      mostrarMensajeTipoUsuario(tipoUsuario);
+      
+      // Limpiar los campos del formulario después del registro exitoso
+      email.value = "";
+      password.value = "";
+      campus.value = "";
+    }
+  } catch (error) {
+    console.error("Error al crear la cuenta:", error.message);
+  }
 }
 </script>
 
