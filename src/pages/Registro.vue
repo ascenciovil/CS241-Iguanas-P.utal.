@@ -12,31 +12,31 @@
       <div class="container">
         <div class="title">Registro</div>
         <div class="content">
-          <form @submit.prevent="createAccount">
+          <form action="#" @submit.prevent="createAccount">
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Nombre Completo</span>
-                <input type="text" placeholder="Ingresa tu nombre" required>
+                <input type="text" id="Nombre" v-model="Nombre" placeholder="Ingresa tu nombre" required>
               </div>
               <div class="input-box">
                 <span class="details">Nombre de usuario</span>
-                <input type="text" placeholder="Ingresa tu usuario" required>
+                <input type="text" id="usernombre" v-model="usernombre" placeholder="Ingresa tu usuario" required>
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input type="text" placeholder="Ingresa tu Correo instuticional" required>
+                <input type="email" id="email" v-model="email" placeholder="Ingresa tu Correo instuticional" required>
               </div>
               <div class="input-box">
-                <span class="details">Numero de Telefono</span>
-                <input type="text" placeholder="Ingresa tu numero" required>
+                <span class="details">Campus</span>
+                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
               </div>
               <div class="input-box">
                 <span class="details">Contraseña</span>
-                <input type="text" placeholder="Ingresa tu contraseña" required>
+                <input type="password" id="password" v-model="password" placeholder="Ingresa tu contraseña" required>
               </div>
               <div class="input-box">
                 <span class="details">Confirmar contraseña</span>
-                <input type="text" placeholder="Confirma tu contraseña" required>
+                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirma tu contraseña" required>
               </div>
             </div>
             <div class="gender-details">
@@ -73,8 +73,9 @@
   </html>
 </template>
 
+
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import { supabase } from "../clients/supabase";
 
 let email = ref("");
@@ -85,29 +86,30 @@ let campus = ref("");
 //crear cuenta
 // Crear cuenta
 async function createAccount() {
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email.value,
-      password: password.value,
-      campus: campus.value
-    });
-    if (error) {
-      console.error("Error al crear la cuenta:", error.message);
-    } else {
-      const userUID = data.user.id;
-      const { data: userData, error: userError }=await supabase
-          .from('usuarios')
-          .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
-      console.log("Usuario creado correctamente:", data);
-      // Clear form fields after successful sign-up
-      email.value = "";
-      password.value = "";
-      campus.value= "";
-    }
-  } catch (error) {
+try {
+  const { data, error } = await supabase.auth.signUp({
+    email: email.value,
+    password: password.value,
+    campus: campus.value,
+    nombre: Nombre.value
+  });
+  if (error) {
     console.error("Error al crear la cuenta:", error.message);
+  } else {
+    const userUID = data.user.id;
+    const { data: userData, error: userError }=await supabase
+        .from('usuarios')
+        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
+    console.log("Usuario creado correctamente:", data);
+    // Clear form fields after successful sign-up
+    email.value = "";
+    password.value = "";
+    campus.value= "";
+    Nombre.value= "";
   }
-  return false; // Detiene la acción predeterminada del formulario
+} catch (error) {
+  console.error("Error al crear la cuenta:", error.message);
+}
 }
 </script>
 
