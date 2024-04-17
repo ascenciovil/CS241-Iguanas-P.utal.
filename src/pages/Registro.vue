@@ -12,31 +12,31 @@
       <div class="container">
         <div class="title">Registro</div>
         <div class="content">
-          <form action="#">
+          <form action="#" @submit.prevent="createAccount">
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Nombre Completo</span>
-                <input type="text" placeholder="Ingresa tu nombre" required>
+                <input type="text" id="Nombre" v-model="Nombre" placeholder="Ingresa tu nombre" required>
               </div>
               <div class="input-box">
                 <span class="details">Nombre de usuario</span>
-                <input type="text" placeholder="Ingresa tu usuario" required>
+                <input type="text" id="usernombre" v-model="usernombre" placeholder="Ingresa tu usuario" required>
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input type="text" placeholder="Ingresa tu Correo instuticional" required>
+                <input type="email" id="email" v-model="email" placeholder="Ingresa tu Correo instuticional" required>
               </div>
               <div class="input-box">
-                <span class="details">Numero de Telefono</span>
-                <input type="text" placeholder="Ingresa tu numero" required>
+                <span class="details">Campus</span>
+                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
               </div>
               <div class="input-box">
                 <span class="details">Contraseña</span>
-                <input type="text" placeholder="Ingresa tu contraseña" required>
+                <input type="password" id="password" v-model="password" placeholder="Ingresa tu contraseña" required>
               </div>
               <div class="input-box">
                 <span class="details">Confirmar contraseña</span>
-                <input type="text" placeholder="Confirma tu contraseña" required>
+                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirma tu contraseña" required>
               </div>
             </div>
             <div class="gender-details">
@@ -83,6 +83,7 @@ let Nombre = ref("");
 let password = ref("");
 let campus = ref("");
 
+
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
   var dominio = correo.split('@')[1];
@@ -126,6 +127,7 @@ async function createAccount(tipoUsuario) {
       email: email.value,
       password: password.value,
       campus: campus.value
+      nombre: Nombre.value
     });
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
@@ -143,11 +145,24 @@ async function createAccount(tipoUsuario) {
       email.value = "";
       password.value = "";
       campus.value = "";
+      Nombre.value= "";
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
   }
 }
+</script>
+
+<script>
+import { onMounted } from "vue";
+
+onMounted(() => {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Evita la acción predeterminada del formulario
+    await createAccount(); // Llama a la función createAccount
+  });
+});
 </script>
 
 <style scoped>
