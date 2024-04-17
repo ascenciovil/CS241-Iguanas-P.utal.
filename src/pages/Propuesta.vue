@@ -20,7 +20,7 @@ export default {
   methods: {
     async enviarTituloYPropuesta() {
       try {
-        const usuarioId = 1; // Id del usuario
+        const usuarioId = 'placeholder'; // Id del usuario
         const { data, error } = await supabase
           .from('propuestas')
           .insert([{ usuario_id: usuarioId, titulo: this.titulo, propuesta: this.propuesta }]);
