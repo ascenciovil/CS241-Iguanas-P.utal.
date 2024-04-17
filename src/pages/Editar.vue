@@ -1,29 +1,52 @@
 <template>
-    <body>
-        <h1>Editar perfil</h1>
-        <form @submit="saveProfile">
-            <div class="Nombre">
-                <label for="Nombre">Nombre:</label>
-                <input type="text" id="nombre" v-model="nombre" required> 
-            </div>
-            <div class="email">
-                <label for="email">Email:</label>
-                <input type="email" id="email" v-model="email" required> 
-            </div>
-            <div class="password">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" v-model="password" required>
-            </div>
-            <div class="Campus">
-                <label for="Campus">Campus:</label>
-                <input type="text" id="campus" v-model="campus" required> 
-            </div>
-            <div class="boton">
-                <button type="submit">Guardar Cambios</button>
-            </div>
-        </form>
-    </body>
-</template>
+    <div class="container">
+      <div class="screen">
+        <div class="screen__background">
+          <div class="screen__background__shape screen__background__shape1"></div>
+          <div class="screen__background__shape screen__background__shape2"></div>
+          <div class="screen__background__shape screen__background__shape3"></div>
+          <div class="screen__background__shape screen__background__shape4"></div>
+        </div>
+        <div class="screen__content">
+          <div class="login">
+            <form @submit.prevent="submitForm">
+              <div class="login__field">
+                <input v-model="firstName" type="text" name="first_name" class="login__input" placeholder="First Name" required>
+              </div>
+              <div class="login__field">
+                <input v-model="lastName" type="text" name="last_name" class="login__input" placeholder="Last Name" required>
+              </div>
+              <div class="login__field">
+                <input v-model="email" type="email" name="email" class="login__input" placeholder="Email Address" required>
+              </div>
+              <div class="login__field">
+                <input v-model="phone" type="tel" name="phone" class="login__input" placeholder="Mobile Number" required pattern="[0-9]{10}">
+              </div>
+              <div class="login__field">
+                <input v-model="birthday" type="date" name="birthday" class="login__input" required>
+              </div>
+              <div class="login__field">
+                <select v-model="gender" name="gender" class="login__input" required>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="login__field">
+                <input v-model="nationality" type="text" name="nationality" class="login__input" placeholder="Nationality" required>
+              </div>
+              <div class="login__field">
+                <input v-model="monthlyIncome" type="text" name="monthly_income" class="login__input" placeholder="Monthly Income" required>
+              </div>
+              <div class="login__submit-container">
+                <input type="submit" class="login__submit" value="Submit">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  
 
 <script>
 import {ref} from "vue";
@@ -80,80 +103,69 @@ async function getProfile() {
     }
   }
 </script>
+
 <style scoped>
-/* Add your custom styles here */
-body{
-    background-color: #ebdeff;
-    height: 100%;
-    padding-bottom: 9%;
-    width: 100%;
-}
-h1{
-    text-align: center;
-    background-color: #ff7f27;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-bottom: 2%;
-}
-form{
-    position: relative;
-    left: 5%;
-    width: 40%;
-    height: 400px;
+  * {
     box-sizing: border-box;
-    margin-top: 6%;
-    border-radius: 50px;
-    background-color: #00cccc;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Raleway', sans-serif;
+    background: linear-gradient(90deg, #C7C5F4, #776BCC);
+    display: flex;
+    justify-content: center;
     align-items: center;
-}
-.nombre{
-    padding-top: 10%;
-    padding-bottom: 4%;
+    height: 100vh;
+  }
+  
+  .container {
     position: relative;
-}
-.email{
-    padding-top: 4%;
-    padding-bottom: 4%;
-    position: relative;
-}
-.boton{
-    margin-top: 4%;
-    margin-bottom: 10%;
-    margin-left: 45%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    position: relative;
-}
-div{
-    display:inline-block;
-    width: 50%;
-    margin-left: 25%;
-    height: 8%;
-}
-input{
-    border-color: #ff7f27;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    background: none;
-    outline: none;
+    background: linear-gradient(90deg, #5D54A4, #7C78B8);
+    box-shadow: 0px 0px 24px #5C5696;
+    border-radius: 20px;
+    width: 480px;
+    padding: 40px;
+    margin: auto; /* Centrar horizontalmente */
+  }
+  
+  .login__input {
     width: 100%;
-    padding-top: 10px;
-}
-textarea{
-    border-color: #ff7f27;
-    border-left: none;
-    border-right: none;
-    border-top: none;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 2px solid #D1D1D4;
     background: none;
+    font-weight: 700;
+    transition: border-color 0.3s ease;
+  }
+  
+  .login__input:focus {
     outline: none;
-    width: 100%;
-    padding-top: 10px;
-}
-label{
-    color: white;
-    font-size: 20px;
-}
-</style>
+    border-bottom-color: #6A679E;
+  }
+  
+  .login__submit-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .login__submit {
+    background: #fff;
+    color: #4C489D;
+    font-size: 14px;
+    padding: 16px 20px;
+    border-radius: 26px;
+    border: 1px solid #D4D3E8;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login__submit:hover {
+    background-color: #F1F0F7;
+  }
+  </style>
+  
