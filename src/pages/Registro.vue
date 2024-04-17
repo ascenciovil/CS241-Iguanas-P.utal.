@@ -126,8 +126,8 @@ async function createAccount(tipoUsuario) {
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
-      campus: campus.value
-      nombre: Nombre.value
+      campus: campus.value,
+      nombre: Nombre.value,
     });
     if (error) {
       console.error("Error al crear la cuenta:", error.message);

@@ -19,24 +19,26 @@ export default {
   },
   methods: {
     async enviarTituloYPropuesta() {
-      try {
-        const usuarioId = 'placeholder'; // Id del usuario
-        const { data, error } = await supabase
-          .from('propuestas')
-          .insert([{ usuario_id: usuarioId, titulo: this.titulo, propuesta: this.propuesta }]);
+  try {
+    const usuarioId = 'placeholder'; // Id del usuario
+    const fecha = new Date(); // Tiempo actual
+    fecha.setDate(fecha.getDate() + 7); // Placeholder/Añade una semana a la fecha actual
+    const { data, error } = await supabase
+      .from('propuestas')
+      .insert([{ usuario_id: usuarioId, titulo: this.titulo, propuesta: this.propuesta, Fecha_expiracion: fecha , Visualización_profesores: false}]);
 
-        if (error) {
-          console.error('Error al enviar título y propuesta:', error.message);
-        } else {
-          console.log('Título y propuesta enviados correctamente:', data);
-          // Limpiar los campos después de enviar los datos
-          this.titulo = '';
-          this.propuesta = '';
-        }
-      } catch (error) {
-        console.error('Error en la solicitud:', error.message);
-      }
+    if (error) {
+      console.error('Error al enviar título y propuesta:', error.message);
+    } else {
+      console.log('Título y propuesta enviados correctamente:', data);
+      // Limpiar los campos después de enviar los datos
+      this.titulo = '';
+      this.propuesta = '';
     }
+  } catch (error) {
+    console.error('Error en la solicitud:', error.message);
+  }
+}
   }
 }
 </script>
