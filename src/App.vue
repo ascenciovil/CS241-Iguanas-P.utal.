@@ -1,5 +1,5 @@
 <template>
-    <h1>Propuestas Utalca</h1>
+   <h1>Propuestas Utalca</h1>
   
     <nav>
       <RouterLink to="/login">Login</RouterLink> |

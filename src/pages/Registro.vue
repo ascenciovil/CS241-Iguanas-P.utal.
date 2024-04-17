@@ -75,15 +75,6 @@
 
 
 <script setup>
-import { ref } from "vue";
-import { supabase } from "../clients/supabase";
-
-let email = ref("");
-let Nombre = ref("");
-let password = ref("");
-let campus = ref("");
-
-
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
   var dominio = correo.split('@')[1];
@@ -95,14 +86,12 @@ function validarDominio(correo) {
     return "desconocido";
   }
 }
-
 // Función para manejar el envío del formulario
 async function handleSubmit() {
   var correo = document.getElementById("email").value;
   var tipoUsuario = validarDominio(correo);
   createAccount(tipoUsuario);
 }
-
 //################################################################### SOLO PARA VERIFICAR 
 // Función para mostrar mensaje según el tipo de usuario
 function mostrarMensajeTipoUsuario(tipoUsuario) {
@@ -119,39 +108,72 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   }
   console.log(message); // Mostrar el mensaje en la consola
 }
+</script>
 
-// Función para crear una cuenta
-async function createAccount(tipoUsuario) {
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email.value,
-      password: password.value,
-      campus: campus.value
-      nombre: Nombre.value
-    });
-    if (error) {
-      console.error("Error al crear la cuenta:", error.message);
-    } else {
-      const userUID = data.user.id;
-      const { data: userData, error: userError } = await supabase
-        .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value }]);
-      console.log("Usuario creado correctamente:", data);
+<script setup>
+import {ref} from "vue";
+import { supabase } from "../clients/supabase";
 
-      // Mostrar mensaje de bienvenida en la consola según el tipo de usuario
-      mostrarMensajeTipoUsuario(tipoUsuario);
-      
-      // Limpiar los campos del formulario después del registro exitoso
-      email.value = "";
-      password.value = "";
-      campus.value = "";
-      Nombre.value= "";
-    }
-  } catch (error) {
+let email = ref("");
+let Nombre = ref ("");
+let password = ref("");
+let campus = ref("");
+let usernombre = ref("");
+let conpassword = ref("");
+
+//crear cuenta
+// Crear cuenta
+async function createAccount() {
+try {
+  const { data, error } = await supabase.auth.signUp({
+    email: email.value,
+    password: password.value,
+    campus: campus.value,
+    nombre: Nombre.value,
+    usernombre : usernombre.value,
+    conpassword : conpassword.value
+  });
+  if (error) {
     console.error("Error al crear la cuenta:", error.message);
+  } else {
+    const userUID = data.user.id;
+    const { data: userData, error: userError }=await supabase
+        .from('usuarios')
+        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value, username: usernombre.value}]);
+    console.log("Usuario creado correctamente:", data);
+    // Clear form fields after successful sign-up
+    email.value = "";
+    password.value = "";
+    campus.value= "";
+    Nombre.value= "";
+    conpassword.value = "";
+    usernombre.value = "";
+  }
+} catch (error) {
+  console.error("Error al crear la cuenta:", error.message);
+}
+}
+
+function validarEmail(email) {
+  const arrobaIndex = email.indexOf("@");
+  if(arrobaIndex <= 0 || arrobaIndex === email.length - 1) {
+    alert("Email no valido");
+    return false;
+  }
+  const [nombre, dominio] = email.split("@");
+  if (dominio == "alumnos.utalca.cl"){
+    //es estudiante
+    return 1;
+  } else if (dominio == "utalca.cl"){
+    //es funcionario
+    return 2;
+  } else {
+    //email no valido
+    return 0;
   }
 }
 </script>
+
 
 <script>
 import { onMounted } from "vue";
