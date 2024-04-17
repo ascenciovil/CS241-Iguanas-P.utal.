@@ -12,7 +12,7 @@
       <div class="container">
         <div class="title">Registro</div>
         <div class="content">
-          <form action="#">
+          <form @submit.prevent="createAccount">
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Nombre Completo</span>
@@ -73,9 +73,8 @@
   </html>
 </template>
 
-
 <script setup>
-import {ref} from "vue";
+import { ref } from "vue";
 import { supabase } from "../clients/supabase";
 
 let email = ref("");
@@ -86,29 +85,42 @@ let campus = ref("");
 //crear cuenta
 // Crear cuenta
 async function createAccount() {
-try {
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-    campus: campus.value
-  });
-  if (error) {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+      campus: campus.value
+    });
+    if (error) {
+      console.error("Error al crear la cuenta:", error.message);
+    } else {
+      const userUID = data.user.id;
+      const { data: userData, error: userError }=await supabase
+          .from('usuarios')
+          .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
+      console.log("Usuario creado correctamente:", data);
+      // Clear form fields after successful sign-up
+      email.value = "";
+      password.value = "";
+      campus.value= "";
+    }
+  } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
-  } else {
-    const userUID = data.user.id;
-    const { data: userData, error: userError }=await supabase
-        .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
-    console.log("Usuario creado correctamente:", data);
-    // Clear form fields after successful sign-up
-    email.value = "";
-    password.value = "";
-    campus.value= "";
   }
-} catch (error) {
-  console.error("Error al crear la cuenta:", error.message);
+  return false; // Detiene la acción predeterminada del formulario
 }
-}
+</script>
+
+<script>
+import { onMounted } from "vue";
+
+onMounted(() => {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Evita la acción predeterminada del formulario
+    await createAccount(); // Llama a la función createAccount
+  });
+});
 </script>
 
 <style scoped>
