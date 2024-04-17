@@ -75,6 +75,42 @@
 
 
 <script setup>
+// Función para validar el dominio del correo electrónico
+function validarDominio(correo) {
+  var dominio = correo.split('@')[1];
+  if (dominio === "alumnos.utalca.cl" || dominio === "estudiante.utalca.cl") {
+    return "estudiante";
+  } else if (dominio === "utalca.cl" || dominio === "profesor.utalca.cl") {
+    return "profesor";
+  } else {
+    return "desconocido";
+  }
+}
+// Función para manejar el envío del formulario
+async function handleSubmit() {
+  var correo = document.getElementById("email").value;
+  var tipoUsuario = validarDominio(correo);
+  createAccount(tipoUsuario);
+}
+//################################################################### SOLO PARA VERIFICAR 
+// Función para mostrar mensaje según el tipo de usuario
+function mostrarMensajeTipoUsuario(tipoUsuario) {
+  var message = "";
+  switch (tipoUsuario) {
+    case "estudiante":
+      message = "¡Bienvenido estudiante!";
+      break;
+    case "profesor":
+      message = "¡Bienvenido profesor!";
+      break;
+    default:
+      message = "Tipo de usuario desconocido";
+  }
+  console.log(message); // Mostrar el mensaje en la consola
+}
+</script>
+
+<script setup>
 import {ref} from "vue";
 import { supabase } from "../clients/supabase";
 
@@ -118,6 +154,7 @@ try {
 }
 }
 </script>
+
 
 <script>
 import { onMounted } from "vue";
