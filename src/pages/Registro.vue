@@ -82,6 +82,8 @@ let email = ref("");
 let Nombre = ref ("");
 let password = ref("");
 let campus = ref("");
+let usernombre = ref("");
+let conpassword = ref("");
 
 //crear cuenta
 // Crear cuenta
@@ -91,7 +93,9 @@ try {
     email: email.value,
     password: password.value,
     campus: campus.value,
-    nombre: Nombre.value
+    nombre: Nombre.value,
+    usernombre : usernombre.value,
+    conpassword : conpassword.value
   });
   if (error) {
     console.error("Error al crear la cuenta:", error.message);
@@ -99,13 +103,15 @@ try {
     const userUID = data.user.id;
     const { data: userData, error: userError }=await supabase
         .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
+        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value, username: usernombre.value}]);
     console.log("Usuario creado correctamente:", data);
     // Clear form fields after successful sign-up
     email.value = "";
     password.value = "";
     campus.value= "";
     Nombre.value= "";
+    conpassword.value = "";
+    usernombre.value = "";
   }
 } catch (error) {
   console.error("Error al crear la cuenta:", error.message);
