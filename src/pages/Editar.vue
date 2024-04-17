@@ -1,120 +1,167 @@
 <template>
-    <body>
-        <h1>Editar perfil</h1>
-        <form @submit="saveProfile">
-            <div class="nombre">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" v-model="profile.name" required>
+  <div class="container">
+    <div class="screen">
+      <div class="screen__background">
+        <div class="screen__background__shape screen__background__shape1"></div>
+        <div class="screen__background__shape screen__background__shape2"></div>
+        <div class="screen__background__shape screen__background__shape3"></div>
+        <div class="screen__background__shape screen__background__shape4"></div>
+      </div>
+      <div class="screen__content">
+        <!-- Imagen a la izquierda -->
+        <img src="../assets/img/editar.jpg" alt="Imagen Izquierda" class="left-image">
+        
+        <div class="login">
+          <form @submit.prevent="submitForm">
+            <div class="login__field">
+              <input v-model="Nombre_Completo" type="text" name="first_name" class="login__input" placeholder="nombre completo" required>
             </div>
-            <div class="email">
-                <label for="email">Email:</label>
-                <input type="email" id="email" v-model="profile.email" required>
+           
+            <div class="login__field">
+              <input v-model="correo" type="email" name="email" class="login__input" placeholder="correo" required>
             </div>
-            <div class="email">
-                <label for="bio">Bio:</label>
-                <textarea id="bio" v-model="profile.bio"></textarea>
+            <div class="login__field">
+              <input v-model="telefono" type="tel" name="phone" class="login__input" placeholder="numero de telefono" required pattern="[0-9]{10}">
             </div>
-            <div class="boton">
-                <button type="submit">Guardar</button>
+            <div class="login__field">
+              <select v-model="genero" name="gender" class="login__input" required>
+                <option value="Male">Masculino</option>
+                <option value="Female">Femenino</option>
+                <option value="no_decirlo">Prefiero no decirlo</option>
+              </select>
             </div>
-        </form>
-    </body>
+            <div class="login__field">
+              <input v-model="nationality" type="text" name="nationality" class="login__input" placeholder="Nacionalidad (no venecos)" required>
+            </div>
+            <!-- Agrega más campos de entrada aquí -->
+            <div class="login__submit-container">
+              <input type="submit" class="login__submit" value="Submit">
+            </div>
+          </form>
+        </div>
+        
+        <!-- Imagen a la derecha -->
+        <img src="../assets/img/editar2.jpg" alt="Imagen Derecha" class="right-image">
+      </div>
+    </div>
+  </div>
 </template>
 
+
 <script>
+import { ref } from "vue";
+import { supabase } from "../clients/supabase";
+
 export default {
-    data() {
-        return {
-            profile: {
-                name: '',
-                email: '',
-                bio: ''
-            }
-        };
-    },
-    methods: {
-        saveProfile() {
-            // Implement your save logic here
-            // You can access the updated profile data using this.profile
-        }
+  name: "Formulario",
+  data() {
+    return {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      birthday: "",
+      gender: "",
+      nationality: "",
+      monthlyIncome: ""
+    };
+  },
+  methods: {
+    async submitForm() {
+      try {
+        // Aquí puedes agregar la lógica para enviar los datos del formulario
+        console.log("Formulario enviado");
+      } catch (error) {
+        console.error("Error al enviar el formulario:", error);
+      }
     }
+  }
 };
 </script>
 
 <style scoped>
-/* Add your custom styles here */
-body{
-    background-color: #ebdeff;
-    height: 100%;
-    padding-bottom: 9%;
-    width: 100%;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-h1{
-    text-align: center;
-    background-color: #ff7f27;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-bottom: 2%;
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background: linear-gradient(90deg, #C7C5F4, #776BCC);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
-form{
-    position: relative;
-    left: 5%;
-    width: 40%;
-    height: 400px;
-    box-sizing: border-box;
-    margin-top: 6%;
-    border-radius: 50px;
-    background-color: #00cccc;
-    align-items: center;
+
+.container {
+  position: relative;
+  background: linear-gradient(90deg, #5D54A4, #7C78B8);
+  box-shadow: 0px 0px 24px #5C5696;
+  border-radius: 20px;
+  width: 480px;
+  padding: 40px;
+  margin: auto; /* Centrar horizontalmente */
 }
-.nombre{
-    padding-top: 10%;
-    padding-bottom: 4%;
-    position: relative;
+
+.login__input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-bottom: 2px solid #D1D1D4;
+  background: none;
+  font-weight: 700;
+  transition: border-color 0.3s ease;
 }
-.email{
-    padding-top: 4%;
-    padding-bottom: 4%;
-    position: relative;
+
+.login__input:focus {
+  outline: none;
+  border-bottom-color: #6A679E;
 }
-.boton{
-    margin-top: 4%;
-    margin-bottom: 10%;
-    margin-left: 45%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    position: relative;
+
+.login__submit-container {
+  text-align: center;
+  margin-top: 20px;
 }
-div{
-    display:inline-block;
-    width: 50%;
-    margin-left: 25%;
-    height: 8%;
+
+.login__submit {
+  background: #fff;
+  color: #4C489D;
+  font-size: 14px;
+  padding: 16px 20px;
+  border-radius: 26px;
+  border: 1px solid #D4D3E8;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
-input{
-    border-color: #ff7f27;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    background: none;
-    outline: none;
-    width: 100%;
-    padding-top: 10px;
+
+.login__submit:hover {
+  background-color: #F1F0F7;
 }
-textarea{
-    border-color: #ff7f27;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    background: none;
-    outline: none;
-    width: 100%;
-    padding-top: 10px;
+
+/* Estilos para las imágenes */
+.left-image,
+.right-image {
+  position: fixed;
+  top: 25vh; /* Centrado verticalmente a media altura */
+  height: 50vh; /* La mitad de la altura del viewport */
+  width: auto;
 }
-label{
-    color: white;
-    font-size: 20px;
+
+.left-image {
+  left: 0; /* Alineado a la izquierda */
+}
+
+.right-image {
+  right: 0; /* Alineado a la derecha */
+}
+
+/* Estilo adicional */
+.container {
+  position: relative; /* Asegura que las imágenes fijas estén dentro del contenedor */
 }
 </style>
