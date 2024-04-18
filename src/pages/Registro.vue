@@ -73,10 +73,10 @@
   </html>
 </template>
 
-
 <script setup>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
+
 
 // Define las variables reactivas para los campos del formulario
 let email = ref("");
@@ -86,6 +86,7 @@ let campus = ref("");
 let usernombre = ref("");
 let conpassword = ref("");
 let gender = ref(""); 
+
 
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
@@ -105,6 +106,7 @@ async function handleSubmit() {
   var tipoUsuario = validarDominio(correo);
   createAccount(tipoUsuario);
 }
+
 
 
 async function createAccount(tipoUsuario) {
@@ -164,9 +166,7 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   }
   console.log(message); 
 }
-</script>
 
-<script>
 import { onMounted } from "vue";
 
 onMounted(() => {
