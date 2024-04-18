@@ -73,8 +73,17 @@
   </html>
 </template>
 
-
 <script setup>
+import { ref } from "vue";
+import { supabase } from "../clients/supabase";
+
+const email = ref("");
+const Nombre = ref("");
+const password = ref("");
+const campus = ref("");
+const usernombre = ref("");
+const conpassword = ref("");
+
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
   var dominio = correo.split('@')[1];
@@ -86,12 +95,14 @@ function validarDominio(correo) {
     return "desconocido";
   }
 }
+
 // Función para manejar el envío del formulario
 async function handleSubmit() {
   var correo = document.getElementById("email").value;
   var tipoUsuario = validarDominio(correo);
   createAccount(tipoUsuario);
 }
+
 //################################################################### SOLO PARA VERIFICAR 
 // Función para mostrar mensaje según el tipo de usuario
 function mostrarMensajeTipoUsuario(tipoUsuario) {
@@ -108,83 +119,58 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   }
   console.log(message); // Mostrar el mensaje en la consola
 }
-</script>
 
-<script setup>
-import {ref} from "vue";
-import { supabase } from "../clients/supabase";
-
-let email = ref("");
-let Nombre = ref ("");
-let password = ref("");
-let campus = ref("");
-let usernombre = ref("");
-let conpassword = ref("");
-
-//crear cuenta
 // Crear cuenta
 async function createAccount() {
-try {
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-    campus: campus.value,
-    nombre: Nombre.value,
-    usernombre : usernombre.value,
-    conpassword : conpassword.value
-  });
-  if (error) {
-    console.error("Error al crear la cuenta:", error.message);
-  } else {
-    const userUID = data.user.id;
-    const { data: userData, error: userError }=await supabase
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+      campus: campus.value,
+      nombre: Nombre.value,
+      usernombre: usernombre.value,
+      conpassword: conpassword.value
+    });
+    if (error) {
+      console.error("Error al crear la cuenta:", error.message);
+    } else {
+      const userUID = data.user.id;
+      const { data: userData, error: userError } = await supabase
         .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value, username: usernombre.value}]);
-    console.log("Usuario creado correctamente:", data);
-    // Clear form fields after successful sign-up
-    email.value = "";
-    password.value = "";
-    campus.value= "";
-    Nombre.value= "";
-    conpassword.value = "";
-    usernombre.value = "";
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value }]);
+      console.log("Usuario creado correctamente:", data);
+      // Limpiar campos del formulario después de un registro exitoso
+      email.value = "";
+      password.value = "";
+      campus.value = "";
+      Nombre.value = "";
+      conpassword.value = "";
+      usernombre.value = "";
+    }
+  } catch (error) {
+    console.error("Error al crear la cuenta:", error.message);
   }
-} catch (error) {
-  console.error("Error al crear la cuenta:", error.message);
-}
 }
 
+// Función para validar el formato del correo electrónico
 function validarEmail(email) {
   const arrobaIndex = email.indexOf("@");
-  if(arrobaIndex <= 0 || arrobaIndex === email.length - 1) {
-    alert("Email no valido");
+  if (arrobaIndex <= 0 || arrobaIndex === email.length - 1) {
+    alert("Email no válido");
     return false;
   }
   const [nombre, dominio] = email.split("@");
-  if (dominio == "alumnos.utalca.cl"){
+  if (dominio == "alumnos.utalca.cl") {
     //es estudiante
     return 1;
-  } else if (dominio == "utalca.cl"){
+  } else if (dominio == "utalca.cl") {
     //es funcionario
     return 2;
   } else {
-    //email no valido
+    //email no válido
     return 0;
   }
 }
-</script>
-
-
-<script>
-import { onMounted } from "vue";
-
-onMounted(() => {
-  const form = document.querySelector('form');
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Evita la acción predeterminada del formulario
-    await createAccount(); // Llama a la función createAccount
-  });
-});
 </script>
 
 <style scoped>
