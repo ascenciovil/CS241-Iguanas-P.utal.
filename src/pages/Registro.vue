@@ -12,31 +12,31 @@
       <div class="container">
         <div class="title">Registro</div>
         <div class="content">
-          <form action="#">
+          <form action="#" @submit.prevent="createAccount">
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Nombre Completo</span>
-                <input type="text" placeholder="Ingresa tu nombre" required>
+                <input type="text" id="Nombre" v-model="Nombre" placeholder="Ingresa tu nombre" required>
               </div>
               <div class="input-box">
                 <span class="details">Nombre de usuario</span>
-                <input type="text" placeholder="Ingresa tu usuario" required>
+                <input type="text" id="usernombre" v-model="usernombre" placeholder="Ingresa tu usuario" required>
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input type="text" placeholder="Ingresa tu Correo instuticional" required>
+                <input type="email" id="email" v-model="email" placeholder="Ingresa tu Correo instuticional" required>
               </div>
               <div class="input-box">
-                <span class="details">Numero de Telefono</span>
-                <input type="text" placeholder="Ingresa tu numero" required>
+                <span class="details">Campus</span>
+                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
               </div>
               <div class="input-box">
                 <span class="details">Contraseña</span>
-                <input type="text" placeholder="Ingresa tu contraseña" required>
+                <input type="password" id="password" v-model="password" placeholder="Ingresa tu contraseña" required>
               </div>
               <div class="input-box">
                 <span class="details">Confirmar contraseña</span>
-                <input type="text" placeholder="Confirma tu contraseña" required>
+                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirma tu contraseña" required>
               </div>
             </div>
             <div class="gender-details">
@@ -75,40 +75,94 @@
 
 
 <script setup>
-import {ref} from "vue";
+import { ref } from "vue";
 import { supabase } from "../clients/supabase";
 
 let email = ref("");
-let Nombre = ref ("");
+let Nombre = ref("");
 let password = ref("");
 let campus = ref("");
 
-//crear cuenta
-// Crear cuenta
-async function createAccount() {
-try {
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-    campus: campus.value
-  });
-  if (error) {
-    console.error("Error al crear la cuenta:", error.message);
+
+// Función para validar el dominio del correo electrónico
+function validarDominio(correo) {
+  var dominio = correo.split('@')[1];
+  if (dominio === "alumnos.utalca.cl" || dominio === "estudiante.utalca.cl") {
+    return "estudiante";
+  } else if (dominio === "utalca.cl" || dominio === "profesor.utalca.cl") {
+    return "profesor";
   } else {
-    const userUID = data.user.id;
-    const { data: userData, error: userError }=await supabase
-        .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
-    console.log("Usuario creado correctamente:", data);
-    // Clear form fields after successful sign-up
-    email.value = "";
-    password.value = "";
-    campus.value= "";
+    return "desconocido";
   }
-} catch (error) {
-  console.error("Error al crear la cuenta:", error.message);
 }
+
+// Función para manejar el envío del formulario
+async function handleSubmit() {
+  var correo = document.getElementById("email").value;
+  var tipoUsuario = validarDominio(correo);
+  createAccount(tipoUsuario);
 }
+
+//################################################################### SOLO PARA VERIFICAR 
+// Función para mostrar mensaje según el tipo de usuario
+function mostrarMensajeTipoUsuario(tipoUsuario) {
+  var message = "";
+  switch (tipoUsuario) {
+    case "estudiante":
+      message = "¡Bienvenido estudiante!";
+      break;
+    case "profesor":
+      message = "¡Bienvenido profesor!";
+      break;
+    default:
+      message = "Tipo de usuario desconocido";
+  }
+  console.log(message); // Mostrar el mensaje en la consola
+}
+
+// Función para crear una cuenta
+async function createAccount(tipoUsuario) {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+      campus: campus.value,
+      nombre: Nombre.value,
+    });
+    if (error) {
+      console.error("Error al crear la cuenta:", error.message);
+    } else {
+      const userUID = data.user.id;
+      const { data: userData, error: userError } = await supabase
+        .from('usuarios')
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value }]);
+      console.log("Usuario creado correctamente:", data);
+
+      // Mostrar mensaje de bienvenida en la consola según el tipo de usuario
+      mostrarMensajeTipoUsuario(tipoUsuario);
+      
+      // Limpiar los campos del formulario después del registro exitoso
+      email.value = "";
+      password.value = "";
+      campus.value = "";
+      Nombre.value= "";
+    }
+  } catch (error) {
+    console.error("Error al crear la cuenta:", error.message);
+  }
+}
+</script>
+
+<script>
+import { onMounted } from "vue";
+
+onMounted(() => {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Evita la acción predeterminada del formulario
+    await createAccount(); // Llama a la función createAccount
+  });
+});
 </script>
 
 <style scoped>
