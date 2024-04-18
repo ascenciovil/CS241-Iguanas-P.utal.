@@ -40,9 +40,9 @@
               </div>
             </div>
             <div class="gender-details">
-              <input type="radio" name="gender" id="dot-1">
-              <input type="radio" name="gender" id="dot-2">
-              <input type="radio" name="gender" id="dot-3">
+              <input type="radio" name="gender" id="dot-1" value="masculino" v-model="gender">
+              <input type="radio" name="gender" id="dot-2" value="femenino" v-model="gender">
+              <input type="radio" name="gender" id="dot-3" value="Prefiero_no_decirlo" v-model="gender">
               <span class="gender-title">Genero</span>
               <div class="category">
                 <label for="dot-1">
@@ -78,11 +78,14 @@
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
 
+// Define las variables reactivas para los campos del formulario
 let email = ref("");
 let Nombre = ref("");
 let password = ref("");
 let campus = ref("");
-
+let usernombre = ref("");
+let conpassword = ref("");
+let gender = ref(""); 
 
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
@@ -103,7 +106,49 @@ async function handleSubmit() {
   createAccount(tipoUsuario);
 }
 
-//################################################################### SOLO PARA VERIFICAR 
+
+async function createAccount(tipoUsuario) {
+  try {
+    console.log(gender.value);
+    const { data, error } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+      campus: campus.value,
+      nombre: Nombre.value,
+      gender: gender.value 
+
+    });
+
+    if (error) {
+      console.error("Error al crear la cuenta:", error.message);
+    } else {
+     
+      const userUID = data.user.id;
+
+   
+      const { data: userData, error: userError } = await supabase
+        .from('usuarios')
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value }]);
+
+      console.log("Usuario creado correctamente:", data);
+
+      
+      mostrarMensajeTipoUsuario(tipoUsuario);
+      
+      
+      email.value = "";
+      password.value = "";
+      campus.value = "";
+      Nombre.value = "";
+      conpassword.value = "";
+      usernombre.value = "";
+      gender.value = ""; 
+    }
+  } catch (error) {
+    console.error("Error al crear la cuenta:", error.message);
+  }
+}
+
 // Función para mostrar mensaje según el tipo de usuario
 function mostrarMensajeTipoUsuario(tipoUsuario) {
   var message = "";
@@ -117,39 +162,7 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
     default:
       message = "Tipo de usuario desconocido";
   }
-  console.log(message); // Mostrar el mensaje en la consola
-}
-
-// Función para crear una cuenta
-async function createAccount(tipoUsuario) {
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email.value,
-      password: password.value,
-      campus: campus.value,
-      nombre: Nombre.value,
-    });
-    if (error) {
-      console.error("Error al crear la cuenta:", error.message);
-    } else {
-      const userUID = data.user.id;
-      const { data: userData, error: userError } = await supabase
-        .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value }]);
-      console.log("Usuario creado correctamente:", data);
-
-      // Mostrar mensaje de bienvenida en la consola según el tipo de usuario
-      mostrarMensajeTipoUsuario(tipoUsuario);
-      
-      // Limpiar los campos del formulario después del registro exitoso
-      email.value = "";
-      password.value = "";
-      campus.value = "";
-      Nombre.value= "";
-    }
-  } catch (error) {
-    console.error("Error al crear la cuenta:", error.message);
-  }
+  console.log(message); 
 }
 </script>
 
@@ -159,8 +172,8 @@ import { onMounted } from "vue";
 onMounted(() => {
   const form = document.querySelector('form');
   form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Evita la acción predeterminada del formulario
-    await createAccount(); // Llama a la función createAccount
+    event.preventDefault();
+    await createAccount(); 
   });
 });
 </script>
