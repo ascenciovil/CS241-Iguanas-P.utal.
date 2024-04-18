@@ -22,21 +22,33 @@
     <div id="ventanaLineamientos" class="ventana">
       <div class="contenido">
         <h2>Lineamientos</h2>
-        <p>Esto es una ventana emergente.</p>
+        <p>1° Registrarse</p>
+        <br>
+        <p>2° Iniciar sesión</p>
+        <br>
+        <p>3° Irse a la página de propuestas</p>
+        <br>
+        <p>4° Ingresar título y propuesta</p>
         <button @click="cerrarLineamientos()">Cerrar</button>
       </div>
     </div>
     <div id="ventanaDocumentacion" class="ventana">
       <div class="contenido">
         <h2>Documentacion</h2>
-        <p>Esto es una ventana emergente.</p>
+        <p>Deben cumplir con las leyes del país, no involucrar datos personales ni ocupar propiedad de otros autores.</p>
         <button @click="cerrarDocumentacion()">Cerrar</button>
       </div>
     </div>
     <div id="ventanaPreguntas" class="ventana">
       <div class="contenido">
         <h2>Preguntas Frecuentes</h2>
-        <p>Esto es una ventana emergente.</p>
+        <p>Página exclusivamente dirigida a propuestas de los estudiantes para los estudiantes</p>
+        <br>
+        <p>Las propuestas se revisan en un máximo de una semana</p>
+        <br>
+        <p>Puedes enviar propuestas solo en tu campus, pero puedes observar las establecidas en los otros</p>
+        <br>
+        <p>Contacto: jascencio21@alumnos.utalca.cl</p>
         <button @click="cerrarPreguntas()">Cerrar</button>
       </div>
     </div>
