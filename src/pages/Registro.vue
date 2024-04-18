@@ -12,37 +12,37 @@
       <div class="container">
         <div class="title">Registro</div>
         <div class="content">
-          <form @submit.prevent="createAccount">
+          <form action="#" @submit.prevent="createAccount">
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Nombre Completo</span>
-                <input type="text" placeholder="Ingresa tu nombre" required>
+                <input type="text" id="Nombre" v-model="Nombre" placeholder="Ingresa tu nombre" required>
               </div>
               <div class="input-box">
                 <span class="details">Nombre de usuario</span>
-                <input type="text" placeholder="Ingresa tu usuario" required>
+                <input type="text" id="usernombre" v-model="usernombre" placeholder="Ingresa tu usuario" required>
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input type="text" placeholder="Ingresa tu Correo instuticional" required>
+                <input type="email" id="email" v-model="email" placeholder="Ingresa tu Correo instuticional" required>
               </div>
               <div class="input-box">
-                <span class="details">Numero de Telefono</span>
-                <input type="text" placeholder="Ingresa tu numero" required>
+                <span class="details">Campus</span>
+                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
               </div>
               <div class="input-box">
                 <span class="details">Contraseña</span>
-                <input type="text" placeholder="Ingresa tu contraseña" required>
+                <input type="password" id="password" v-model="password" placeholder="Ingresa tu contraseña" required>
               </div>
               <div class="input-box">
                 <span class="details">Confirmar contraseña</span>
-                <input type="text" placeholder="Confirma tu contraseña" required>
+                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirma tu contraseña" required>
               </div>
             </div>
             <div class="gender-details">
-              <input type="radio" name="gender" id="dot-1">
-              <input type="radio" name="gender" id="dot-2">
-              <input type="radio" name="gender" id="dot-3">
+              <input type="radio" name="gender" id="dot-1" value="masculino" v-model="gender">
+              <input type="radio" name="gender" id="dot-2" value="femenino" v-model="gender">
+              <input type="radio" name="gender" id="dot-3" value="Prefiero_no_decirlo" v-model="gender">
               <span class="gender-title">Genero</span>
               <div class="category">
                 <label for="dot-1">
@@ -77,48 +77,103 @@
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
 
+
+// Define las variables reactivas para los campos del formulario
 let email = ref("");
-let Nombre = ref ("");
+let Nombre = ref("");
 let password = ref("");
 let campus = ref("");
+let usernombre = ref("");
+let conpassword = ref("");
+let gender = ref(""); 
 
-//crear cuenta
-// Crear cuenta
-async function createAccount() {
+
+// Función para validar el dominio del correo electrónico
+function validarDominio(correo) {
+  var dominio = correo.split('@')[1];
+  if (dominio === "alumnos.utalca.cl" || dominio === "estudiante.utalca.cl") {
+    return "estudiante";
+  } else if (dominio === "utalca.cl" || dominio === "profesor.utalca.cl") {
+    return "profesor";
+  } else {
+    return "desconocido";
+  }
+}
+
+// Función para manejar el envío del formulario
+async function handleSubmit() {
+  var correo = document.getElementById("email").value;
+  var tipoUsuario = validarDominio(correo);
+  createAccount(tipoUsuario);
+}
+
+
+
+async function createAccount(tipoUsuario) {
   try {
+    console.log(gender.value);
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
-      campus: campus.value
+      campus: campus.value,
+      nombre: Nombre.value,
+      gender: gender.value 
+
     });
+
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
     } else {
+     
       const userUID = data.user.id;
-      const { data: userData, error: userError }=await supabase
-          .from('usuarios')
-          .insert([{ nombre: Nombre.value, correo: email.value , UID: userUID, campus: campus.value}]);
+
+   
+      const { data: userData, error: userError } = await supabase
+        .from('usuarios')
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value }]);
+
       console.log("Usuario creado correctamente:", data);
-      // Clear form fields after successful sign-up
+
+      
+      mostrarMensajeTipoUsuario(tipoUsuario);
+      
+      
       email.value = "";
       password.value = "";
-      campus.value= "";
+      campus.value = "";
+      Nombre.value = "";
+      conpassword.value = "";
+      usernombre.value = "";
+      gender.value = ""; 
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
   }
-  return false; // Detiene la acción predeterminada del formulario
 }
-</script>
 
-<script>
+// Función para mostrar mensaje según el tipo de usuario
+function mostrarMensajeTipoUsuario(tipoUsuario) {
+  var message = "";
+  switch (tipoUsuario) {
+    case "estudiante":
+      message = "¡Bienvenido estudiante!";
+      break;
+    case "profesor":
+      message = "¡Bienvenido profesor!";
+      break;
+    default:
+      message = "Tipo de usuario desconocido";
+  }
+  console.log(message); 
+}
+
 import { onMounted } from "vue";
 
 onMounted(() => {
   const form = document.querySelector('form');
   form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Evita la acción predeterminada del formulario
-    await createAccount(); // Llama a la función createAccount
+    event.preventDefault();
+    await createAccount(); 
   });
 });
 </script>
