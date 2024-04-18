@@ -116,6 +116,7 @@ async function createAccount(tipoUsuario) {
       campus: campus.value,
       nombre: Nombre.value,
       gender: gender.value 
+
     });
 
     if (error) {
