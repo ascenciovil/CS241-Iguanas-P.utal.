@@ -1,7 +1,7 @@
 <template>
   <div>
-    <img src="../assets/img/foto.jpeg" alt="Imagen Izquierda" style="position: absolute; top: 24vh; left: 0; height: 70vh;">
-    <img src="../assets/img/foto.jpeg" alt="Imagen Derecha" style="position: absolute; top: 24vh; right: 0; height: 70vh;">
+    <img src="../assets/img/foto.jpeg" alt="Imagen Izquierda" style="position: absolute; top: 29vh; left: 0; height: 70vh;">
+    <img src="../assets/img/foto.jpeg" alt="Imagen Derecha" style="position: absolute; top: 29vh; right: 0; height: 70vh;">
     <div class="container">
       <div class="screen">
         <div class="screen__content">

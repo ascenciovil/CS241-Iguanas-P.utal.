@@ -1,30 +1,98 @@
 <template>
-   <h1>Propuestas Utalca</h1>
-  
-    <nav>
-      <RouterLink to="/login">Login</RouterLink> |
-      <RouterLink to="/Registro">Registro</RouterLink> |
-      <RouterLink to="/Editar">EditarPerfil</RouterLink> |
-      <RouterLink to="/Propuesta">Propuesta</RouterLink>
-      <div class="dropdown">
-      <button>Acerca de</button>
+  <h1>Propuestas Utalca</h1>
+
+  <nav>
+    <RouterLink to="/login">Login</RouterLink> |
+    <RouterLink to="/Registro">Registro</RouterLink> |
+    <RouterLink to="/Editar">EditarPerfil</RouterLink> |
+    <RouterLink to="/Propuesta">Propuesta</RouterLink>
+    <div class="dropdown">
+      <button class="acercaDe">Acerca de</button>
       <div class="dropdown-content">
         <a @click="abrirLineamientos()">Lineamientos</a>
-        <a id="documentacion">Documentación</a>
-        <a id="preguntas">Preguntas Frecuentes</a>
+        <a @click="abrirDocumentacion()">Documentación</a>
+        <a @click="abrirPreguntas()">Preguntas Frecuentes</a>
       </div>
     </div>
-    </nav>
-    <main>
-      <RouterView />
-    </main>
-  </template>
+  </nav>
+  <main>
+    <RouterView />
+  </main>
+  <body>
+    <div id="ventanaLineamientos" class="ventana">
+      <div class="contenido">
+        <h2>Lineamientos</h2>
+        <p>Esto es una ventana emergente.</p>
+        <button @click="cerrarLineamientos()">Cerrar</button>
+      </div>
+    </div>
+    <div id="ventanaDocumentacion" class="ventana">
+      <div class="contenido">
+        <h2>Documentacion</h2>
+        <p>Esto es una ventana emergente.</p>
+        <button @click="cerrarDocumentacion()">Cerrar</button>
+      </div>
+    </div>
+    <div id="ventanaPreguntas" class="ventana">
+      <div class="contenido">
+        <h2>Preguntas Frecuentes</h2>
+        <p>Esto es una ventana emergente.</p>
+        <button @click="cerrarPreguntas()">Cerrar</button>
+      </div>
+    </div>
+  </body>
+</template>
+
+<script setup>
+function abrirLineamientos() {
+  var elemento = document.getElementById("ventanaLineamientos");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+};
+
+function cerrarLineamientos() {
+  var elemento = document.getElementById("ventanaLineamientos");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+};
+
+function abrirDocumentacion() {
+  var elemento = document.getElementById("ventanaDocumentacion");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+};
+
+function cerrarDocumentacion() {
+  var elemento = document.getElementById("ventanaDocumentacion");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+};
+
+function abrirPreguntas() {
+  var elemento = document.getElementById("ventanaPreguntas");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+};
+
+function cerrarPreguntas() {
+  var elemento = document.getElementById("ventanaPreguntas");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+};
+</script>
 
 <style scoped>
 .dropdown {
   display: inline-block;
   position: relative;
   width: 8%;
+  font-size: small;
 }
 
 .dropdown-content {
@@ -82,5 +150,17 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.acercaDe {
+  margin-left: 5px;
+  font-size: medium;
+  background-color: #bfbcf0;
+  color: blue;
+  text-decoration: underline;
+  border-bottom: none;
+  border-top: none;
+  border-right: none;
+  padding-left: 5px;
 }
 </style>
