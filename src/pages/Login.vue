@@ -35,6 +35,7 @@
 <script setup>
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
+import { useRouter } from 'vue-router';
 import { supabase } from "../clients/supabase";
 
 let email = ref("");
@@ -71,6 +72,16 @@ async function createAccount() {
 
     }
     alert('Usuario logueado');
+    // Redireccionar según el rol del usuario
+    if (userData.rol == 'estudiante') {
+      console.log("estudiante");
+      this.$router.push('/Alumno');
+    } else if (userData.rol == 'profesor') {
+      console.log("profesor");
+      useRouter().push('/Profesor');
+    } else {
+      console.log("ninguno");
+    }
   }
   
 }
@@ -91,7 +102,6 @@ function mostrarInterfaces(tipoUsuario) {
   }
   console.log(message); 
 }
-
 </script>
 
 

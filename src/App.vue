@@ -16,15 +16,14 @@ const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
       <RouterLink to="/Editar">EditarPerfil</RouterLink> |
       <RouterLink to="/Propuesta">Propuesta</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
-      <div><button @click="logout">Log Out</button>
-        <button @click="Conectado">Ver usuario</button></div>
+      <div><button @click="logout">Log Out</button></div>
       
       
     </span>
     <span v-if="loginProfesor">
-      <RouterLink to="/Editar">EditarPerfil</RouterLink>
-      <div><button @click="logout">Log Out</button>
-        <button @click="Conectado">Ver usuario</button></div>
+      <RouterLink to="/Editar">EditarPerfil</RouterLink> |
+      <RouterLink to="/Profesor">Profesor</RouterLink>
+      <div><button @click="logout">Log Out</button></div>
     </span>
     <div class="dropdown">
       <button class="acercaDe">Acerca de</button>
@@ -109,14 +108,7 @@ async function logout() {
     updateLoginState(false);
   }
 }
-async function Conectado() {
-  const { user, error } = await supabase.auth.getSession();
-  if (error) {
-    console.error("Error al obtener la sesión:", error.message);
-  } else {
-    console.log("Usuario en sesión:", user);
-  }
-}
+
 function cerrarLineamientos() {
   var elemento = document.getElementById("ventanaLineamientos");
   if (elemento != null) {
