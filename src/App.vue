@@ -14,7 +14,8 @@ const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
     </span>
     <span v-if="loginEstudiante">
       <RouterLink to="/Editar">EditarPerfil</RouterLink> |
-      <RouterLink to="/Propuesta">Propuesta</RouterLink>
+      <RouterLink to="/Propuesta">Propuesta</RouterLink> |
+      <RouterLink to="/Alumno">Alumno</RouterLink>
       <div><button @click="logout">Log Out</button>
         <button @click="Conectado">Ver usuario</button></div>
       
