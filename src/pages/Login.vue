@@ -32,26 +32,79 @@
 </template>
 
 
-  <script setup>
-  import {ref} from "vue";
-  import { supabase } from "../clients/supabase";
+<script setup>
+import { ref } from "vue";
+import { updateLoginState } from "@/App.vue";
+import { useRouter } from 'vue-router';
+import { supabase } from "../clients/supabase";
 
-  let email = ref("");
-  let password = ref("");
+let email = ref("");
+let password = ref("");
 
-  async function createAccount() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.value,
-        password: password.value
-    });
-    if (error) {
-        console.error("Error este usuario no es valido:", error.message);
+async function createAccount() {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email.value,
+    password: password.value
+  });
+  if (error) {
+    console.error("Error: ", error.message);
+    alert('No eres un usuario, ahora sufriras las consecuencias');
+    //easter egg
+    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+  } else {
+    console.log("Usuario autenticado:", data.user);
+
+    // Obtener el UID del usuario
+    const userId = data.user.id;
+    
+    // Consultar la tabla de usuarios para obtener el rol
+    const { data: userData, error: userError } = await supabase
+      .from('usuarios')
+      .select('rol')
+      .eq('UID', userId)
+      .single();
+
+    if (userError) {
+      console.error("Error al obtener la información del usuario:", userError.message);
     } else {
-        console.log(data);
-        console.log("Este usuario es valido");
+      console.log("Rol del usuario:", userData.rol);
+      mostrarInterfaces(userData.rol);
+
+    }
+    alert('Usuario logueado');
+    // Redireccionar según el rol del usuario
+    if (userData.rol == 'estudiante') {
+      console.log("estudiante");
+      this.$router.push('/Alumno');
+    } else if (userData.rol == 'profesor') {
+      console.log("profesor");
+      useRouter().push('/Profesor');
+    } else {
+      console.log("ninguno");
     }
   }
-  </script>
+  
+}
+
+function mostrarInterfaces(tipoUsuario) {
+  var message = "";
+  switch (tipoUsuario) {
+    case "estudiante":
+      message = "¡Bienvenido estudiante!";
+      updateLoginState(true,false);
+      break;
+    case "profesor":
+      message = "¡Bienvenido profesor!";
+      updateLoginState(false,true);
+      break;
+    default:
+      message = "Tipo de usuario desconocido";
+  }
+  console.log(message); 
+}
+</script>
+
+
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
