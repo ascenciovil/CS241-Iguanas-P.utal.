@@ -14,14 +14,14 @@
         <div class="login">
           <form @submit.prevent="submitForm">
             <div class="login__field">
-              <input v-model="Nombre_Completo" type="text" name="first_name" class="login__input" placeholder="nombre completo" required>
+              <input v-model="Nombre_Completo" type="text" name="first_name" class="login__input" placeholder="Nombre completo" required>
             </div>
            
             <div class="login__field">
-              <input v-model="correo" type="email" name="email" class="login__input" placeholder="correo" required>
+              <input v-model="correo" type="email" name="email" class="login__input" placeholder="Correo" required>
             </div>
             <div class="login__field">
-              <input v-model="telefono" type="tel" name="phone" class="login__input" placeholder="numero de telefono" required pattern="[0-9]{10}">
+              <input v-model="telefono" type="tel" name="phone" class="login__input" placeholder="Numero de telefono" required pattern="[0-9]{10}">
             </div>
             <div class="login__field">
               <select v-model="genero" name="gender" class="login__input" required>
@@ -31,7 +31,7 @@
               </select>
             </div>
             <div class="login__field">
-              <input v-model="nationality" type="text" name="nationality" class="login__input" placeholder="Nacionalidad (no venecos)" required>
+              <input v-model="nationality" type="text" name="nationality" class="login__input" placeholder="Nacionalidad" required>
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
