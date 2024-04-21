@@ -35,7 +35,6 @@
 <script setup>
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
-import { useRouter } from 'vue-router';
 import { supabase } from "../clients/supabase";
 
 let email = ref("");
@@ -73,12 +72,14 @@ async function createAccount() {
     }
     alert('Usuario logueado');
     // Redireccionar según el rol del usuario
+    // Tambien probe con useRouter().push("/Alumno"); pero useRouter sale que es undefined
+    // Gaste casi una hora intentando solucionar ese error asi que ten en cuenta eso (Felipe)
     if (userData.rol == 'estudiante') {
       console.log("estudiante");
-      this.$router.push('/Alumno');
+      //window.location.href = '/Alumno'; //por algun motivo esta redireccionando al App.vue en vez de Alumno.vue
     } else if (userData.rol == 'profesor') {
       console.log("profesor");
-      useRouter().push('/Profesor');
+      //window.location.href = '/Profesor';
     } else {
       console.log("ninguno");
     }
