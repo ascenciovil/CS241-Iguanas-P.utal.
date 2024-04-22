@@ -12,7 +12,7 @@
       <div class="container">
         <div class="title">Registro</div>
         <div class="content">
-          <form action="#" @submit.prevent="createAccount">
+          <form action="#" @submit.prevent="handleSubmit">
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Nombre Completo</span>
@@ -92,8 +92,10 @@ let gender = ref("");
 function validarDominio(correo) {
   var dominio = correo.split('@')[1];
   if (dominio === "alumnos.utalca.cl" || dominio === "estudiante.utalca.cl") {
+    console.log("es un estudiante");
     return "estudiante";
   } else if (dominio === "utalca.cl" || dominio === "profesor.utalca.cl") {
+    console.log("es un profesor");
     return "profesor";
   } else {
     return "desconocido";
@@ -104,21 +106,23 @@ function validarDominio(correo) {
 async function handleSubmit() {
   var correo = document.getElementById("email").value;
   var tipoUsuario = validarDominio(correo);
+  console.log(tipoUsuario.valueOf);
+
   createAccount(tipoUsuario);
 }
 
 
 
 async function createAccount(tipoUsuario) {
+  
   try {
-    console.log(gender.value);
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
       campus: campus.value,
       nombre: Nombre.value,
-      gender: gender.value 
-
+      gender: gender.value,
+      rol: tipoUsuario
     });
 
     if (error) {
@@ -127,17 +131,17 @@ async function createAccount(tipoUsuario) {
      
       const userUID = data.user.id;
 
-   
+      console.log(tipoUsuario);
       const { data: userData, error: userError } = await supabase
         .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value }]);
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario }]);
 
       console.log("Usuario creado correctamente:", data);
 
       
       mostrarMensajeTipoUsuario(tipoUsuario);
       
-      
+      alert('Usuario Registrado');
       email.value = "";
       password.value = "";
       campus.value = "";
@@ -145,6 +149,7 @@ async function createAccount(tipoUsuario) {
       conpassword.value = "";
       usernombre.value = "";
       gender.value = ""; 
+      
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
