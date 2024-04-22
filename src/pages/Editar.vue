@@ -14,24 +14,23 @@
         <div class="login">
           <form @submit.prevent="submitForm">
             <div class="login__field">
-              <input v-model="Nombre_Completo" type="text" name="first_name" class="login__input" placeholder="nombre completo" required>
-            </div>
-           
-            <div class="login__field">
-              <input v-model="correo" type="email" name="email" class="login__input" placeholder="correo" required>
+              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="correo" required>
             </div>
             <div class="login__field">
-              <input v-model="telefono" type="tel" name="phone" class="login__input" placeholder="numero de telefono" required pattern="[0-9]{10}">
+              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="nombre completo" required>
             </div>
             <div class="login__field">
-              <select v-model="genero" name="gender" class="login__input" required>
-                <option value="Male">Masculino</option>
-                <option value="Female">Femenino</option>
-                <option value="no_decirlo">Prefiero no decirlo</option>
+              <input v-model="campus" type="text" name="campus" class="login__input" placeholder="campus" required>
+            </div>
+            <div class="login__field">
+              <select v-model="gender" name="gender" class="login__input" required>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
               </select>
             </div>
             <div class="login__field">
-              <input v-model="nationality" type="text" name="nationality" class="login__input" placeholder="Nacionalidad (no venecos)" required>
+              <input v-model="username" type="text" name="username" class="login__input" placeholder="Nombre de usuario" required>
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
@@ -47,7 +46,6 @@
   </div>
 </template>
 
-
 <script>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
@@ -56,23 +54,39 @@ export default {
   name: "Formulario",
   data() {
     return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      birthday: "",
+      correo: "",
+      Nombre_Completo: "",
+      campus: "",
       gender: "",
-      nationality: "",
-      monthlyIncome: ""
+      username: ""
     };
   },
   methods: {
     async submitForm() {
       try {
-        // Aquí puedes agregar la lógica para enviar los datos del formulario
-        console.log("Formulario enviado");
+        const { data, error } = await supabase
+          .from('usuarios')
+          .update({
+            nombre: this.Nombre_Completo,
+            campus: this.campus,
+            gender: this.gender,
+            username: this.username
+          })
+          .eq('correo', this.correo);
+
+        if (error) {
+          throw error;
+        } else {
+          console.log("Datos actualizados correctamente:", data);
+          // Reiniciar los valores de los campos después de enviarlos
+          this.correo = "";
+          this.Nombre_Completo = "";
+          this.campus = "";
+          this.gender = "";
+          this.username = "";
+        }
       } catch (error) {
-        console.error("Error al enviar el formulario:", error);
+        console.error("Error al actualizar los datos:", error.message);
       }
     }
   }
