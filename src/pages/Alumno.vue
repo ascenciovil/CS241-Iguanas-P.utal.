@@ -62,6 +62,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+
 .propuestas {
   font-family: Arial, sans-serif;
 }
