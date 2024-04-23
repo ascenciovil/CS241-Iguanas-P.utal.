@@ -10,9 +10,12 @@
         <input type="checkbox" v-model="visibleParaProfesores">
         ¿Es visible para los profesores?
       </label>
-      <button @click="enviarTituloYPropuesta" class="boton-enviar">Enviar</button>
+      <button @click="enviarTituloYPropuesta" class="boton-enviar" :class="{ 'disabled': submitButtonDisabled }" :disabled="submitButtonDisabled">Enviar</button>
+      <div class="message-container">
+        <div v-if="successMessage" class="message success">{{ successMessage }}</div>
+        <div v-if="errorMessage" class="message error">{{ errorMessage }}</div>
+      </div>
     </div>
-    
     <footer class="footer">
       <p>Deben cumplir con las leyes del país, no involucrar datos personales ni ocupar propiedad de otros autores.</p>
       <p>Propuestas Utalca - 2024</p>
@@ -31,6 +34,13 @@ export default {
       fecha: '',
       birthday: '',
       visibleParaProfesores: false,
+      successMessage: '',
+      errorMessage: '',
+    }
+  },
+  computed: {
+    submitButtonDisabled() {
+      return !(this.titulo.trim() && this.propuesta.trim() && this.birthday);
     }
   },
   methods: {
@@ -46,9 +56,9 @@ export default {
             Visualización_profesores: this.visibleParaProfesores
           }]);
         if (error) {
-          console.error('Error al enviar título y propuesta:', error.message);
+          this.displayErrorMessage('¡Error al enviar propuesta!');
         } else {
-          console.log('Título y propuesta enviados correctamente:', data);
+          this.displaySuccessMessage('¡Propuesta enviada correctamente!');
           // Limpiar los campos después de enviar los datos
           this.titulo = '';
           this.propuesta = '';
@@ -58,6 +68,18 @@ export default {
       } catch (error) {
         console.error('Error en la solicitud:', error.message);
       }
+    },
+    displaySuccessMessage(message) {
+      this.successMessage = message;
+      setTimeout(() => {
+        this.successMessage = '';
+      }, 5000);
+    },
+    displayErrorMessage(message) {
+      this.errorMessage = message;
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 5000);
     }
   }
 }
@@ -67,6 +89,27 @@ export default {
 
 h1 {
   text-align: center;
+}
+
+.message {
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  text-align: center;
+}
+.message-container {
+  margin-top: 10px;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 .formulario-container {
@@ -127,6 +170,11 @@ h1 {
 
 .boton-enviar:hover {
   background-color: #0056b3;
+}
+
+.boton-enviar.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .footer {
