@@ -68,7 +68,6 @@ async function createAccount() {
     } else {
       console.log("Rol del usuario:", userData.rol);
       mostrarInterfaces(userData.rol);
-
     }
     alert('Usuario logueado');
     // Redireccionar según el rol del usuario
@@ -80,7 +79,11 @@ async function createAccount() {
     } else if (userData.rol == 'profesor') {
       console.log("profesor");
       //window.location.href = '/Profesor';
-    } else {
+    } else if(userData.rol == 'federacion'){
+      console.log("federacion");
+      //window.location.href = '/Federacion';
+    }
+    else {
       console.log("ninguno");
     }
   }
@@ -92,11 +95,15 @@ function mostrarInterfaces(tipoUsuario) {
   switch (tipoUsuario) {
     case "estudiante":
       message = "¡Bienvenido estudiante!";
-      updateLoginState(true,false);
+      updateLoginState(true, false, false);
       break;
     case "profesor":
       message = "¡Bienvenido profesor!";
-      updateLoginState(false,true);
+      updateLoginState(false, true, false);
+      break;
+    case "federacion":
+      message = "¡Bienvenido miembro de la federación!";
+      updateLoginState(false, false, true);
       break;
     default:
       message = "Tipo de usuario desconocido";

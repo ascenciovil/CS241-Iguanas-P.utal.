@@ -1,28 +1,31 @@
 <script setup>
 import { defineProps } from 'vue';
 
-const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
+const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion', 'loginAux']);
 </script>
 
 <template>
   <h1>Propuestas Utalca</h1>
-
   <nav>
     <span v-if="loginAux">
       <RouterLink to="/login">Login</RouterLink> |
       <RouterLink to="/Registro">Registro</RouterLink>
     </span>
     <span v-if="loginEstudiante">
-      <RouterLink to="/Editar">EditarPerfil</RouterLink> |
+      <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Propuesta">Propuesta</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
       <div><button @click="logout">Log Out</button></div>
-      
-      
     </span>
     <span v-if="loginProfesor">
-      <RouterLink to="/Editar">EditarPerfil</RouterLink> |
+      <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Profesor">Profesor</RouterLink>
+      <div><button @click="logout">Log Out</button></div>
+    </span>
+    <span v-if="loginFederacion">
+      <RouterLink to="/Editar">Editar perfil</RouterLink> |
+      <RouterLink to="/Evento">Evento</RouterLink> |
+      <RouterLink to="/Alumno">Alumno</RouterLink>
       <div><button @click="logout">Log Out</button></div>
     </span>
     <div class="dropdown">
@@ -79,11 +82,13 @@ import { ref } from 'vue';
 // Definir loggedIn como ref
 const loginEstudiante = ref(false);
 const loginProfesor = ref(false);
-const loginAux=ref(true);
+const loginFederacion = ref(false);
+const loginAux = ref(true);
 // Función para actualizar el estado de loggedIn
-function updateLoginState(valueEstudiante,valueProfesor) {
+function updateLoginState(valueEstudiante,valueProfesor, valueFederacion) {
     loginEstudiante.value = valueEstudiante;
     loginProfesor.value = valueProfesor;
+    loginFederacion.value = valueFederacion;
     if(loginAux.value){
       loginAux.value=false;
     }else{
@@ -91,7 +96,7 @@ function updateLoginState(valueEstudiante,valueProfesor) {
     }
     console.log(loginAux.value);
 }
-export { loginEstudiante,loginProfesor, updateLoginState };
+export { loginEstudiante, loginProfesor, loginFederacion, updateLoginState };
 // Funciones de ventana
 function abrirLineamientos() {
   var elemento = document.getElementById("ventanaLineamientos");
