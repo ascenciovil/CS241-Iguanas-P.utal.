@@ -17,8 +17,6 @@
       <p>Deben cumplir con las leyes del país, no involucrar datos personales ni ocupar propiedad de otros autores.</p>
       <p>Propuestas Utalca - 2024</p>
     </footer>
-
-
   </div>
 </template>
 
@@ -38,11 +36,15 @@ export default {
   methods: {
     async enviarTituloYPropuesta() {
       try {
-        const usuarioId = 'placeholder'; // Id del usuario
         const { data, error } = await supabase
           .from('propuestas')
-          .insert([{ usuario_id: usuarioId, titulo: this.titulo, propuesta: this.propuesta, Fecha_expiracion: this.birthday, Visualización_profesores: this.visibleParaProfesores}]);
-
+          .insert([{ 
+            usuario_id: (await supabase.auth.getUser()).data.user.id, 
+            titulo: this.titulo, 
+            propuesta: this.propuesta, 
+            Fecha_expiracion: this.birthday, 
+            Visualización_profesores: this.visibleParaProfesores
+          }]);
         if (error) {
           console.error('Error al enviar título y propuesta:', error.message);
         } else {
