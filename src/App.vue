@@ -16,14 +16,14 @@ const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
       <RouterLink to="/Editar">EditarPerfil</RouterLink> |
       <RouterLink to="/Propuesta">Propuesta</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
-      <div><button @click="logout">Log Out</button></div>
+      <div><RouterLink to="/App" replace @click="logout">Log Out</RouterLink></div>
       
       
     </span>
     <span v-if="loginProfesor">
       <RouterLink to="/Editar">EditarPerfil</RouterLink> |
       <RouterLink to="/Profesor">Profesor</RouterLink>
-      <div><button @click="logout">Log Out</button></div>
+      <div><RouterLink to="/App" replace @click="logout">Log Out</RouterLink></div>
     </span>
     <div class="dropdown">
       <button class="acercaDe">Acerca de</button>
@@ -75,6 +75,7 @@ const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
 <script>
 import { supabase } from "./clients/supabase";
 import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 // Definir loggedIn como ref
 const loginEstudiante = ref(false);

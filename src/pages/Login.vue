@@ -33,11 +33,18 @@
   </div>
 
   <div id="ventanaAlumno" class="ventana">
-      <div class="contenido">
-        <h2>Ha iniciado sesión correctamente</h2>
-        <RouterLink to="/Alumno" replace @click="cerrarAlumno()">Cerrar</RouterLink>
-      </div>
+    <div class="contenido">
+      <h2>Ha iniciado sesión correctamente</h2>
+      <RouterLink to="/Alumno" replace @click="cerrarAlumno()">Cerrar</RouterLink>
     </div>
+  </div>
+
+  <div id="ventanaProfesor" class="ventana">
+    <div class="contenido">
+      <h2>Ha iniciado sesión correctamente</h2>
+      <RouterLink to="/Profesor" replace @click="cerrarProfesor()">Cerrar</RouterLink>
+    </div>
+  </div>
 </template>
 
 
@@ -80,7 +87,6 @@ async function createAccount() {
       mostrarInterfaces(userData.rol);
 
     }
-    alert('Usuario logueado');
     // Redireccionar según el rol del usuario
     // Tambien probe con useRouter().push("/Alumno"); pero useRouter sale que es undefined
     // Gaste casi una hora intentando solucionar ese error asi que ten en cuenta eso (Felipe)
@@ -90,6 +96,7 @@ async function createAccount() {
       //window.location.href = '/Alumno'; //por algun motivo esta redireccionando al App.vue en vez de Alumno.vue
     } else if (userData.rol == 'profesor') {
       console.log("profesor");
+      abrirProfesor();
       //window.location.href = '/Profesor';
     } else {
       console.log("ninguno");
@@ -125,6 +132,20 @@ function abrirAlumno() {
 
 function cerrarAlumno() {
   var elemento = document.getElementById("ventanaAlumno");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
+
+function abrirProfesor() {
+  var elemento = document.getElementById("ventanaProfesor");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+}
+
+function cerrarProfesor() {
+  var elemento = document.getElementById("ventanaProfesor");
   if (elemento != null) {
     elemento.style.display = "none";
   }
