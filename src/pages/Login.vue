@@ -45,6 +45,13 @@
       <RouterLink to="/Profesor" replace @click="cerrarProfesor()">Cerrar</RouterLink>
     </div>
   </div>
+
+  <div id="ventanaAdmin" class="ventana">
+    <div class="contenido">
+      <h2>Ha iniciado sesión correctamente</h2>
+      <RouterLink to="/Admin" replace @click="cerrarAdmin()">Cerrar</RouterLink>
+    </div>
+  </div>
 </template>
 
 
@@ -98,6 +105,10 @@ async function createAccount() {
       console.log("profesor");
       abrirProfesor();
       //window.location.href = '/Profesor';
+    }else if (userData.rol == 'admin') {
+      console.log("admin");
+      abrirAdmin();
+      //window.location.href = '/Profesor';
     } else {
       console.log("ninguno");
     }
@@ -146,6 +157,20 @@ function abrirProfesor() {
 
 function cerrarProfesor() {
   var elemento = document.getElementById("ventanaProfesor");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
+
+function abrirAdmin() {
+  var elemento = document.getElementById("ventanaAdmin");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+}
+
+function cerrarAdmin() {
+  var elemento = document.getElementById("ventanaAdmin");
   if (elemento != null) {
     elemento.style.display = "none";
   }
