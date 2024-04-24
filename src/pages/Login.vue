@@ -1,7 +1,9 @@
 <template>
   <div>
-    <img src="../assets/img/foto.jpeg" alt="Imagen Izquierda" style="position: absolute; top: 29vh; left: 0; height: 70vh;">
-    <img src="../assets/img/foto.jpeg" alt="Imagen Derecha" style="position: absolute; top: 29vh; right: 0; height: 70vh;">
+    <img src="../assets/img/foto.jpeg" alt="Imagen Izquierda"
+      style="position: absolute; top: 29vh; left: 0; height: 70vh;">
+    <img src="../assets/img/foto.jpeg" alt="Imagen Derecha"
+      style="position: absolute; top: 29vh; right: 0; height: 70vh;">
     <div class="container">
       <div class="screen">
         <div class="screen__content">
@@ -29,6 +31,13 @@
       </div>
     </div>
   </div>
+
+  <div id="ventanaAlumno" class="ventana">
+      <div class="contenido">
+        <h2>Ha iniciado sesión correctamente</h2>
+        <RouterLink to="/Alumno" replace @click="cerrarAlumno()">Cerrar</RouterLink>
+      </div>
+    </div>
 </template>
 
 
@@ -36,6 +45,7 @@
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
 import { supabase } from "../clients/supabase";
+import { RouterLink } from "vue-router";
 
 let email = ref("");
 let password = ref("");
@@ -55,7 +65,7 @@ async function createAccount() {
 
     // Obtener el UID del usuario
     const userId = data.user.id;
-    
+
     // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
@@ -76,6 +86,7 @@ async function createAccount() {
     // Gaste casi una hora intentando solucionar ese error asi que ten en cuenta eso (Felipe)
     if (userData.rol == 'estudiante') {
       console.log("estudiante");
+      abrirAlumno();
       //window.location.href = '/Alumno'; //por algun motivo esta redireccionando al App.vue en vez de Alumno.vue
     } else if (userData.rol == 'profesor') {
       console.log("profesor");
@@ -84,7 +95,8 @@ async function createAccount() {
       console.log("ninguno");
     }
   }
-  
+
+
 }
 
 function mostrarInterfaces(tipoUsuario) {
@@ -92,16 +104,30 @@ function mostrarInterfaces(tipoUsuario) {
   switch (tipoUsuario) {
     case "estudiante":
       message = "¡Bienvenido estudiante!";
-      updateLoginState(true,false);
+      updateLoginState(true, false);
       break;
     case "profesor":
       message = "¡Bienvenido profesor!";
-      updateLoginState(false,true);
+      updateLoginState(false, true);
       break;
     default:
       message = "Tipo de usuario desconocido";
   }
-  console.log(message); 
+  console.log(message);
+}
+
+function abrirAlumno() {
+  var elemento = document.getElementById("ventanaAlumno");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+}
+
+function cerrarAlumno() {
+  var elemento = document.getElementById("ventanaAlumno");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
 }
 </script>
 
@@ -259,5 +285,37 @@ body {
   font-size: 24px;
   margin-left: auto;
   color: #7875B5;
+}
+
+.ventana {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.contenido {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+#cerrarVentana {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #ff6347;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
