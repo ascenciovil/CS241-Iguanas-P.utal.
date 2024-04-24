@@ -14,13 +14,17 @@
         <div class="login">
           <form @submit.prevent="submitForm">
             <div class="login__field">
+
               <input v-model="correo" type="email" name="correo" class="login__input" placeholder="correo" required>
+
             </div>
             <div class="login__field">
+
               <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="nombre completo" required>
             </div>
             <div class="login__field">
               <input v-model="campus" type="text" name="campus" class="login__input" placeholder="campus" required>
+
             </div>
             <div class="login__field">
               <select v-model="gender" name="gender" class="login__input" required>
@@ -30,7 +34,9 @@
               </select>
             </div>
             <div class="login__field">
+
               <input v-model="username" type="text" name="username" class="login__input" placeholder="Nombre de usuario" required>
+
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
