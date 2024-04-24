@@ -2,6 +2,7 @@
     <div>
         <!-- Your HTML code here -->
         <h1>Admin</h1>
+        <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
     </div>
 </template>
 

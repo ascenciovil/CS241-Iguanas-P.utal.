@@ -49,7 +49,7 @@
   <div id="ventanaAdmin" class="ventana">
     <div class="contenido">
       <h2>Ha iniciado sesión correctamente</h2>
-      <RouterLink to="/Admin" replace @click="cerrarAdmin()">Cerrar</RouterLink>
+      <RouterLink to="/Admin" @click="cerrarAdmin()">Cerrar</RouterLink>
     </div>
   </div>
 </template>
@@ -122,11 +122,15 @@ function mostrarInterfaces(tipoUsuario) {
   switch (tipoUsuario) {
     case "estudiante":
       message = "¡Bienvenido estudiante!";
-      updateLoginState(true, false);
+      updateLoginState(true, false, false);
       break;
     case "profesor":
       message = "¡Bienvenido profesor!";
-      updateLoginState(false, true);
+      updateLoginState(false, true, false);
+      break;
+    case "admin":
+      message = "¡Bienvenido admin!"; //pa q wea sirve esto
+      updateLoginState(false, false, true);
       break;
     default:
       message = "Tipo de usuario desconocido";

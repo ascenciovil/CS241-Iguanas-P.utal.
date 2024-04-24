@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps } from 'vue';
 
-const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
+const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginAux']);
 </script>
 
 <template>
@@ -16,14 +16,22 @@ const props = defineProps(['loginEstudiante','loginProfesor','loginAux']);
       <RouterLink to="/Editar">EditarPerfil</RouterLink> |
       <RouterLink to="/Propuesta">Propuesta</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
-      <div><RouterLink to="/App" replace @click="logout">Log Out</RouterLink></div>
-      
-      
+      <div>
+        <RouterLink to="/App" replace @click="logout">Log Out</RouterLink>
+      </div>
     </span>
     <span v-if="loginProfesor">
       <RouterLink to="/Editar">EditarPerfil</RouterLink> |
       <RouterLink to="/Profesor">Profesor</RouterLink>
-      <div><RouterLink to="/App" replace @click="logout">Log Out</RouterLink></div>
+      <div>
+        <RouterLink to="/App" replace @click="logout">Log Out</RouterLink>
+      </div>
+    </span>
+    <span v-if="loginAdmin">
+      <RouterLink to="/Admin">Admin</RouterLink> |
+      <div>
+        <RouterLink to="/App" replace @click="logout">Log Out</RouterLink>
+      </div>
     </span>
     <div class="dropdown">
       <button class="acercaDe">Acerca de</button>
@@ -80,19 +88,21 @@ import { RouterLink } from 'vue-router';
 // Definir loggedIn como ref
 const loginEstudiante = ref(false);
 const loginProfesor = ref(false);
-const loginAux=ref(true);
+const loginAdmin = ref(false);
+const loginAux = ref(true);
 // Función para actualizar el estado de loggedIn
-function updateLoginState(valueEstudiante,valueProfesor) {
-    loginEstudiante.value = valueEstudiante;
-    loginProfesor.value = valueProfesor;
-    if(loginAux.value){
-      loginAux.value=false;
-    }else{
-      loginAux.value=true;
-    }
-    console.log(loginAux.value);
+function updateLoginState(valueEstudiante, valueProfesor, valueAdmin) {
+  loginEstudiante.value = valueEstudiante;
+  loginProfesor.value = valueProfesor;
+  loginAdmin.value = valueAdmin;
+  if (loginAux.value) {
+    loginAux.value = false;
+  } else {
+    loginAux.value = true;
+  }
+  console.log(loginAux.value);
 }
-export { loginEstudiante,loginProfesor, updateLoginState };
+export { loginEstudiante, loginProfesor, loginAdmin, updateLoginState };
 // Funciones de ventana
 function abrirLineamientos() {
   var elemento = document.getElementById("ventanaLineamientos");
