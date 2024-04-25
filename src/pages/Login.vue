@@ -39,6 +39,7 @@ import { supabase } from "../clients/supabase";
 
 let email = ref("");
 let password = ref("");
+let userId = ref("");
 
 async function createAccount() {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -53,14 +54,14 @@ async function createAccount() {
   } else {
     console.log("Usuario autenticado:", data.user);
 
-    // Obtener el UID del usuario
-    const userId = data.user.id;
+    // Obtener el UID del usuario 
+    userId.value = data.user.id;
     
     // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
-      .select('rol')
-      .eq('UID', userId)
+      .select('*')
+      .eq('UID', userId.value)
       .single();
 
     if (userError) {
@@ -68,6 +69,10 @@ async function createAccount() {
     } else {
       console.log("Rol del usuario:", userData.rol);
       mostrarInterfaces(userData.rol);
+      console.log("nombre del usuario:", userData.nombre);
+      console.log("nombre del usuario:", userData.campus);
+      console.log("nombre del usuario:", userData.username);
+      console.log("nombre del usuario:", userData.gender);
     }
     alert('Usuario logueado');
     // Redireccionar según el rol del usuario
@@ -108,8 +113,12 @@ function mostrarInterfaces(tipoUsuario) {
     default:
       message = "Tipo de usuario desconocido";
   }
+  
   console.log(message); 
 }
+
+//export { userId };
+
 </script>
 
 

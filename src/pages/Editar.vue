@@ -52,49 +52,73 @@
   </div>
 </template>
 
+
+
 <script>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
+import { onMounted } from "vue"; // Importamos onMounted desde @vue/runtime-core
 
 export default {
   name: "Formulario",
-  data() {
-    return {
-      correo: "",
-      Nombre_Completo: "",
-      campus: "",
-      gender: "",
-      username: ""
-    };
-  },
-  methods: {
-    async submitForm() {
+  setup() {
+    const correo = ref("");
+    const Nombre_Completo = ref("");
+    const campus = ref("");
+    const gender = ref("");
+    const username = ref("");
+    let userId = ref("");
+
+    const submitForm = async () => {
       try {
+        const { data: userData, error: userError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('UID', userId.value)
+          .single();
+
         const { data, error } = await supabase
           .from('usuarios')
           .update({
-            nombre: this.Nombre_Completo,
-            campus: this.campus,
-            gender: this.gender,
-            username: this.username
+            nombre: Nombre_Completo.value,
+            campus: campus.value,
+            gender: gender.value,
+            username: username.value
           })
-          .eq('correo', this.correo);
+          .eq('correo', correo.value);
 
         if (error) {
           throw error;
         } else {
           console.log("Datos actualizados correctamente:", data);
           // Reiniciar los valores de los campos después de enviarlos
-          this.correo = "";
-          this.Nombre_Completo = "";
-          this.campus = "";
-          this.gender = "";
-          this.username = "";
+          correo.value = "";
+          Nombre_Completo.value = "";
+          campus.value = "";
+          gender.value = "";
+          username.value = "";
         }
       } catch (error) {
         console.error("Error al actualizar los datos:", error.message);
       }
-    }
+    };
+
+    const getUid = async () => {
+      try {
+        const localUser = await supabase.auth.getSession();
+        console.log(localUser.data.session.user.id);
+        userId.value = localUser.data.session.user.id;
+        
+      } catch (error) {
+        console.error('Error al obtener la sesión:', error.message);
+      }
+    };
+
+    // Llama a la función getUid cuando el componente se monta
+    onMounted(getUid);
+   
+
+    return { correo, Nombre_Completo, campus, gender, username, submitForm };
   }
 };
 </script>
