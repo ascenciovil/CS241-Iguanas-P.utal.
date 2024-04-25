@@ -92,7 +92,6 @@ async function createAccount() {
     } else {
       console.log("Rol del usuario:", userData.rol);
       mostrarInterfaces(userData.rol);
-
     }
     // Redireccionar según el rol del usuario
     // Tambien probe con useRouter().push("/Alumno"); pero useRouter sale que es undefined
@@ -109,7 +108,11 @@ async function createAccount() {
       console.log("admin");
       abrirAdmin();
       //window.location.href = '/Profesor';
-    } else {
+    } else if(userData.rol == 'federacion'){
+      console.log("federacion");
+      //window.location.href = '/Federacion';
+    }
+    else {
       console.log("ninguno");
     }
   }
@@ -130,6 +133,8 @@ function mostrarInterfaces(tipoUsuario) {
       break;
     case "admin":
       message = "¡Bienvenido admin!"; //pa q wea sirve esto
+    case "federacion":
+      message = "¡Bienvenido miembro de la federación!";
       updateLoginState(false, false, true);
       break;
     default:
