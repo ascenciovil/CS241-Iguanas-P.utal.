@@ -46,6 +46,7 @@ async function loadPropuestas() {
 
     return { ...propuesta, autor: autorData.nombre };
   }));
+  propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
 
   propuestas.value = propuestasConAutor;
 }
