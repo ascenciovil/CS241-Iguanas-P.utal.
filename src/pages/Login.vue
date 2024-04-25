@@ -1,11 +1,7 @@
 <template>
   <div>
-    <img src="../assets/img/foto.jpeg" alt="Imagen Izquierda"
-      style="position: absolute; top: 29vh; left: 0; height: 70vh;">
-    <img src="../assets/img/foto.jpeg" alt="Imagen Derecha"
-      style="position: absolute; top: 29vh; right: 0; height: 70vh;">
     <div class="container">
-      <div class="screen">
+      <div class="screen"style="margin-top: 70px;">
         <div class="screen__content">
           <form class="login" @submit.prevent="createAccount">
             <div class="login__field">
@@ -31,6 +27,10 @@
       </div>
     </div>
   </div>
+
+  <footer class="footer">
+    <img src="../assets/img/footer2.png" alt="Footer Image" class="footer-image">
+  </footer>
 
   <div id="ventanaAlumno" class="ventana">
     <div class="contenido">
@@ -206,7 +206,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 6vh;
 }
 
 .screen {
@@ -221,6 +221,7 @@ body {
   z-index: 1;
   position: relative;
   height: 100%;
+  margin-top: 0%;
 }
 
 .screen__background {
@@ -300,9 +301,10 @@ body {
   padding: 10px;
   padding-left: 24px;
   font-weight: 700;
-  width: 75%;
+  width: 100%; /* Ajuste del ancho del campo de entrada */
   transition: .2s;
 }
+
 
 .login__input:active,
 .login__input:focus,
@@ -312,7 +314,7 @@ body {
 }
 
 .login__submit {
-  background: #fff;
+  background: linear-gradient(90deg, #FFF, #E5E5FF); /* Cambio de color del botón */
   font-size: 14px;
   margin-top: 30px;
   padding: 16px 20px;
@@ -324,18 +326,18 @@ body {
   align-items: center;
   width: 100%;
   color: #4C489D;
-  box-shadow: 0px 2px 2px #5C5696;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Efecto de sombra */
   cursor: pointer;
   transition: .2s;
 }
 
-.login__submit:active,
-.login__submit:focus,
-.login__submit:hover {
-  border-color: #6A679E;
-  outline: none;
-}
 
+.login__input:active,
+.login__input:focus,
+.login__input:hover {
+  outline: none;
+  border-bottom-color: #6A679E; /* Cambio de color al enfocar el campo */
+}
 .button__icon {
   font-size: 24px;
   margin-left: auto;
@@ -373,4 +375,29 @@ body {
   border-radius: 5px;
   cursor: pointer;
 }
+
+
+.login__submit:active,
+.login__submit:focus,
+.login__submit:hover {
+  outline: none;
+  transform: translateY(-2px); /* Efecto de elevación al hacer hover */
+}
+
+
+
+.footer-image {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-height: 100px; /* Ajusta este valor según tus necesidades */
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+.footer-image {
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 3));
+}
+
 </style>
+

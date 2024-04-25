@@ -1,10 +1,7 @@
 <script setup>
 import { defineProps } from 'vue';
 
-
-const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginAux']);
 const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion', 'loginAux']);
-
 </script>
 
 <template>
@@ -12,31 +9,19 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
   
   <nav>
     <span v-if="loginAux">
-      <RouterLink to="/login">Login</RouterLink> |
-      <RouterLink to="/Registro">Registro</RouterLink> |
+      <RouterLink to="/login" @click="ocultarVentana()">Login</RouterLink> |
+      <RouterLink to="/Registro"@click="ocultarVentana()">Registro</RouterLink> |
     </span>
     <span v-if="loginEstudiante">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Propuesta">Propuesta</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
-      <div>
-        <RouterLink to="/App" replace @click="logout">Log Out</RouterLink>
-      </div>
       <div><button @click="logout">Log Out</button></div>
-
     </span>
     <span v-if="loginProfesor">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Profesor">Profesor</RouterLink>
-      <div>
-        <RouterLink to="/App" replace @click="logout">Log Out</RouterLink>
-      </div>
-    </span>
-    <span v-if="loginAdmin">
-      <RouterLink to="/Admin">Admin</RouterLink> |
-      <div>
-        <RouterLink to="/App" replace @click="logout">Log Out</RouterLink>
-      </div>
+      <div><button @click="logout">Log Out</button></div>
     </span>
     <span v-if="loginFederacion">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
@@ -77,7 +62,7 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
     </div>
   </div>
   <div id="ventanaPreguntas" class="ventana">
-    <div class="contenido">
+    <div class="contenido" >
       <h2>Preguntas Frecuentes</h2>
       <p>Página exclusivamente dirigida a propuestas de los estudiantes para los estudiantes</p>
       <br>
@@ -89,16 +74,16 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
       <button @click="cerrarPreguntas()">Cerrar</button>
     </div>
   </div>
-  <div class="centered">
+  <div class="centered" id="centered">
     <h1>¡Bienvenido a propuestas Utalca!</h1>
     <p>Donde puedes hacer tus sueños realidad</p>
     <div>
-      <router-link to="/login">
+      <router-link to="/login" @click="ocultarVentana()">
         <button class="login-button">Login</button>
       </router-link>
     </div>
     <div>
-      <router-link to="/registro">
+      <router-link to="/registro" @click="ocultarVentana()">
         <button class="register-button">Regístrate aquí</button>
       </router-link>
     </div>
@@ -112,29 +97,25 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
 <script>
 import { supabase } from "./clients/supabase";
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
 
 // Definir loggedIn como ref
 const loginEstudiante = ref(false);
 const loginProfesor = ref(false);
-
-const loginAdmin = ref(false);
 const loginFederacion = ref(false);
 const loginAux = ref(true);
 // Función para actualizar el estado de loggedIn
-function updateLoginState(valueEstudiante, valueProfesor, valueAdmin, valueFederacion) {
-  loginEstudiante.value = valueEstudiante;
-  loginProfesor.value = valueProfesor;
-  loginAdmin.value = valueAdmin;
-  loginFederacion.value = valueFederacion;
-  if (loginAux.value) {
-    loginAux.value = false;
-  } else {
-    loginAux.value = true;
-  }
-  console.log(loginAux.value);
+function updateLoginState(valueEstudiante,valueProfesor, valueFederacion) {
+    loginEstudiante.value = valueEstudiante;
+    loginProfesor.value = valueProfesor;
+    loginFederacion.value = valueFederacion;
+    if(loginAux.value){
+      loginAux.value=false;
+    }else{
+      loginAux.value=true;
+    }
+    console.log(loginAux.value);
 }
-export { loginEstudiante, loginProfesor, loginAdmin, loginFederacion, updateLoginState };
+export { loginEstudiante, loginProfesor, loginFederacion, updateLoginState };
 // Funciones de ventana
 function abrirLineamientos() {
   var elemento = document.getElementById("ventanaLineamientos");
@@ -182,6 +163,12 @@ function abrirPreguntas() {
 
 function cerrarPreguntas() {
   var elemento = document.getElementById("ventanaPreguntas");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
+function ocultarVentana() {
+  var elemento = document.getElementById("centered");
   if (elemento != null) {
     elemento.style.display = "none";
   }
