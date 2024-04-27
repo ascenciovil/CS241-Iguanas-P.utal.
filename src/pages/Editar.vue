@@ -14,24 +14,29 @@
         <div class="login">
           <form @submit.prevent="submitForm">
             <div class="login__field">
-              <input v-model="Nombre_Completo" type="text" name="first_name" class="login__input" placeholder="Nombre completo" required>
-            </div>
-           
-            <div class="login__field">
-              <input v-model="correo" type="email" name="email" class="login__input" placeholder="Correo" required>
+
+              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="correo" required>
+
             </div>
             <div class="login__field">
-              <input v-model="telefono" type="tel" name="phone" class="login__input" placeholder="Numero de telefono" required pattern="[0-9]{10}">
+
+              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="nombre completo" required>
             </div>
             <div class="login__field">
-              <select v-model="genero" name="gender" class="login__input" required>
-                <option value="Male">Masculino</option>
-                <option value="Female">Femenino</option>
-                <option value="no_decirlo">Prefiero no decirlo</option>
+              <input v-model="campus" type="text" name="campus" class="login__input" placeholder="campus" required>
+
+            </div>
+            <div class="login__field">
+              <select v-model="gender" name="gender" class="login__input" required>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
               </select>
             </div>
             <div class="login__field">
-              <input v-model="nationality" type="text" name="nationality" class="login__input" placeholder="Nacionalidad" required>
+
+              <input v-model="username" type="text" name="username" class="login__input" placeholder="Nombre de usuario" required>
+
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
@@ -48,33 +53,72 @@
 </template>
 
 
+
 <script>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
+import { onMounted } from "vue"; // Importamos onMounted desde @vue/runtime-core
 
 export default {
   name: "Formulario",
-  data() {
-    return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      birthday: "",
-      gender: "",
-      nationality: "",
-      monthlyIncome: ""
-    };
-  },
-  methods: {
-    async submitForm() {
+  setup() {
+    const correo = ref("");
+    const Nombre_Completo = ref("");
+    const campus = ref("");
+    const gender = ref("");
+    const username = ref("");
+    let userId = ref("");
+
+    const submitForm = async () => {
       try {
-        // Aquí puedes agregar la lógica para enviar los datos del formulario
-        console.log("Formulario enviado");
+        const { data: userData, error: userError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('UID', userId.value)
+          .single();
+
+        const { data, error } = await supabase
+          .from('usuarios')
+          .update({
+            nombre: Nombre_Completo.value,
+            campus: campus.value,
+            gender: gender.value,
+            username: username.value
+          })
+          .eq('correo', correo.value);
+
+        if (error) {
+          throw error;
+        } else {
+          console.log("Datos actualizados correctamente:", data);
+          // Reiniciar los valores de los campos después de enviarlos
+          correo.value = "";
+          Nombre_Completo.value = "";
+          campus.value = "";
+          gender.value = "";
+          username.value = "";
+        }
       } catch (error) {
-        console.error("Error al enviar el formulario:", error);
+        console.error("Error al actualizar los datos:", error.message);
       }
-    }
+    };
+
+    const getUid = async () => {
+      try {
+        const localUser = await supabase.auth.getSession();
+        console.log(localUser.data.session.user.id);
+        userId.value = localUser.data.session.user.id;
+        
+      } catch (error) {
+        console.error('Error al obtener la sesión:', error.message);
+      }
+    };
+
+    // Llama a la función getUid cuando el componente se monta
+    onMounted(getUid);
+   
+
+    return { correo, Nombre_Completo, campus, gender, username, submitForm };
   }
 };
 </script>

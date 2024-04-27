@@ -36,7 +36,7 @@ async function loadPropuestas() {
     const { data: autorData, error: autorError } = await supabase
       .from('usuarios')
       .select('nombre')
-      .eq('id', propuesta.usuario_id)
+      .eq('UID', propuesta.usuario_id)
       .single();
 
     if (autorError) {
@@ -46,6 +46,7 @@ async function loadPropuestas() {
 
     return { ...propuesta, autor: autorData.nombre };
   }));
+  propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
 
   propuestas.value = propuestasConAutor;
 }
@@ -62,6 +63,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+
 .propuestas {
   font-family: Arial, sans-serif;
 }

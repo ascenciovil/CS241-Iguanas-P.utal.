@@ -166,6 +166,9 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
     case "profesor":
       message = "¡Bienvenido profesor!";
       break;
+    case "federacion":
+      message = "¡Bienvenido miembro de la federación!";
+      break;
     default:
       message = "Tipo de usuario desconocido";
   }

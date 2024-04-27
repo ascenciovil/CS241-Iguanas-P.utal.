@@ -1,16 +1,16 @@
 <template>
   <div class="formulario-container">
     <div class="formulario">
-      <h1>Ingresa tu propuesta <br></h1>
+      <h1>Ingresa tu evento <br></h1>
       <br>
       <input type="text" v-model="titulo" placeholder="Título" class="input-titulo">
-      <textarea v-model="propuesta" placeholder="Propuesta" class="textarea-propuesta"></textarea>
+      <textarea v-model="evento" placeholder="Evento" class="textarea-evento"></textarea>
       <input v-model="birthday" type="date" name="birthday" class="select-fecha" required>
       <label class="checkbox-label">
         <input type="checkbox" v-model="visibleParaProfesores">
         ¿Es visible para los profesores?
       </label>
-      <button @click="enviarTituloYPropuesta" class="boton-enviar" :class="{ 'disabled': submitButtonDisabled }" :disabled="submitButtonDisabled">Enviar</button>
+      <button @click="enviarTituloYEvento" class="boton-enviar" :class="{ 'disabled': submitButtonDisabled }" :disabled="submitButtonDisabled">Enviar</button>
       <div class="message-container">
         <div v-if="successMessage" class="message success">{{ successMessage }}</div>
         <div v-if="errorMessage" class="message error">{{ errorMessage }}</div>
@@ -22,7 +22,7 @@
     </footer>
   </div>
 </template>
-
+  
 <script>
 import { supabase } from "../clients/supabase.js";
 
@@ -30,7 +30,7 @@ export default {
   data() {
     return {
       titulo: '',
-      propuesta: '',
+      evento: '',
       fecha: '',
       birthday: '',
       visibleParaProfesores: false,
@@ -40,28 +40,29 @@ export default {
   },
   computed: {
     submitButtonDisabled() {
-      return !(this.titulo.trim() && this.propuesta.trim() && this.birthday);
+      return !(this.titulo.trim() && this.evento.trim() && this.birthday);
     }
   },
   methods: {
-    async enviarTituloYPropuesta() {
+    async enviarTituloYEvento() {
       try {
         const { data, error } = await supabase
-          .from('propuestas')
+          .from('eventos')
           .insert([{ 
             usuario_id: (await supabase.auth.getUser()).data.user.id, 
             titulo: this.titulo, 
-            propuesta: this.propuesta, 
+            evento: this.evento, 
             Fecha_expiracion: this.birthday, 
             Visualización_profesores: this.visibleParaProfesores
           }]);
+
         if (error) {
-          this.displayErrorMessage('¡Error al enviar propuesta!');
+          this.displayErrorMessage('¡Error al enviar evento!');
         } else {
-          this.displaySuccessMessage('¡Propuesta enviada correctamente!');
+          this.displaySuccessMessage('¡Evento enviado correctamente!');
           // Limpiar los campos después de enviar los datos
           this.titulo = '';
-          this.propuesta = '';
+          this.evento = '';
           this.fecha = '';
           this.visibleParaProfesores = false;
         }
@@ -138,7 +139,7 @@ h1 {
   border-radius: 5px;
 }
 
-.textarea-propuesta {
+.textarea-evento {
   display: block;
   width: calc(100% - 20px); /* Ajusta el ancho para compensar el padding */
   margin-bottom: 15px;
@@ -194,3 +195,4 @@ h1 {
   }
 }
 </style>
+  
