@@ -26,7 +26,8 @@ async function loadPropuestas() {
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
     .select('id, titulo, propuesta, Fecha_expiracion, usuario_id')
-    .eq('Visualización_profesores',true);
+    .eq('Visualización_profesores',true)
+    .eq('campusAutor',campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -36,7 +37,7 @@ async function loadPropuestas() {
     const { data: autorData, error: autorError } = await supabase
       .from('usuarios')
       .select('nombre')
-      .eq('id', propuesta.usuario_id)
+      .eq('UID', propuesta.usuario_id)
       .single();
 
     if (autorError) {
