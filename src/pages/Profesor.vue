@@ -28,8 +28,8 @@ async function loadPropuestas() {
     .from('propuestas')
     .select('id, titulo, propuesta, Fecha_expiracion, usuario_id')
     .eq('Visualización_profesores',true)
-    .eq('Aprobado', true);
-  
+    .eq('Aprobado', true)
+    .eq('campusAutor',campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;

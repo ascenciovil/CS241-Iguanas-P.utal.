@@ -59,7 +59,6 @@
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
 import { supabase } from "../clients/supabase";
-import { RouterLink } from "vue-router";
 
 let email = ref("");
 let password = ref("");
@@ -78,14 +77,13 @@ async function createAccount() {
   } else {
     console.log("Usuario autenticado:", data.user);
 
-
     // Obtener el UID del usuario
     const userId = data.user.id;
 
-    // Consultar la tabla de usuarios para obtener el rol
+    // Consultar la tabla de usuarios para obtener el rol y el campus
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
-      .select('*')
+      .select('rol, campus')
       .eq('UID', userId)
       .single();
 
@@ -93,37 +91,30 @@ async function createAccount() {
       console.error("Error al obtener la información del usuario:", userError.message);
     } else {
       console.log("Rol del usuario:", userData.rol);
+      console.log("Campus del usuario:", userData.campus);
       mostrarInterfaces(userData.rol);
-      console.log("nombre del usuario:", userData.nombre);
-      console.log("nombre del usuario:", userData.campus);
-      console.log("nombre del usuario:", userData.username);
-      console.log("nombre del usuario:", userData.gender);
+
+      // Después de obtener la información del usuario autenticado
+      const campusUsuarioLogeado = userData.campus; // Asumiendo que userData.campus contiene el campus del usuario
+      localStorage.setItem('campusUsuarioLogeado', campusUsuarioLogeado); // Almacenar el campus en el almacenamiento local
     }
     // Redireccionar según el rol del usuario
-    // Tambien probe con useRouter().push("/Alumno"); pero useRouter sale que es undefined
-    // Gaste casi una hora intentando solucionar ese error asi que ten en cuenta eso (Felipe)
     if (userData.rol == 'estudiante') {
       console.log("estudiante");
       abrirAlumno();
-      //window.location.href = '/Alumno'; //por algun motivo esta redireccionando al App.vue en vez de Alumno.vue
     } else if (userData.rol == 'profesor') {
       console.log("profesor");
       abrirProfesor();
-      //window.location.href = '/Profesor';
-    }else if (userData.rol == 'admin') {
+    } else if (userData.rol == 'admin') {
       console.log("admin");
       abrirAdmin();
-      //window.location.href = '/Profesor';
     } else if(userData.rol == 'federacion'){
       console.log("federacion");
-      //window.location.href = '/Federacion';
     }
     else {
       console.log("ninguno");
     }
   }
-
-
 }
 
 function mostrarInterfaces(tipoUsuario) {
@@ -190,12 +181,9 @@ function cerrarAdmin() {
   if (elemento != null) {
     elemento.style.display = "none";
   }
-
 }
-
-//export { userId };
-
 </script>
+
 
 
 
