@@ -1,4 +1,5 @@
 <template>
+  <div><h1>hacer esta pagina desde 0</h1></div>
   <div>
     <div class="container">
       <div class="screen"style="margin-top: 70px;">
@@ -59,10 +60,10 @@
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
 import { supabase } from "../clients/supabase";
+import { RouterLink } from "vue-router";
 
 let email = ref("");
 let password = ref("");
-let userId = ref("");
 
 async function createAccount() {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -80,10 +81,10 @@ async function createAccount() {
     // Obtener el UID del usuario
     const userId = data.user.id;
 
-    // Consultar la tabla de usuarios para obtener el rol y el campus
+    // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
-      .select('rol, campus')
+      .select('rol')
       .eq('UID', userId)
       .single();
 
@@ -91,30 +92,33 @@ async function createAccount() {
       console.error("Error al obtener la información del usuario:", userError.message);
     } else {
       console.log("Rol del usuario:", userData.rol);
-      console.log("Campus del usuario:", userData.campus);
       mostrarInterfaces(userData.rol);
-
-      // Después de obtener la información del usuario autenticado
-      const campusUsuarioLogeado = userData.campus; // Asumiendo que userData.campus contiene el campus del usuario
-      localStorage.setItem('campusUsuarioLogeado', campusUsuarioLogeado); // Almacenar el campus en el almacenamiento local
     }
     // Redireccionar según el rol del usuario
+    // Tambien probe con useRouter().push("/Alumno"); pero useRouter sale que es undefined
+    // Gaste casi una hora intentando solucionar ese error asi que ten en cuenta eso (Felipe)
     if (userData.rol == 'estudiante') {
       console.log("estudiante");
       abrirAlumno();
+      //window.location.href = '/Alumno'; //por algun motivo esta redireccionando al App.vue en vez de Alumno.vue
     } else if (userData.rol == 'profesor') {
       console.log("profesor");
       abrirProfesor();
-    } else if (userData.rol == 'admin') {
+      //window.location.href = '/Profesor';
+    }else if (userData.rol == 'admin') {
       console.log("admin");
       abrirAdmin();
+      //window.location.href = '/Profesor';
     } else if(userData.rol == 'federacion'){
       console.log("federacion");
+      //window.location.href = '/Federacion';
     }
     else {
       console.log("ninguno");
     }
   }
+
+
 }
 
 function mostrarInterfaces(tipoUsuario) {
@@ -137,7 +141,6 @@ function mostrarInterfaces(tipoUsuario) {
     default:
       message = "Tipo de usuario desconocido";
   }
-
   console.log(message);
 }
 
@@ -183,7 +186,6 @@ function cerrarAdmin() {
   }
 }
 </script>
-
 
 
 
