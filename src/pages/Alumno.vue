@@ -36,7 +36,7 @@ async function loadPropuestas() {
     const { data: autorData, error: autorError } = await supabase
       .from('usuarios')
       .select('nombre')
-      .eq('id', propuesta.usuario_id)
+      .eq('UID', propuesta.usuario_id)
       .single();
 
     if (autorError) {
