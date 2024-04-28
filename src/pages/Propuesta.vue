@@ -35,6 +35,7 @@ export default {
       fecha: '',
       birthday: '',
       visibleParaProfesores: false,
+      Aprobado: false,
       successMessage: '',
       errorMessage: '',
       campusAutor: '',
@@ -56,6 +57,7 @@ export default {
             propuesta: this.propuesta, 
             Fecha_expiracion: this.birthday, 
             Visualización_profesores: this.visibleParaProfesores,
+            Aprobado: this.Aprobado
             campusAutor: localStorage.getItem('campusUsuarioLogeado')
           }]);
         if (error) {
