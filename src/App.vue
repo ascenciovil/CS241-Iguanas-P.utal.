@@ -5,11 +5,12 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
 </script>
 
 <template>
-  <h1>Propuestas Utalca</h1>
+  
+  
   <nav>
     <span v-if="loginAux">
-      <RouterLink to="/login">Login</RouterLink> |
-      <RouterLink to="/Registro">Registro</RouterLink>
+      <RouterLink to="/login" @click="ocultarVentana()">Login</RouterLink> |
+      <RouterLink to="/Registro"@click="ocultarVentana()">Registro</RouterLink> |
     </span>
     <span v-if="loginEstudiante">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
@@ -61,7 +62,7 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
     </div>
   </div>
   <div id="ventanaPreguntas" class="ventana">
-    <div class="contenido">
+    <div class="contenido" >
       <h2>Preguntas Frecuentes</h2>
       <p>Página exclusivamente dirigida a propuestas de los estudiantes para los estudiantes</p>
       <br>
@@ -73,6 +74,24 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
       <button @click="cerrarPreguntas()">Cerrar</button>
     </div>
   </div>
+  <div class="centered" id="centered">
+    <h1>¡Bienvenido a propuestas Utalca!</h1>
+    <p>Donde puedes hacer tus sueños realidad</p>
+    <div>
+      <router-link to="/login" @click="ocultarVentana()">
+        <button class="login-button">Login</button>
+      </router-link>
+    </div>
+    <div>
+      <router-link to="/registro" @click="ocultarVentana()">
+        <button class="register-button">Regístrate aquí</button>
+      </router-link>
+    </div>
+    <p class="bottom-text">Creado por y para estudiantes &#174</p>
+    <img src="./assets/img/footer2.png" alt="Footer Image" class="footer-image">
+  </div>
+
+
 </template>
 
 <script>
@@ -148,34 +167,42 @@ function cerrarPreguntas() {
     elemento.style.display = "none";
   }
 }
+function ocultarVentana() {
+  var elemento = document.getElementById("centered");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
 </script>
 
 <style scoped>
 .dropdown {
-  display: inline-block;
   position: relative;
-  width: 8%;
-  font-size: small;
+  background-color: #333;
+  display: block;
+  color: white;
+
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  width: 100%;
-  overflow: auto;
-  box-shadow: 0px 20px 20px 0px rgba(0, 0, 0, 0.4);
+  background-color: #333; /* Change this to the color of your navbar */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: white; /* Change this to the color of your navbar text */
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
 }
 
 .dropdown:hover .dropdown-content {
   display: block;
-}
-
-.dropdown-content a {
-  display: block;
-  color: #000000;
-  padding: 5px;
-  text-decoration: none;
-  background-color: white;
 }
 
 .dropdown-content a:hover {
@@ -216,14 +243,117 @@ function cerrarPreguntas() {
 }
 
 .acercaDe {
-  margin-left: 5px;
+  margin-left: -76px;
   font-size: medium;
-  background-color: #bfbcf0;
-  color: blue;
+  background-color: #333;
+  color: white;
   text-decoration: underline;
   border-bottom: none;
   border-top: none;
   border-right: none;
-  padding-left: 5px;
+  padding-left: px;
+  position: relative;
+  top: -19px;
+  
+}
+
+nav {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  display: flex;
+}
+
+nav span {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-right: 0px;
+}
+
+nav button {
+  background-color: #5b4fbb; /* Green */
+  border-radius: 10px;
+  color: white;
+  border: none;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  position: absolute;
+  left: 90%;
+  top: 2%;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 75vh;
+  text-align: center;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url('./assets/img/gente.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white; /* Cambia el color del texto a blanco para mejorar la legibilidad */
+}
+.login-button, .register-button {
+  font-size: 20px;
+  padding: 15px 30px;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover, .register-button:hover {
+  background-color: #45a049;
+}
+
+.bottom-text {
+  margin-top: 40px;
+}
+
+
+
+.footer-image {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-height: 100px; /* Ajusta este valor según tus necesidades */
+  height: auto;
+  object-fit: contain;
+}
+.footer-image {
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 3));
+}
+
+/* Media query for screens smaller than 600px */
+@media (max-width: 600px) {
+  .dropdown {
+    left: 5%;
+    top: 2%;
+  }
+
+  .dropdown-content {
+    min-width: 100px;
+    padding: 6px 8px;
+  }
+
+  .dropdown-content a {
+    padding: 6px 8px;
+  }
 }
 </style>
