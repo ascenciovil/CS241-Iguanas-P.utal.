@@ -25,8 +25,8 @@ const propuestas = ref([]);
 async function loadPropuestas() {
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, titulo, propuesta, Fecha_expiracion, usuario_id');
-  
+    .select('id, titulo, propuesta, Fecha_expiracion, usuario_id')
+    .eq('Visualización_profesores',true);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
