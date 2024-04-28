@@ -73,9 +73,24 @@
     
   }
   if (voto === 'Rechazaste') {
-    console.log(`${voto} por la propuesta con ID ${propuestaId}`);
-    window.alert(`${voto} la propuesta con ID ${propuestaId}`);
-    // Aquí podrías implementar la lógica para marcar la propuesta como rechazada si es necesario
+    try {
+      const { data, error } = await supabase
+        .from('propuestas')
+        .delete()
+        .eq('id', propuestaId);
+      
+      if (error) {
+        console.error('Error al eliminar la propuesta:', error.message);
+        return;
+      }else{
+        window.alert(`${voto} la propuesta con ID ${propuestaId}`);
+        // Recargar las propuestas después de votar aprobado
+        await loadPropuestas();
+      }
+      
+    } catch (error) {
+      console.error('Error en la solicitud:', error.message);
+    }
   }
 }
   
