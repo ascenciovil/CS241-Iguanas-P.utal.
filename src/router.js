@@ -6,6 +6,7 @@ import editar from './pages/Editar.vue'
 import propuesta from './pages/Propuesta.vue'
 import alumno from './pages/Alumno.vue'
 import profesor from './pages/Profesor.vue'
+import aprobar from './pages/Aprobar.vue'
 import admin from './pages/Admin.vue'
 import evento from './pages/Evento.vue'
 import app from './App.vue'
@@ -20,6 +21,7 @@ const routes = [
   { path: '/Profesor', component: profesor }, 
   { path: '/Admin', component: admin },
   { path: '/Evento', component: evento },
+  { path: '/Aprobar', component: aprobar },
 ]
 const router = createRouter({
   history: createMemoryHistory(),

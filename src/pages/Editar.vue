@@ -76,7 +76,6 @@ export default {
           .select('*')
           .eq('UID', userId.value)
           .single();
-
         const { data, error } = await supabase
           .from('usuarios')
           .update({
