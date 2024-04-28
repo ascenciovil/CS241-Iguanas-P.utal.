@@ -26,7 +26,8 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
     <span v-if="loginFederacion">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Evento">Evento</RouterLink> |
-      <RouterLink to="/Alumno">Alumno</RouterLink>
+      <RouterLink to="/Alumno">Alumno</RouterLink> |
+      <RouterLink to="/Aprobar">Aprobar/Rechazar propuestas</RouterLink>
       <div><button @click="logout">Log Out</button></div>
     </span>
     <div class="dropdown">

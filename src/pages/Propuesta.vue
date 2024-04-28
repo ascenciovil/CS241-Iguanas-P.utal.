@@ -34,6 +34,7 @@ export default {
       fecha: '',
       birthday: '',
       visibleParaProfesores: false,
+      Aprobado: false,
       successMessage: '',
       errorMessage: '',
     }
@@ -53,7 +54,8 @@ export default {
             titulo: this.titulo, 
             propuesta: this.propuesta, 
             Fecha_expiracion: this.birthday, 
-            Visualización_profesores: this.visibleParaProfesores
+            Visualización_profesores: this.visibleParaProfesores,
+            Aprobado: this.Aprobado
           }]);
         if (error) {
           this.displayErrorMessage('¡Error al enviar propuesta!');
