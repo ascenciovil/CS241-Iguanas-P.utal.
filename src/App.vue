@@ -6,7 +6,6 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
 
 <template>
   
-  
   <nav>
     <span v-if="loginAux">
       <RouterLink to="/login" @click="ocultarVentana()">Login</RouterLink> |
@@ -90,7 +89,12 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
     <p class="bottom-text">Creado por y para estudiantes &#174</p>
     <img src="./assets/img/footer2.png" alt="Footer Image" class="footer-image">
   </div>
-
+  <div id="ventanaLogOut" class="ventana">
+    <div class="contenido">
+      <h2>Ha cerrado sesión correctamente</h2>
+      <RouterLink to="/App" replace @click="cerrarLogOut()">Cerrar</RouterLink>
+    </div>
+  </div>
 
 </template>
 
@@ -117,8 +121,8 @@ function updateLoginState(valueEstudiante,valueProfesor, valueFederacion) {
 }
 export { loginEstudiante, loginProfesor, loginFederacion, updateLoginState };
 // Funciones de ventana
-function abrirLineamientos() {
-  var elemento = document.getElementById("ventanaLineamientos");
+function abrirVentana(nombreVentana) {
+  var elemento = document.getElementById(nombreVentana);
   if (elemento != null) {
     elemento.style.display = "block";
   }
@@ -130,6 +134,10 @@ async function logout() {
   } else {
     console.log("Sesión cerrada exitosamente.");
     updateLoginState(false);
+  }
+  var elemento = document.getElementById("ventanaLogOut");
+  if (elemento != null) {
+    elemento.style.display = "block";
   }
 }
 
@@ -167,8 +175,16 @@ function cerrarPreguntas() {
     elemento.style.display = "none";
   }
 }
+
 function ocultarVentana() {
   var elemento = document.getElementById("centered");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
+
+function cerrarLogOut() {
+  var elemento = document.getElementById("ventanaLogOut");
   if (elemento != null) {
     elemento.style.display = "none";
   }
