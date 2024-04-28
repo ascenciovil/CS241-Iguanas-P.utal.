@@ -23,6 +23,7 @@
   const propuestas = ref([]);
   
   async function loadPropuestas() {
+    const currentDate = new Date();
     const { data: propuestasData, error: propuestasError } = await supabase
       .from('propuestas')
       .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
@@ -49,6 +50,11 @@
     propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
   
     propuestas.value = propuestasConAutor;
+    const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
+
+    propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
+    propuestas.value = propuestasFiltradas;
   }
   
   async function votar(propuestaId, voto) {
