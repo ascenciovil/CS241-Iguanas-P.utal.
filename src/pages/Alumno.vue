@@ -1,6 +1,6 @@
 <template>
   <div class="propuestas">
-    <h1 class="centered-title">Listado de Propuestas</h1>
+    <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -14,7 +14,7 @@
         <h3 class="propuesta-titulo">{{ propuesta.titulo }}</h3>
         <p class="propuesta-autor">Autor: {{ propuesta.autor }}</p>
         <p class="propuesta-descripcion">{{ propuesta.propuesta }}</p>
-        <p class="propuesta-expiracion">Fecha de Expiración: {{ propuesta.Fecha_expiracion }}</p>
+        <p class="propuesta-expiracion">Fecha de expiración: {{ propuesta.Fecha_expiracion }}</p>
         <div class="acciones">
           <button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button>
           <button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button>
@@ -26,7 +26,7 @@
         <h3 class="evento-titulo">{{ evento.titulo }}</h3>
         <p class="evento-autor">Autor: {{ evento.autor }}</p>
         <p class="evento-descripcion">{{ evento.evento }}</p>
-        <p class="evento-expiracion">Fecha de Expiración: {{ evento.Fecha_expiracion }}</p>
+        <p class="evento-expiracion">Fecha de expiración: {{ evento.Fecha_expiracion }}</p>
       </li>
     </ul>
   </div>
