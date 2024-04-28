@@ -25,7 +25,8 @@
 
 <script>
 import { supabase } from "../clients/supabase.js";
-
+const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
+console.log(campusUsuarioLogeado);
 export default {
   data() {
     return {
@@ -36,6 +37,7 @@ export default {
       visibleParaProfesores: false,
       successMessage: '',
       errorMessage: '',
+      campusAutor: '',
     }
   },
   computed: {
@@ -53,7 +55,8 @@ export default {
             titulo: this.titulo, 
             propuesta: this.propuesta, 
             Fecha_expiracion: this.birthday, 
-            Visualización_profesores: this.visibleParaProfesores
+            Visualización_profesores: this.visibleParaProfesores,
+            campusAutor: localStorage.getItem('campusUsuarioLogeado')
           }]);
         if (error) {
           this.displayErrorMessage('¡Error al enviar propuesta!');
