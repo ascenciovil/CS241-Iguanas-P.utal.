@@ -1,5 +1,5 @@
 <template>
-  <div><h1>hacer esta pagina desde 0</h1></div>
+  <div><h1>cansao de esta vida y de trabajar gratis, dejo esto como nota de suicidio si alguien lo ve digale a mis papas que los quiero</h1></div>
   <div>
     <div class="container">
       <div class="screen"style="margin-top: 70px;">
