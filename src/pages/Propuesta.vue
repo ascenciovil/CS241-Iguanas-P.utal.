@@ -57,7 +57,7 @@ export default {
             propuesta: this.propuesta, 
             Fecha_expiracion: this.birthday, 
             Visualización_profesores: this.visibleParaProfesores,
-            Aprobado: this.Aprobado
+            Aprobado: this.Aprobado,
             campusAutor: localStorage.getItem('campusUsuarioLogeado')
           }]);
         if (error) {
