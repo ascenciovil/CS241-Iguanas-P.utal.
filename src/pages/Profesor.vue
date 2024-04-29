@@ -21,7 +21,7 @@ import { ref, onMounted } from 'vue';
 import { supabase } from "../clients/supabase";
 
 const propuestas = ref([]);
-
+const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase

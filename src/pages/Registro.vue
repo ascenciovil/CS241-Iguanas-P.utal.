@@ -122,7 +122,8 @@ async function createAccount(tipoUsuario) {
       campus: campus.value,
       nombre: Nombre.value,
       gender: gender.value,
-      rol: tipoUsuario
+      rol: tipoUsuario,
+      Baneado : false
     });
 
     if (error) {
@@ -134,7 +135,7 @@ async function createAccount(tipoUsuario) {
       console.log(tipoUsuario);
       const { data: userData, error: userError } = await supabase
         .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario }]);
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario, Baneado: false }]);
 
       console.log("Usuario creado correctamente:", data);
 
