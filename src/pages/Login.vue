@@ -1,4 +1,5 @@
 <template>
+  <div><h1>hacer esta pagina desde 0</h1></div>
   <div>
     <div class="container">
       <div class="screen"style="margin-top: 70px;">
@@ -66,10 +67,10 @@
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
 import { supabase } from "../clients/supabase";
+import { RouterLink } from "vue-router";
 
 let email = ref("");
 let password = ref("");
-let userId = ref("");
 
 async function createAccount() {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -87,10 +88,12 @@ async function createAccount() {
     // Obtener el UID del usuario
     const userId = data.user.id;
 
-    // Consultar la tabla de usuarios para obtener el rol y el campus
+    // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
+
       .select('rol, campus, Baneado, Fecha_Desban')
+
       .eq('UID', userId)
       .single();
 
@@ -112,7 +115,7 @@ async function createAccount() {
       console.error("Error al obtener la información del usuario:", userError.message);
     } else {
       console.log("Rol del usuario:", userData.rol);
-      console.log("Campus del usuario:", userData.campus);
+console.log("Campus del usuario:", userData.campus);
       console.log(Finban);
       mostrarInterfaces(userData.rol,Finban);
 
@@ -142,6 +145,8 @@ async function createAccount() {
       AbrirAlumnoBanPropuesta();
     }
   }
+
+
 }
 
 function mostrarInterfaces(tipoUsuario, Findesban) {
@@ -169,7 +174,6 @@ function mostrarInterfaces(tipoUsuario, Findesban) {
     updateLoginState(false, false, false, true);
     message = "usuario no puede subir propuestas";
   }
-
   console.log(message);
 }
 
@@ -227,7 +231,6 @@ function cerrarAdmin() {
   }
 }
 </script>
-
 
 
 
