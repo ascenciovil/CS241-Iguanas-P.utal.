@@ -86,7 +86,7 @@ async function createAccount() {
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
       .select('*')
-      .eq('UID', userId.value)
+      .eq('UID', userId)
       .single();
 
     if (userError) {
