@@ -38,6 +38,7 @@ import { ref, onMounted } from 'vue';
 import { supabase } from "../clients/supabase";
 
 const propuestas = ref([]);
+const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 const showPropuestas = ref(false);
 const eventos = ref([]);
 const showEventos = ref(false);
@@ -56,10 +57,12 @@ async function togglePropuestasYEventos(buttonIndex) {
 }
 
 async function loadPropuestas() {
+  const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion');
-  
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
+    .eq('Aprobado',true)
+    .eq('campusAutor',campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -82,6 +85,11 @@ async function loadPropuestas() {
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
 
   propuestas.value = propuestasConAutor;
+  const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
+
+  propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
+  propuestas.value = propuestasFiltradas;
 }
 
 async function loadEventos() {
@@ -114,7 +122,7 @@ async function loadEventos() {
 }
 
 async function votar(propuestaId, voto) {
-  // Aca se debe implementar la logica para guardar los votos (Felipe)
+  // Lógica para registrar el voto en la base de datos
   console.log(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
   alert(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
 }
@@ -131,6 +139,7 @@ onMounted(() => {
   loadEventos();
 });
 </script>
+
 
 <style scoped>
 

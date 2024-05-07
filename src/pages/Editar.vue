@@ -15,19 +15,19 @@
           <form @submit.prevent="submitForm">
             <div class="login__field">
 
-              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="correo" required>
+              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="userData.correo" required>
 
             </div>
             <div class="login__field">
 
-              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="nombre completo" required>
+              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="userData.nombre" required>
             </div>
             <div class="login__field">
-              <input v-model="campus" type="text" name="campus" class="login__input" placeholder="campus" required>
+              <input v-model="campus" type="text" name="campus" class="login__input" placeholder="userData.campus" required>
 
             </div>
             <div class="login__field">
-              <select v-model="gender" name="gender" class="login__input" required>
+              <select v-model="gender" name="userData.gender" class="login__input" required>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
                 <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
@@ -35,7 +35,7 @@
             </div>
             <div class="login__field">
 
-              <input v-model="username" type="text" name="username" class="login__input" placeholder="Nombre de usuario" required>
+              <input v-model="username" type="text" name="username" class="login__input" placeholder="userData.username" required>
 
             </div>
             <!-- Agrega más campos de entrada aquí -->
@@ -57,7 +57,7 @@
 <script>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
-import { onMounted } from "vue"; // Importamos onMounted desde @vue/runtime-core
+import { onMounted } from "vue"; 
 
 export default {
   name: "Formulario",
@@ -68,35 +68,37 @@ export default {
     const gender = ref("");
     const username = ref("");
     let userId = ref("");
+    let userData = ref({});
 
     const submitForm = async () => {
+
       try {
         const { data: userData, error: userError } = await supabase
           .from('usuarios')
           .select('*')
           .eq('UID', userId.value)
           .single();
-
         const { data, error } = await supabase
           .from('usuarios')
           .update({
+            correo: correo.value,
             nombre: Nombre_Completo.value,
             campus: campus.value,
             gender: gender.value,
-            username: username.value
+            username: username.value,
           })
           .eq('correo', correo.value);
 
         if (error) {
           throw error;
         } else {
+          localStorage.setItem('campusUsuarioLogeado', campus.value);
+          const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
+          console.log(campusUsuarioLogeado);
           console.log("Datos actualizados correctamente:", data);
+          alert('Datos actualizados correctamente ');
           // Reiniciar los valores de los campos después de enviarlos
-          correo.value = "";
-          Nombre_Completo.value = "";
-          campus.value = "";
-          gender.value = "";
-          username.value = "";
+         
         }
       } catch (error) {
         console.error("Error al actualizar los datos:", error.message);
@@ -108,6 +110,46 @@ export default {
         const localUser = await supabase.auth.getSession();
         console.log(localUser.data.session.user.id);
         userId.value = localUser.data.session.user.id;
+
+        const { data: userDataFromDB, error: userError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('UID', userId.value)
+          .single();
+
+        userData.value = userDataFromDB;
+
+        // Asignar el valor de userData.nombre al campo Nombre_Completo si no está definido aún
+        if (!Nombre_Completo.value && userData.value.nombre) {
+          Nombre_Completo.value = userData.value.nombre;
+        }
+
+        // Asignar el valor de userData.nombre al campo Nombre_Completo si no está definido aún
+        if (!username.value && userData.value.username) {
+          username.value = userData.value.username;
+        }
+        // Asignar el valor de userData.correo al campo correo si no está definido aún
+        if (!correo.value && userData.value.correo) {
+          correo.value = userData.value.correo;
+        }
+
+        // Asignar el valor de userData.campus al campo campus si no está definido aún
+        if (!campus.value && userData.value.campus) {
+          campus.value = userData.value.campus;
+        }
+
+        // Asignar el valor de userData.campus al campo campus si no está definido aún
+        if (!gender.value && userData.value.gender) {
+          gender.value = userData.value.gender;
+        }
+
+       
+        
+        console.log("rol:", userData.value.rol);
+        console.log("nombre:", userData.value.nombre);
+        console.log("username:", userData.value.username);
+        console.log("genero:", userData.value.gender);
+        console.log("correo:", userData.value.correo);
         
       } catch (error) {
         console.error('Error al obtener la sesión:', error.message);
@@ -117,8 +159,7 @@ export default {
     // Llama a la función getUid cuando el componente se monta
     onMounted(getUid);
    
-
-    return { correo, Nombre_Completo, campus, gender, username, submitForm };
+    return { correo, Nombre_Completo, campus, gender, username, submitForm , userData};
   }
 };
 </script>

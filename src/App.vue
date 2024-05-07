@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps } from 'vue';
 
-const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion', 'loginAux']);
+const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion', 'loginAux' , 'loginNopropuesta']);
 </script>
 
 <template>
@@ -11,6 +11,11 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
     <span v-if="loginAux">
       <RouterLink to="/login" @click="ocultarVentana()">Login</RouterLink> |
       <RouterLink to="/Registro"@click="ocultarVentana()">Registro</RouterLink> |
+    </span>
+    <span v-if="loginNopropuesta">
+      <RouterLink to="/Editar">Editar perfil</RouterLink> |
+      <RouterLink to="/Alumno">Alumno</RouterLink>
+      <div><button @click="logout">Log Out</button></div>
     </span>
     <span v-if="loginEstudiante">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
@@ -26,7 +31,8 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
     <span v-if="loginFederacion">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Evento">Evento</RouterLink> |
-      <RouterLink to="/Alumno">Alumno</RouterLink>
+      <RouterLink to="/Alumno">Alumno</RouterLink> |
+      <RouterLink to="/Aprobar">Evaluar Propuestas</RouterLink>
       <div><button @click="logout">Log Out</button></div>
     </span>
     <div class="dropdown">
@@ -103,11 +109,13 @@ const loginEstudiante = ref(false);
 const loginProfesor = ref(false);
 const loginFederacion = ref(false);
 const loginAux = ref(true);
+const loginNopropuesta = ref(false);
 // Función para actualizar el estado de loggedIn
-function updateLoginState(valueEstudiante,valueProfesor, valueFederacion) {
+function updateLoginState(valueEstudiante,valueProfesor, valueFederacion, valueBaneadoNoPropuesta) {
     loginEstudiante.value = valueEstudiante;
     loginProfesor.value = valueProfesor;
     loginFederacion.value = valueFederacion;
+    loginNopropuesta.value = valueBaneadoNoPropuesta;
     if(loginAux.value){
       loginAux.value=false;
     }else{
@@ -115,7 +123,7 @@ function updateLoginState(valueEstudiante,valueProfesor, valueFederacion) {
     }
     console.log(loginAux.value);
 }
-export { loginEstudiante, loginProfesor, loginFederacion, updateLoginState };
+export { loginEstudiante, loginProfesor, loginFederacion,loginNopropuesta, updateLoginState };
 // Funciones de ventana
 function abrirLineamientos() {
   var elemento = document.getElementById("ventanaLineamientos");
