@@ -71,7 +71,13 @@ export default {
     let userData = ref({});
 
     const submitForm = async () => {
-      try {  
+
+      try {
+        const { data: userData, error: userError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('UID', userId.value)
+          .single();
         const { data, error } = await supabase
           .from('usuarios')
           .update({
@@ -79,13 +85,16 @@ export default {
             nombre: Nombre_Completo.value,
             campus: campus.value,
             gender: gender.value,
-            username: username.value
+            username: username.value,
           })
           .eq('correo', correo.value);
 
         if (error) {
           throw error;
         } else {
+          localStorage.setItem('campusUsuarioLogeado', campus.value);
+          const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
+          console.log(campusUsuarioLogeado);
           console.log("Datos actualizados correctamente:", data);
           alert('Datos actualizados correctamente ');
           // Reiniciar los valores de los campos después de enviarlos
