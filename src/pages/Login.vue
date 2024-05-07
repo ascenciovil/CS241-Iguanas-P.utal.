@@ -91,9 +91,7 @@ async function createAccount() {
     // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
-
       .select('rol, campus, Baneado, Fecha_Desban')
-
       .eq('UID', userId)
       .single();
 
