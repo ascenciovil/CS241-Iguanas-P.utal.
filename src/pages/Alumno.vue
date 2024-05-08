@@ -1,6 +1,7 @@
 <template>
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
+    <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
     <ul>
       <li v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
         <h3 class="propuesta-titulo">{{ propuesta.titulo }}</h3>
@@ -9,7 +10,7 @@
         <p class="propuesta-expiracion">Fecha de Expiración: {{ propuesta.Fecha_expiracion }}</p>
         <div class="acciones">
           <button @click="votar(propuesta, 'up')" class="btn-thumb-up">👍</button>
-          <span>{{ propuesta.votosPositivos }}</span>
+          <span>{{ propuesta.Me_gusta }}</span>
           <button @click="votar(propuesta, 'down')" class="btn-thumb-down">👎</button>
           <span>{{ propuesta.votosNegativos }}</span>
         </div>
@@ -17,6 +18,7 @@
     </ul>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -29,7 +31,7 @@ async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, Me_gusta') // Asegúrate de seleccionar Me_gusta
     .eq('Aprobado', true)
     .eq('campusAutor', campusUsuarioLogeado);
   if (propuestasError) {
@@ -66,17 +68,9 @@ async function votar(propuesta, voto) {
   // Verificar si el usuario ya ha votado en esta propuesta
   const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
 
-  // Si el usuario ya ha votado en esta propuesta, quitar su voto
+  // Si el usuario ya ha votado en esta propuesta, no hacer nada
   if (usuarioYaVoto) {
-    if (voto === 'up' && propuesta.votosPositivos > 0) {
-      propuesta.votosPositivos--;
-    } else if (voto === 'down' && propuesta.votosNegativos > 0) {
-      propuesta.votosNegativos--;
-    }
-    
-    // Eliminar el indicador de voto del almacenamiento local
-    localStorage.removeItem(`voto_${propuesta.id}`);
-    //alert(`Quitaste tu voto por la propuesta con ID ${propuesta.id}`);
+    alert('Ya has votado en esta propuesta.');
     return;
   }
 
@@ -89,13 +83,38 @@ async function votar(propuesta, voto) {
   
   // Marcar que el usuario ya ha votado en esta propuesta
   localStorage.setItem(`voto_${propuesta.id}`, true);
-  //alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
+
+  // Actualizar la columna 'Me_gusta' en la base de datos
+  await supabase
+    .from('propuestas')
+    .update({
+      Me_gusta: voto === 'up' ? propuesta.votosPositivos : propuesta.votosNegativos
+    })
+    .eq('id', propuesta.id);
+
+  alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
 }
 
+async function reiniciarPropuestas() {
+  // Reiniciar todas las propuestas a cero en la base de datos
+  await supabase
+    .from('propuestas')
+    .update({ Me_gusta: 0 })
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
 
+  // Eliminar los votos de los usuarios en todas las propuestas
+  for (const propuesta of propuestas.value) {
+    localStorage.removeItem(`voto_${propuesta.id}`);
+  }
 
+  // Actualizar el estado local para mostrar los cambios
+  propuestas.value.forEach(propuesta => {
+    propuesta.Me_gusta = 0;
+  });
 
-
+  alert('Todas las propuestas han sido reiniciadas.');
+}
 
 onMounted(() => {
   loadPropuestas();
