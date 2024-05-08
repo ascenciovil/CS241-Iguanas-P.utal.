@@ -8,8 +8,10 @@
         <p class="propuesta-descripcion">{{ propuesta.propuesta }}</p>
         <p class="propuesta-expiracion">Fecha de Expiración: {{ propuesta.Fecha_expiracion }}</p>
         <div class="acciones">
-          <button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button>
-          <button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button>
+          <button @click="votar(propuesta, 'up')" class="btn-thumb-up">👍</button>
+          <span>{{ propuesta.votosPositivos }}</span>
+          <button @click="votar(propuesta, 'down')" class="btn-thumb-down">👎</button>
+          <span>{{ propuesta.votosNegativos }}</span>
         </div>
       </li>
     </ul>
@@ -22,13 +24,14 @@ import { supabase } from "../clients/supabase";
 
 const propuestas = ref([]);
 const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
+
 async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
     .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
-    .eq('Aprobado',true)
-    .eq('campusAutor',campusUsuarioLogeado);
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -46,8 +49,9 @@ async function loadPropuestas() {
       return { ...propuesta, autor: 'Desconocido' };
     }
 
-    return { ...propuesta, autor: autorData.nombre };
+    return { ...propuesta, autor: autorData.nombre, votosPositivos: 0, votosNegativos: 0 };
   }));
+
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
 
   propuestas.value = propuestasConAutor;
@@ -58,11 +62,40 @@ async function loadPropuestas() {
   propuestas.value = propuestasFiltradas;
 }
 
-async function votar(propuestaId, voto) {
-  // Lógica para registrar el voto en la base de datos
-  console.log(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-  alert(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
+async function votar(propuesta, voto) {
+  // Verificar si el usuario ya ha votado en esta propuesta
+  const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
+
+  // Si el usuario ya ha votado en esta propuesta, quitar su voto
+  if (usuarioYaVoto) {
+    if (voto === 'up' && propuesta.votosPositivos > 0) {
+      propuesta.votosPositivos--;
+    } else if (voto === 'down' && propuesta.votosNegativos > 0) {
+      propuesta.votosNegativos--;
+    }
+    
+    // Eliminar el indicador de voto del almacenamiento local
+    localStorage.removeItem(`voto_${propuesta.id}`);
+    //alert(`Quitaste tu voto por la propuesta con ID ${propuesta.id}`);
+    return;
+  }
+
+  // Si el usuario no ha votado en esta propuesta, registrar su voto
+  if (voto === 'up') {
+    propuesta.votosPositivos++;
+  } else if (voto === 'down') {
+    propuesta.votosNegativos++;
+  }
+  
+  // Marcar que el usuario ya ha votado en esta propuesta
+  localStorage.setItem(`voto_${propuesta.id}`, true);
+  //alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
 }
+
+
+
+
+
 
 onMounted(() => {
   loadPropuestas();
