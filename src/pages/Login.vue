@@ -253,7 +253,7 @@ body {
 }
 
 .screen {
-  background: linear-gradient(90deg, #5D54A4, #7C78B8);
+  background: #7E7BB9;
   position: relative;
   height: 600px;
   width: 360px;
@@ -295,7 +295,7 @@ body {
 .screen__background__shape2 {
   height: 220px;
   width: 220px;
-  background: #6C63AC;
+  background: #7E7BB9;
   top: -172px;
   right: 0;
   border-radius: 32px;
@@ -304,7 +304,7 @@ body {
 .screen__background__shape3 {
   height: 540px;
   width: 190px;
-  background: linear-gradient(270deg, #5D54A4, #6A679E);
+  background: #7E7BB9;
   top: -24px;
   right: 0;
   border-radius: 32px;
