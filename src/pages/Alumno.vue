@@ -2,7 +2,6 @@
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
     <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
-    <ul>
     <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
@@ -91,12 +90,13 @@ async function loadPropuestas() {
   }));
 
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-  propuestas.value = propuestasConAutor;
   const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
-  propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
   propuestas.value = propuestasFiltradas;
 }
 
+onMounted(async () => {
+  await loadPropuestas();
+});
 
 async function votar(propuesta, voto) {
   // Verificar si el usuario ya ha votado en esta propuesta
@@ -108,24 +108,24 @@ async function votar(propuesta, voto) {
     return;
   }
 
-  // Si el usuario no ha votado en esta propuesta, registrar su voto
-  if (voto === 'up') {
-    propuesta.votosPositivos++;
-  } else if (voto === 'down') {
-    propuesta.votosNegativos++;
-  }
-  
-  // Marcar que el usuario ya ha votado en esta propuesta
-  localStorage.setItem(`voto_${propuesta.id}`, true);
+  // Incrementar o decrementar el valor de 'Me_gusta' según el voto
+  const nuevaCantidad = propuesta.Me_gusta + (voto === 'up' ? 1 : -1);
 
-  // Actualizar la columna 'Me_gusta' en la base de datos
+  // Actualizar la columna 'Me_gusta' en la base de datos con el nuevo valor
   await supabase
     .from('propuestas')
     .update({
-      Me_gusta: voto === 'up' ? propuesta.votosPositivos : propuesta.votosNegativos
+      Me_gusta: nuevaCantidad
     })
     .eq('id', propuesta.id);
 
+  // Guardar el nuevo voto del usuario en el localStorage
+  localStorage.setItem(`voto_${propuesta.id}`, true);
+
+  // Marcar que el usuario ya ha votado en esta propuesta
+  localStorage.setItem(`voto_tipo_${propuesta.id}`, voto);
+
+  // Mostrar un mensaje de confirmación
   alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
 }
 
@@ -149,6 +149,7 @@ async function reiniciarPropuestas() {
 
   alert('Todas las propuestas han sido reiniciadas.');
  }
+
 async function loadEventos() {
   const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
