@@ -16,6 +16,9 @@
               <span class="button__text">Ingresa ahora</span>
               <i class="button__icon fas fa-chevron-right"></i>
             </button>
+            <router-link to="/registro" @click="ocultarVentana()" class="toRegistro">
+              <button class="button login__submit">Regístrate aquí</button>
+            </router-link>
           </form>
         </div>
         <div class="screen__background">
@@ -372,8 +375,12 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Efecto de sombra */
   cursor: pointer;
   transition: .2s;
+  justify-content: center;
 }
 
+.button__text {
+  margin-left: auto;
+}
 
 .login__input:active,
 .login__input:focus,
@@ -439,8 +446,12 @@ body {
   margin-bottom: 30px;
 }
 .footer-image {
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 3));
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 5));
 }
 
+.toRegistro {
+  text-decoration: none;
+  display: block;
+}
 </style>
 
