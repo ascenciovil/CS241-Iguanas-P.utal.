@@ -83,19 +83,17 @@ async function loadPropuestas() {
     return { ...propuesta, autor: autorData.nombre };
   }));
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   propuestas.value = propuestasConAutor;
   const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
-
   propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   propuestas.value = propuestasFiltradas;
 }
 
 async function loadEventos() {
   const { data: eventosData, error: eventosError } = await supabase
     .from('eventos')
-    .select('id, usuario_id, titulo, evento, Fecha_expiracion');
+    .select('id, usuario_id, titulo, evento, Fecha_expiracion')
+    .eq('campusAutor',campusUsuarioLogeado);
   
   if (eventosError) {
     console.error('Error cargando los eventos:', eventosError.message);
@@ -228,5 +226,4 @@ onMounted(() => {
   padding: 10px 20px;
   margin: 0 10px;
 }
-
 </style>
