@@ -1,4 +1,5 @@
 <template>
+  <div><h1>hacer esta pagina desde 0</h1></div>
   <div>
     <div class="container">
       <div class="screen"style="margin-top: 70px;">
@@ -52,6 +53,13 @@
       <RouterLink to="/Admin" @click="cerrarAdmin()">Cerrar</RouterLink>
     </div>
   </div>
+
+  <div id="ventanaBanPropuesta" class="ventana">
+    <div class="contenido">
+      <h2>Ha iniciado sesión correctamente, pero no podrá subir propuestas por su comportamiento inadecuado</h2>
+      <RouterLink to="/Alumno" @click="CerrarAlumnoBanPropuesta()">Cerrar</RouterLink>
+    </div>
+  </div>
 </template>
 
 
@@ -59,10 +67,10 @@
 import { ref } from "vue";
 import { updateLoginState } from "@/App.vue";
 import { supabase } from "../clients/supabase";
+import { RouterLink } from "vue-router";
 
 let email = ref("");
 let password = ref("");
-let userId = ref("");
 
 async function createAccount() {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -80,64 +88,90 @@ async function createAccount() {
     // Obtener el UID del usuario
     const userId = data.user.id;
 
-    // Consultar la tabla de usuarios para obtener el rol y el campus
+    // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
-      .select('rol, campus')
+      .select('rol, campus, Baneado, Fecha_Desban')
       .eq('UID', userId)
       .single();
 
+    var Finban='si';
+    console.log(userData.Baneado);
+    if(userData.Baneado){
+      const fechaDesbanUsuario = new Date(userData.Fecha_Desban);
+      // Comparar las fechas
+      if (Date.now() < fechaDesbanUsuario.getTime()) {
+        Finban='no';
+      }else{
+        const { data, error } = await supabase
+                .from('usuarios')
+                .update({ Baneado: false})
+                .eq('UID', userId);
+      }
+    }
     if (userError) {
       console.error("Error al obtener la información del usuario:", userError.message);
     } else {
       console.log("Rol del usuario:", userData.rol);
-      console.log("Campus del usuario:", userData.campus);
-      mostrarInterfaces(userData.rol);
+console.log("Campus del usuario:", userData.campus);
+      console.log(Finban);
+      mostrarInterfaces(userData.rol,Finban);
 
       // Después de obtener la información del usuario autenticado
       const campusUsuarioLogeado = userData.campus; // Asumiendo que userData.campus contiene el campus del usuario
       localStorage.setItem('campusUsuarioLogeado', campusUsuarioLogeado); // Almacenar el campus en el almacenamiento local
     }
     // Redireccionar según el rol del usuario
-    if (userData.rol == 'estudiante') {
-      console.log("estudiante");
-      abrirAlumno();
-    } else if (userData.rol == 'profesor') {
-      console.log("profesor");
-      abrirProfesor();
-    } else if (userData.rol == 'admin') {
-      console.log("admin");
-      abrirAdmin();
-    } else if(userData.rol == 'federacion'){
-      console.log("federacion");
-    }
-    else {
-      console.log("ninguno");
+    if(Finban == 'si'){
+      if (userData.rol == 'estudiante') {
+        console.log("estudiante");
+        abrirAlumno();
+      } else if (userData.rol == 'profesor') {
+        console.log("profesor");
+        abrirProfesor();
+      } else if (userData.rol == 'admin') {
+        console.log("admin");
+        abrirAdmin();
+      } else if(userData.rol == 'federacion'){
+        console.log("federacion");
+      }
+      else {
+        console.log("ninguno");
+      }
+    }else{
+      console.log("Alumno que no puede ver propuestas");
+      AbrirAlumnoBanPropuesta();
     }
   }
+
+
 }
 
-function mostrarInterfaces(tipoUsuario) {
+function mostrarInterfaces(tipoUsuario, Findesban) {
   var message = "";
-  switch (tipoUsuario) {
-    case "estudiante":
-      message = "¡Bienvenido estudiante!";
-      updateLoginState(true, false, false);
-      break;
-    case "profesor":
-      message = "¡Bienvenido profesor!";
-      updateLoginState(false, true, false);
-      break;
-    case "admin":
-      message = "¡Bienvenido admin!"; //pa q wea sirve esto
-    case "federacion":
-      message = "¡Bienvenido miembro de la federación!";
-      updateLoginState(false, false, true);
-      break;
-    default:
-      message = "Tipo de usuario desconocido";
+  if(Findesban=='si'){
+    switch (tipoUsuario) {
+      case "estudiante":
+        message = "¡Bienvenido estudiante!";
+        updateLoginState(true, false, false, false);
+        break;
+      case "profesor":
+        message = "¡Bienvenido profesor!";
+        updateLoginState(false, true, false, false);
+        break;
+      case "admin":
+        message = "¡Bienvenido admin!"; //pa q wea sirve esto
+      case "federacion":
+        message = "¡Bienvenido miembro de la federación!";
+        updateLoginState(false, false, true, false);
+        break;
+      default:
+        message = "Tipo de usuario desconocido";
+    }
+  }else{
+    updateLoginState(false, false, false, true);
+    message = "usuario no puede subir propuestas";
   }
-
   console.log(message);
 }
 
@@ -147,9 +181,21 @@ function abrirAlumno() {
     elemento.style.display = "block";
   }
 }
-
 function cerrarAlumno() {
   var elemento = document.getElementById("ventanaAlumno");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
+
+function AbrirAlumnoBanPropuesta() {
+  var elemento = document.getElementById("ventanaBanPropuesta");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+}
+function CerrarAlumnoBanPropuesta() {
+  var elemento = document.getElementById("ventanaBanPropuesta");
   if (elemento != null) {
     elemento.style.display = "none";
   }
@@ -183,7 +229,6 @@ function cerrarAdmin() {
   }
 }
 </script>
-
 
 
 
