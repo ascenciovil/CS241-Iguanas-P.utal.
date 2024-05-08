@@ -1,4 +1,5 @@
 <template>
+  <body>
   <div class="propuestas">
     <h1 class="centered-title">Listado</h1>
     <div class="button-container">
@@ -9,27 +10,49 @@
         {{ showEventos ? 'Eventos' : 'Eventos' }}
       </button>
     </div>
-    <ul v-if="showPropuestas">
-      <li v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
-        <h3 class="propuesta-titulo">{{ propuesta.titulo }}</h3>
-        <p class="propuesta-autor">Autor: {{ propuesta.autor }}</p>
-        <p class="propuesta-descripcion">{{ propuesta.propuesta }}</p>
-        <p class="propuesta-expiracion">Fecha de expiración: {{ propuesta.Fecha_expiracion }}</p>
-        <div class="acciones">
-          <button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button>
-          <button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button>
-        </div>
-      </li>
-    </ul>
-    <ul v-if="showEventos">
-      <li v-for="evento in eventos" :key="evento.id" class="evento">
-        <h3 class="evento-titulo">{{ evento.titulo }}</h3>
-        <p class="evento-autor">Autor: {{ evento.autor }}</p>
-        <p class="evento-descripcion">{{ evento.evento }}</p>
-        <p class="evento-expiracion">Fecha de expiración: {{ evento.Fecha_expiracion }}</p>
-      </li>
-    </ul>
+    <div class="table-responsive">
+      <table class="table v-middle text-nowrap bg-transparent" v-if="showPropuestas">
+        <thead class="bg-light">
+            <tr>
+              <th class="border-0">Título</th>
+              <th class="border-0">Autor</th>
+              <th class="border-0">Descripción</th>
+              <th class="border-0">Expiración</th>
+              <th class="border-0" colspan="2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
+              <td class="propuesta-titulo">{{ propuesta.titulo }}</td>
+              <td class="propuesta-autor">{{ propuesta.autor }}</td>
+              <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
+              <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
+              <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
+              <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
+            </tr>
+          </tbody>
+      </table>
+      <table class="table v-middle text-nowrap bg-transparent" v-if="showEventos">
+        <thead class="bg-light">
+            <tr>
+              <th class="border-0">Título</th>
+              <th class="border-0">Autor</th>
+              <th class="border-0">Descripción</th>
+              <th class="border-0">Expiración</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="evento in eventos" :key="evento.id" class="evento">
+              <td class="evento-titulo">{{ evento.titulo }}</td>
+              <td class="evento-autor">{{ evento.autor }}</td>
+              <td class="evento-descripcion">{{ evento.propuesta }}</td>
+              <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
   </div>
+  </body>
 </template>
 
 <script setup>
@@ -61,7 +84,6 @@ async function loadPropuestas() {
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
     .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
-    .eq('Aprobado',true)
     .eq('campusAutor',campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
@@ -83,9 +105,12 @@ async function loadPropuestas() {
     return { ...propuesta, autor: autorData.nombre };
   }));
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
   propuestas.value = propuestasConAutor;
   const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
+
   propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
   propuestas.value = propuestasFiltradas;
 }
 
@@ -143,75 +168,46 @@ onMounted(() => {
 
 .centered-title {
   text-align: center;
+  color: black;
 }
 
 .propuestas {
   font-family: Arial, sans-serif;
 }
 
-.propuesta {
+.propuesta, .evento {
   margin-bottom: 20px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid black;
 }
 
-.propuesta-titulo {
+.propuesta-titulo, .evento-titulo {
   font-size: 20px;
   margin-bottom: 5px;
 }
 
-.propuesta-autor {
+.propuesta-autor, .evento-autor {
   font-style: italic;
   margin-bottom: 5px;
 }
 
-.propuesta-descripcion {
+.propuesta-descripcion, .evento-descripcion {
   margin-bottom: 10px;
 }
 
-.propuesta-expiracion {
+.propuesta-expiracion, .evento-expiracion {
   font-style: italic;
-  color: #888;
+  color: black;
 }
 
 .acciones {
   margin-top: 10px;
 }
 
-.btn-thumb-up,
-.btn-thumb-down {
+.btn-thumb-up, .btn-thumb-down {
   font-size: 18px;
   cursor: pointer;
   margin-right: 10px;
-}
-
-.eventos {
-  font-family: Arial, sans-serif;
-}
-
-.evento {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.evento-titulo {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-
-.evento-autor {
-  font-style: italic;
-  margin-bottom: 5px;
-}
-
-.evento-descripcion {
-  margin-bottom: 10px;
-}
-
-.evento-expiracion {
-  font-style: italic;
-  color: #888;
 }
 
 .button-container {
@@ -222,8 +218,59 @@ onMounted(() => {
 
 .toggle-button {
   width: 200px;
-  font-size: 24px;
+  font-size: 1.5rem;
   padding: 10px 20px;
   margin: 0 10px;
 }
+
+.bg-light {
+  background-color: #f8f9fa!important;
+  font-size: 1.5rem;
+}
+
+* {
+  outline: none;
+}
+
+*, :after, :before {
+  box-sizing: border-box;
+}
+
+.text-nowrap {
+  white-space: nowrap!important;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: black;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+body {
+  margin: 0;
+  font-family: Nunito Sans, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: black;
+  text-align: left;
+  background-color: #00aae4;
+}
+
+.propuesta-titulo{
+  font-size: 1.5rem;
+}
+
+.evento-titulo{
+  font-size: 1.5rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
 </style>

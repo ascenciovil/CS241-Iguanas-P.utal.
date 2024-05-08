@@ -128,13 +128,6 @@ function updateLoginState(valueEstudiante,valueProfesor, valueFederacion, valueB
     console.log(loginAux.value);
 }
 export { loginEstudiante, loginProfesor, loginFederacion,loginNopropuesta, updateLoginState };
-// Funciones de ventana
-function abrirVentana(nombreVentana) {
-  var elemento = document.getElementById(nombreVentana);
-  if (elemento != null) {
-    elemento.style.display = "block";
-  }
-}
 async function logout() {
   const { error } = await supabase.auth.signOut();
   if (error) {
@@ -144,6 +137,13 @@ async function logout() {
     updateLoginState(false);
   }
   var elemento = document.getElementById("ventanaLogOut");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+}
+
+function abrirLineamientos() {
+  var elemento = document.getElementById("ventanaLineamientos");
   if (elemento != null) {
     elemento.style.display = "block";
   }
