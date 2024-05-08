@@ -1,5 +1,4 @@
 <template>
-  <div><h1>hacer esta pagina desde 0</h1></div>
   <div>
     <div class="container">
       <div class="screen"style="margin-top: 70px;">
@@ -232,7 +231,7 @@ function cerrarAdmin() {
 
 
 
-<style>
+<style >
 @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
 
 * {
