@@ -28,7 +28,10 @@
               </div>
               <div class="input-box">
                 <span class="details">Campus</span>
-                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
+                <select id="campus" v-model="campus" required>
+                  <option disabled value="">Selecciona tu campus</option>
+                  <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+                </select>
               </div>
               <div class="input-box">
                 <span class="details">Contraseña</span>
@@ -76,7 +79,7 @@
 <script setup>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
-
+import { onMounted } from "vue";
 
 // Define las variables reactivas para los campos del formulario
 let email = ref("");
@@ -86,7 +89,7 @@ let campus = ref("");
 let usernombre = ref("");
 let conpassword = ref("");
 let gender = ref(""); 
-
+let opcionesCampus = ref(["Curico", "Talca", "Santiago","Linares","Colchagua"]); // Agrega aquí tus opciones de campus
 
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
@@ -111,10 +114,7 @@ async function handleSubmit() {
   createAccount(tipoUsuario);
 }
 
-
-
 async function createAccount(tipoUsuario) {
-  
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
@@ -129,7 +129,6 @@ async function createAccount(tipoUsuario) {
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
     } else {
-     
       const userUID = data.user.id;
 
       console.log(tipoUsuario);
@@ -138,10 +137,7 @@ async function createAccount(tipoUsuario) {
         .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario, Baneado: false }]);
 
       console.log("Usuario creado correctamente:", data);
-
-      
       mostrarMensajeTipoUsuario(tipoUsuario);
-      
       alert('Usuario Registrado');
       email.value = "";
       password.value = "";
@@ -150,7 +146,6 @@ async function createAccount(tipoUsuario) {
       conpassword.value = "";
       usernombre.value = "";
       gender.value = ""; 
-      
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
@@ -176,8 +171,6 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   console.log(message); 
 }
 
-import { onMounted } from "vue";
-
 onMounted(() => {
   const form = document.querySelector('form');
   form.addEventListener('submit', async (event) => {
@@ -186,6 +179,7 @@ onMounted(() => {
   });
 });
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');

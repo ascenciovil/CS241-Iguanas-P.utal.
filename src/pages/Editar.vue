@@ -14,29 +14,26 @@
         <div class="login">
           <form @submit.prevent="submitForm">
             <div class="login__field">
-
-              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="userData.correo" required>
-
+              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="Correo" required>
             </div>
             <div class="login__field">
-
-              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="userData.nombre" required>
+              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="Nombre Completo" required>
             </div>
             <div class="login__field">
-              <input v-model="campus" type="text" name="campus" class="login__input" placeholder="userData.campus" required>
-
+              <select v-model="campus" name="campus" class="login__input" required>
+                <option disabled value="">Selecciona tu campus</option>
+                <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+              </select>
             </div>
             <div class="login__field">
-              <select v-model="gender" name="userData.gender" class="login__input" required>
+              <select v-model="gender" name="gender" class="login__input" required>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
                 <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
               </select>
             </div>
             <div class="login__field">
-
-              <input v-model="username" type="text" name="username" class="login__input" placeholder="userData.username" required>
-
+              <input v-model="username" type="text" name="username" class="login__input" placeholder="Nombre de usuario" required>
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
@@ -51,8 +48,6 @@
     </div>
   </div>
 </template>
-
-
 
 <script>
 import { ref } from "vue";
@@ -69,6 +64,7 @@ export default {
     const username = ref("");
     let userId = ref("");
     let userData = ref({});
+    let opcionesCampus = ref(["Curico", "Talca", "Santiago", "Linares", "Colchagua"]);
 
     const submitForm = async () => {
 
@@ -159,10 +155,11 @@ export default {
     // Llama a la función getUid cuando el componente se monta
     onMounted(getUid);
    
-    return { correo, Nombre_Completo, campus, gender, username, submitForm , userData};
+    return { correo, Nombre_Completo, campus, gender, username, submitForm , userData, opcionesCampus};
   }
 };
 </script>
+
 
 <style scoped>
 * {
