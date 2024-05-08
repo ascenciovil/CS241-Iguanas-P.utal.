@@ -321,7 +321,7 @@ nav button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 75vh;
+  height: 90vh;
   text-align: center;
   background: 
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
