@@ -27,7 +27,7 @@ async function loadUsuarios() {
         const { data: usuariosData, error: usuariosError } = await supabase
             .from('usuarios')
             .select('id, nombre, correo, campus, rol')
-            .in('rol', ['estudiante', 'federación']);
+            .in('rol', ['estudiante', 'federacion']);
 
         if (usuariosError) {
             console.error('Error cargando los usuarios:', usuariosError.message);
