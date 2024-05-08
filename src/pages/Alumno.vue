@@ -1,5 +1,8 @@
 <template>
   <div class="propuestas">
+    <h1>Listado de Propuestas</h1>
+    <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
+    <ul>
     <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
@@ -16,8 +19,10 @@
         <p class="propuesta-descripcion">{{ propuesta.propuesta }}</p>
         <p class="propuesta-expiracion">Fecha de expiración: {{ propuesta.Fecha_expiracion }}</p>
         <div class="acciones">
-          <button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button>
-          <button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button>
+          <button @click="votar(propuesta, 'up')" class="btn-thumb-up">👍</button>
+          <span>{{ propuesta.Me_gusta }}</span>
+          <button @click="votar(propuesta, 'down')" class="btn-thumb-down">👎</button>
+          <span>{{ propuesta.votosNegativos }}</span>
         </div>
       </li>
     </ul>
@@ -31,6 +36,7 @@
     </ul>
   </div>
 </template>
+
 
 <script setup>
 
@@ -56,13 +62,14 @@ async function togglePropuestasYEventos(buttonIndex) {
   }
 }
 
+
 async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
-    .eq('Aprobado',true)
-    .eq('campusAutor',campusUsuarioLogeado);
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, Me_gusta') // Asegúrate de seleccionar Me_gusta
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -80,8 +87,9 @@ async function loadPropuestas() {
       return { ...propuesta, autor: 'Desconocido' };
     }
 
-    return { ...propuesta, autor: autorData.nombre };
+    return { ...propuesta, autor: autorData.nombre, votosPositivos: 0, votosNegativos: 0 };
   }));
+
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
   propuestas.value = propuestasConAutor;
   const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
@@ -89,6 +97,58 @@ async function loadPropuestas() {
   propuestas.value = propuestasFiltradas;
 }
 
+
+async function votar(propuesta, voto) {
+  // Verificar si el usuario ya ha votado en esta propuesta
+  const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
+
+  // Si el usuario ya ha votado en esta propuesta, no hacer nada
+  if (usuarioYaVoto) {
+    alert('Ya has votado en esta propuesta.');
+    return;
+  }
+
+  // Si el usuario no ha votado en esta propuesta, registrar su voto
+  if (voto === 'up') {
+    propuesta.votosPositivos++;
+  } else if (voto === 'down') {
+    propuesta.votosNegativos++;
+  }
+  
+  // Marcar que el usuario ya ha votado en esta propuesta
+  localStorage.setItem(`voto_${propuesta.id}`, true);
+
+  // Actualizar la columna 'Me_gusta' en la base de datos
+  await supabase
+    .from('propuestas')
+    .update({
+      Me_gusta: voto === 'up' ? propuesta.votosPositivos : propuesta.votosNegativos
+    })
+    .eq('id', propuesta.id);
+
+  alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
+}
+
+async function reiniciarPropuestas() {
+  // Reiniciar todas las propuestas a cero en la base de datos
+  await supabase
+    .from('propuestas')
+    .update({ Me_gusta: 0 })
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
+
+  // Eliminar los votos de los usuarios en todas las propuestas
+  for (const propuesta of propuestas.value) {
+    localStorage.removeItem(`voto_${propuesta.id}`);
+  }
+
+  // Actualizar el estado local para mostrar los cambios
+  propuestas.value.forEach(propuesta => {
+    propuesta.Me_gusta = 0;
+  });
+
+  alert('Todas las propuestas han sido reiniciadas.');
+ }
 async function loadEventos() {
   const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
@@ -122,11 +182,8 @@ async function loadEventos() {
   eventos.value = eventosFiltrados;
 }
 
-async function votar(propuestaId, voto) {
-  // Lógica para registrar el voto en la base de datos
-  console.log(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-  alert(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-}
+
+
 
 onMounted(async () => {
   await loadPropuestas();
