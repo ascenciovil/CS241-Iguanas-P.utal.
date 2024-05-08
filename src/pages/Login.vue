@@ -1,5 +1,4 @@
 <template>
-  <div><h1>cansao de esta vida y de trabajar gratis, dejo esto como nota de suicidio si alguien lo ve digale a mis papas que los quiero</h1></div>
   <div>
     <div class="container">
       <div class="screen"style="margin-top: 70px;">
@@ -189,7 +188,7 @@ function cerrarAdmin() {
 
 
 
-<style>
+<style >
 @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
 
 * {
