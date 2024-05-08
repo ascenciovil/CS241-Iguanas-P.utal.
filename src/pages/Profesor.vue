@@ -21,12 +21,15 @@ import { ref, onMounted } from 'vue';
 import { supabase } from "../clients/supabase";
 
 const propuestas = ref([]);
-
+const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 async function loadPropuestas() {
+  const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, titulo, propuesta, Fecha_expiracion, usuario_id');
-  
+    .select('id, titulo, propuesta, Fecha_expiracion, usuario_id')
+    .eq('Visualización_profesores',true)
+    .eq('Aprobado', true)
+    .eq('campusAutor',campusUsuarioLogeado);
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -36,7 +39,7 @@ async function loadPropuestas() {
     const { data: autorData, error: autorError } = await supabase
       .from('usuarios')
       .select('nombre')
-      .eq('id', propuesta.usuario_id)
+      .eq('UID', propuesta.usuario_id)
       .single();
 
     if (autorError) {
@@ -49,6 +52,12 @@ async function loadPropuestas() {
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
 
   propuestas.value = propuestasConAutor;
+
+  const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
+
+  propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
+  propuestas.value = propuestasFiltradas;
 }
 
 async function votar(propuestaId, voto) {
