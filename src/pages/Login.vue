@@ -16,7 +16,7 @@
               <span class="button__text">Ingresa ahora</span>
               <i class="button__icon fas fa-chevron-right"></i>
             </button>
-            <router-link to="/registro" @click="ocultarVentana()" class="toRegistro">
+            <router-link to="/registro" class="toRegistro">
               <button class="button login__submit">Regístrate aquí</button>
             </router-link>
           </form>

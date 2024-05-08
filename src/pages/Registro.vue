@@ -59,8 +59,11 @@
               </div>
             </div>
             <div class="button">
-              <input type="submit" value="Registrarme">
+              <input type="submit" value="Registrarme" class="custom-button">
             </div>
+            <router-link to="/login" class="button">
+              <button class="custom-button">Inicia sesión aquí</button>
+            </router-link>
           </form>
         </div>
         <!-- Footer con imagen de banner -->
@@ -176,6 +179,7 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
 }
 
 import { onMounted } from "vue";
+import { RouterLink } from "vue-router";
 
 onMounted(() => {
   const form = document.querySelector('form');
@@ -372,5 +376,30 @@ footer img {
   width: 100%; /* La imagen ocupa todo el ancho */
   height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
   max-height: 100%; /* La imagen no superará el 100% de la altura del footer */
+}
+
+.custom-button {
+  height: 45px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  text-decoration: none; /* Quita el subrayado */
+  display: block;
+  margin: 20px auto 0; /* Centro horizontalmente */
+}
+
+.custom-button:hover {
+  background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+
+.button {
+  text-decoration: none;
 }
 </style>
