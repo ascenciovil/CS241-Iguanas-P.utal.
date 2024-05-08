@@ -90,6 +90,7 @@ async function loadPropuestas() {
 }
 
 async function loadEventos() {
+  const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
     .from('eventos')
     .select('id, usuario_id, titulo, evento, Fecha_expiracion')
@@ -115,8 +116,10 @@ async function loadEventos() {
     return { ...evento, autor: autorData.nombre };
   }));
   eventosConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   eventos.value = eventosConAutor;
+  const eventosFiltrados = eventosConAutor.filter(evento => new Date(evento.Fecha_expiracion) > currentDate);
+  eventosFiltrados.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+  eventos.value = eventosFiltrados;
 }
 
 async function votar(propuestaId, voto) {
