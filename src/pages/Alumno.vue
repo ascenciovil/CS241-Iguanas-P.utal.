@@ -3,7 +3,6 @@
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
     <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
-    <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -89,7 +88,7 @@ async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, Me_gusta') 
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up') 
     .eq('Aprobado', true)
     .eq('campusAutor', campusUsuarioLogeado);
 
