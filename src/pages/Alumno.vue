@@ -1,6 +1,8 @@
 <template>
   <body>
   <div class="propuestas">
+    <h1>Listado de Propuestas</h1>
+    <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
     <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
@@ -55,6 +57,7 @@
   </body>
 </template>
 
+
 <script setup>
 
 import { ref, onMounted } from 'vue';
@@ -81,12 +84,15 @@ async function togglePropuestasYEventos(buttonIndex) {
   }
 }
 
+
 async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
-    .eq('campusAutor',campusUsuarioLogeado);
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, Me_gusta') 
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
+
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -104,19 +110,77 @@ async function loadPropuestas() {
       return { ...propuesta, autor: 'Desconocido' };
     }
 
-    return { ...propuesta, autor: autorData.nombre };
+    return { ...propuesta, autor: autorData.nombre, votosPositivos: 0, votosNegativos: 0 };
   }));
+
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
 
   propuestas.value = propuestasConAutor;
   const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
 
   propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   propuestas.value = propuestasFiltradas;
 }
 
+onMounted(async () => {
+  await loadPropuestas();
+});
+
+async function votar(propuesta, voto) {
+  // Verificar si el usuario ya ha votado en esta propuesta
+  const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
+
+  // Si el usuario ya ha votado en esta propuesta, no hacer nada
+  if (usuarioYaVoto) {
+    alert('Ya has votado en esta propuesta.');
+    return;
+  }
+
+  // Incrementar o decrementar el valor de 'Me_gusta' según el voto
+  const nuevaCantidad = propuesta.Me_gusta + (voto === 'up' ? 1 : -1);
+
+  // Actualizar la columna 'Me_gusta' en la base de datos con el nuevo valor
+  await supabase
+    .from('propuestas')
+    .update({
+      Me_gusta: nuevaCantidad
+    })
+    .eq('id', propuesta.id);
+
+  // Guardar el nuevo voto del usuario en el localStorage
+  localStorage.setItem(`voto_${propuesta.id}`, true);
+
+  // Marcar que el usuario ya ha votado en esta propuesta
+  localStorage.setItem(`voto_tipo_${propuesta.id}`, voto);
+
+  // Mostrar un mensaje de confirmación
+  alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
+}
+
+async function reiniciarPropuestas() {
+  // Reiniciar todas las propuestas a cero en la base de datos
+  await supabase
+    .from('propuestas')
+    .update({ Me_gusta: 0 })
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
+
+  // Eliminar los votos de los usuarios en todas las propuestas
+  for (const propuesta of propuestas.value) {
+    localStorage.removeItem(`voto_${propuesta.id}`);
+  }
+
+  // Actualizar el estado local para mostrar los cambios
+  propuestas.value.forEach(propuesta => {
+    propuesta.Me_gusta = 0;
+  });
+
+  alert('Todas las propuestas han sido reiniciadas.');
+ }
+
 async function loadEventos() {
+  const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
     .from('eventos')
     .select('id, usuario_id, titulo, evento, Fecha_expiracion')
@@ -142,15 +206,14 @@ async function loadEventos() {
     return { ...evento, autor: autorData.nombre };
   }));
   eventosConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   eventos.value = eventosConAutor;
+  const eventosFiltrados = eventosConAutor.filter(evento => new Date(evento.Fecha_expiracion) > currentDate);
+  eventosFiltrados.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+  eventos.value = eventosFiltrados;
 }
 
-async function votar(propuestaId, voto) {
-  // Lógica para registrar el voto en la base de datos
-  console.log(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-  alert(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-}
+
+
 
 onMounted(async () => {
   await loadPropuestas();
