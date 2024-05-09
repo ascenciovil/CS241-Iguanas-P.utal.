@@ -4,7 +4,6 @@
   <html lang="en" dir="ltr">
     <head>
       <meta charset="UTF-8">
-      <title> Responsive Registration Form | CodingLab </title>
       <link rel="stylesheet" href="style.css">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -63,8 +62,11 @@
               </div>
             </div>
             <div class="button">
-              <input type="submit" value="Registrarme">
+              <input type="submit" value="Registrarme" class="custom-button">
             </div>
+            <router-link to="/login" class="button">
+              <button class="custom-button">Inicia sesión aquí</button>
+            </router-link>
           </form>
         </div>
         <!-- Footer con imagen de banner -->
@@ -171,6 +173,11 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   console.log(message); 
 }
 
+
+import { onMounted } from "vue";
+import { RouterLink } from "vue-router";
+
+
 onMounted(() => {
   const form = document.querySelector('form');
   form.addEventListener('submit', async (event) => {
@@ -196,7 +203,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 padding: 10px;
-background: linear-gradient(135deg, #71b7e6, #9b59b6);
+background: linear-gradient(135deg, #9b59b6, #71b7e6);
 font-family: 'Poppins', sans-serif;
 }
 
@@ -220,7 +227,7 @@ font-size: 60px; /* Aumenta el tamaño del texto */
 font-weight: 500;
 text-align: center; /* Alinea el texto al centro */
 position: absolute; /* Añade posicionamiento absoluto */
-top: 20%; /* Ajusta la posición verticalmente */
+top: 10%; /* Ajusta la posición verticalmente */
 left: 50%; /* Centra horizontalmente */
 transform: translateX(-50%); /* Centra horizontalmente */
 color: white; /* Cambia el color del texto a blanco */
@@ -367,5 +374,30 @@ footer img {
   width: 100%; /* La imagen ocupa todo el ancho */
   height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
   max-height: 100%; /* La imagen no superará el 100% de la altura del footer */
+}
+
+.custom-button {
+  height: 45px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  text-decoration: none; /* Quita el subrayado */
+  display: block;
+  margin: 20px auto 0; /* Centro horizontalmente */
+}
+
+.custom-button:hover {
+  background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+
+.button {
+  text-decoration: none;
 }
 </style>
