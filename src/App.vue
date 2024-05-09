@@ -6,7 +6,7 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
 
 <template>
   
-  <nav>
+  <nav v-if="acercaDe">
     <span v-if="loginNopropuesta">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
@@ -118,9 +118,11 @@ function updateLoginState(valueEstudiante,valueProfesor, valueFederacion, valueB
     loginFederacion.value = valueFederacion;
     loginNopropuesta.value = valueBaneadoNoPropuesta;
     if(loginAux.value){
-      acercaDe.value=false;
-    }else{
       acercaDe.value=true;
+      loginAux.value=false;
+    }else{
+      acercaDe.value=false;
+      loginAux.value=true;
     }
     console.log(loginAux.value);
 }
@@ -318,7 +320,7 @@ nav button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 95vh;
+  height: 100vh;
   text-align: center;
   background: 
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 

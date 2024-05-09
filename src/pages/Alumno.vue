@@ -62,19 +62,21 @@ import { supabase } from "../clients/supabase";
 
 const propuestas = ref([]);
 const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
-const showPropuestas = ref(false);
+const showPropuestas = ref(true);
 const eventos = ref([]);
 const showEventos = ref(false);
-const buttonClicked = ref([false, false]); 
+const buttonClicked = ref([true, false]); 
 
 async function togglePropuestasYEventos(buttonIndex) {
-  buttonClicked.value[buttonIndex] = true;
-  buttonClicked.value[1 - buttonIndex] = false;
   if (buttonIndex === 0) {
-    showPropuestas.value = !showPropuestas.value;
+    buttonClicked.value[0] = true;
+    buttonClicked.value[1] = false;
+    showPropuestas.value = true;
     showEventos.value = false;
   } else if (buttonIndex === 1) {
-    showEventos.value = !showEventos.value;
+    buttonClicked.value[1] = true;
+    buttonClicked.value[0] = false;
+    showEventos.value = true;
     showPropuestas.value = false;
   }
 }
@@ -273,4 +275,25 @@ h1 {
   font-size: 2.5rem;
 }
 
+.toggle-button {
+  width: 200px;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #4CAF50; /* Color de fondo */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #45a049; /* Cambio de color de fondo al pasar el mouse */
+}
+
+.toggle-button:disabled {
+  background-color: #cccccc; /* Color de fondo cuando está desactivado */
+  color: #666666; /* Color del texto cuando está desactivado */
+  cursor: not-allowed; /* Cursor no permitido cuando está desactivado */
+}
 </style>

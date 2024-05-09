@@ -229,7 +229,7 @@ font-size: 60px; /* Aumenta el tamaño del texto */
 font-weight: 500;
 text-align: center; /* Alinea el texto al centro */
 position: absolute; /* Añade posicionamiento absoluto */
-top: 20%; /* Ajusta la posición verticalmente */
+top: 10%; /* Ajusta la posición verticalmente */
 left: 50%; /* Centra horizontalmente */
 transform: translateX(-50%); /* Centra horizontalmente */
 color: white; /* Cambia el color del texto a blanco */
