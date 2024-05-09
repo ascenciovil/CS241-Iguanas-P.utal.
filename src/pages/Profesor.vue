@@ -18,7 +18,6 @@
               <th class="border-0">Autor</th>
               <th class="border-0">Descripción</th>
               <th class="border-0">Expiración</th>
-              <th class="border-0" colspan="2">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -27,8 +26,6 @@
               <td class="propuesta-autor">{{ propuesta.autor }}</td>
               <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
               <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
-              <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
-              <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
             </tr>
           </tbody>
       </table>
@@ -45,7 +42,7 @@
             <tr v-for="evento in eventos" :key="evento.id" class="evento">
               <td class="evento-titulo">{{ evento.titulo }}</td>
               <td class="evento-autor">{{ evento.autor }}</td>
-              <td class="evento-descripcion">{{ evento.propuesta }}</td>
+              <td class="evento-descripcion">{{ evento.evento }}</td>
               <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
             </tr>
           </tbody>
@@ -269,4 +266,25 @@ h1 {
   font-size: 2.5rem;
 }
 
+.toggle-button {
+  width: 200px;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #4CAF50; /* Color de fondo */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #45a049; /* Cambio de color de fondo al pasar el mouse */
+}
+
+.toggle-button:disabled {
+  background-color: #cccccc; /* Color de fondo cuando está desactivado */
+  color: #666666; /* Color del texto cuando está desactivado */
+  cursor: not-allowed; /* Cursor no permitido cuando está desactivado */
+}
 </style>

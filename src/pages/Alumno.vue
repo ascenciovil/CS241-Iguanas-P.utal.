@@ -46,7 +46,7 @@
             <tr v-for="evento in eventos" :key="evento.id" class="evento">
               <td class="evento-titulo">{{ evento.titulo }}</td>
               <td class="evento-autor">{{ evento.autor }}</td>
-              <td class="evento-descripcion">{{ evento.propuesta }}</td>
+              <td class="evento-descripcion">{{ evento.evento }}</td>
               <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
             </tr>
           </tbody>
