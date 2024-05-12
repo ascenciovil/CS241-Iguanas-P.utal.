@@ -3,7 +3,6 @@
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
     <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
-    <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -47,7 +46,7 @@
             <tr v-for="evento in eventos" :key="evento.id" class="evento">
               <td class="evento-titulo">{{ evento.titulo }}</td>
               <td class="evento-autor">{{ evento.autor }}</td>
-              <td class="evento-descripcion">{{ evento.propuesta }}</td>
+              <td class="evento-descripcion">{{ evento.evento }}</td>
               <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
             </tr>
           </tbody>
@@ -89,7 +88,7 @@ async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, Me_gusta') 
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up') 
     .eq('Aprobado', true)
     .eq('campusAutor', campusUsuarioLogeado);
 

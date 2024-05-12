@@ -174,7 +174,6 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
 }
 
 
-import { onMounted } from "vue";
 import { RouterLink } from "vue-router";
 
 
@@ -400,4 +399,22 @@ footer img {
 .button {
   text-decoration: none;
 }
+
+.user-details .input-box select {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.user-details .input-box select:focus,
+.user-details .input-box select:valid {
+  border-color: #9b59b6;
+}
+
 </style>
