@@ -58,36 +58,53 @@ async function loadPropuestas() {
   propuestas.value = propuestasFiltradas;
 }
 
-async function banear(usuario_id, voto, propuesta_id) {
-if (voto === 'Baneaste') {
-  if (confirm('¿Estás seguro de que quieres banear al usuario por 1 semana?')) {
-    try {
-            // Calcular la fecha de desbaneo sumando una semana a la fecha actual
-            const fechaDesban = new Date();
-            fechaDesban.setDate(fechaDesban.getDate() + 7);
+// Define la función para guardar la propuesta baneada
+async function guardarPropuestaBaneada(usuario_id, razon, propuesta_id) {
+  try {
+    // Inserta los datos en la tabla "Ban"
+    const { data, error } = await supabase
+      .from('Ban')
+      .insert([{ razon, uid_user: usuario_id, id_propuesta: propuesta_id }]);
+    
+    if (error) {
+      console.error('Error al guardar la propuesta baneada:', error.message);
+      return;
+    } else {
+      window.alert(`Propuesta baneada con éxito: ${razon}`);
+      // Recarga las propuestas después de banear la propuesta
+      await loadPropuestas();
+    }
+  } catch (error) {
+    console.error('Error en la solicitud:', error.message);
+  }
+}
 
-            // Actualizar la tabla de usuarios con el estado de baneo y la fecha de desbaneo
-            const { data, error } = await supabase
-                .from('usuarios')
-                .update({ Baneado: true, Fecha_Desban: fechaDesban })
-                .eq('UID', usuario_id);
-            
-            if (error) {
-                console.error('Error al actualizar el estado de baneo del usuario:', error.message);
-                return;
-            } else {
-              const { data, error } = await supabase
-              .from('propuestas')
-              .delete()
-              .eq('id', propuesta_id);
-                window.alert(`${voto} el usuario de la propuesta ${propuesta_id}`);
-                // Recargar las propuestas después de banear al usuario
-                await loadPropuestas();
-            }
-        } catch (error) {
-            console.error('Error en la solicitud:', error.message);
+// Define la función banear con los cambios necesarios
+async function banear(usuario_id, voto, propuesta_id) {
+  if (voto === 'Baneaste') {
+    if (confirm('¿Estás seguro de que quieres banear al usuario por 1 semana?')) {
+      try {
+        // Calcular la fecha de desbaneo sumando una semana a la fecha actual
+        const fechaDesban = new Date();
+        fechaDesban.setDate(fechaDesban.getDate() + 7);
+
+        // Actualizar la tabla de usuarios con el estado de baneo y la fecha de desbaneo
+        const { data, error } = await supabase
+          .from('usuarios')
+          .update({ Baneado: true, Fecha_Desban: fechaDesban })
+          .eq('UID', usuario_id);
+        
+        if (error) {
+          console.error('Error al actualizar el estado de baneo del usuario:', error.message);
+          return;
+        } else {
+          // Llama a la función para guardar la propuesta baneada
+          await guardarPropuestaBaneada(usuario_id, 'Test', propuesta_id);
         }
+      } catch (error) {
+        console.error('Error en la solicitud:', error.message);
       }
+    }
   }
 }
 
@@ -116,7 +133,7 @@ if (voto === 'Rechazaste') {
   try {
     const { data, error } = await supabase
       .from('propuestas')
-      .delete()
+      .update({ Aprobado: false })
       .eq('id', propuestaId);
     
     if (error) {
@@ -138,7 +155,6 @@ onMounted(() => {
   loadPropuestas();
 });
 </script>
-
 <style scoped>
 
 
