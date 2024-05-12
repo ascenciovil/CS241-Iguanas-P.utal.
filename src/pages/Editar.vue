@@ -14,17 +14,16 @@
         <div class="login">
           <form @submit.prevent="submitForm">
             <div class="login__field">
-
-              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="correo" required>
-
+              <input v-model="correo" type="email" name="correo" class="login__input" placeholder="Correo" required>
             </div>
             <div class="login__field">
-
-              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="nombre completo" required>
+              <input v-model="Nombre_Completo" type="text" name="Nombre_Completo" class="login__input" placeholder="Nombre Completo" required>
             </div>
             <div class="login__field">
-              <input v-model="campus" type="text" name="campus" class="login__input" placeholder="campus" required>
-
+              <select v-model="campus" name="campus" class="login__input" required>
+                <option disabled value="">Selecciona tu campus</option>
+                <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+              </select>
             </div>
             <div class="login__field">
               <select v-model="gender" name="gender" class="login__input" required>
@@ -34,9 +33,7 @@
               </select>
             </div>
             <div class="login__field">
-
               <input v-model="username" type="text" name="username" class="login__input" placeholder="Nombre de usuario" required>
-
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
@@ -52,12 +49,10 @@
   </div>
 </template>
 
-
-
 <script>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
-import { onMounted } from "vue"; // Importamos onMounted desde @vue/runtime-core
+import { onMounted } from "vue"; 
 
 export default {
   name: "Formulario",
@@ -68,8 +63,11 @@ export default {
     const gender = ref("");
     const username = ref("");
     let userId = ref("");
+    let userData = ref({});
+    let opcionesCampus = ref(["Curico", "Talca", "Santiago", "Linares", "Colchagua"]);
 
     const submitForm = async () => {
+
       try {
         const { data: userData, error: userError } = await supabase
           .from('usuarios')
@@ -79,6 +77,7 @@ export default {
         const { data, error } = await supabase
           .from('usuarios')
           .update({
+            correo: correo.value,
             nombre: Nombre_Completo.value,
             campus: campus.value,
             gender: gender.value,
@@ -93,12 +92,9 @@ export default {
           const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
           console.log(campusUsuarioLogeado);
           console.log("Datos actualizados correctamente:", data);
+          alert('Datos actualizados correctamente ');
           // Reiniciar los valores de los campos después de enviarlos
-          correo.value = "";
-          Nombre_Completo.value = "";
-          campus.value = "";
-          gender.value = "";
-          username.value = "";
+         
         }
       } catch (error) {
         console.error("Error al actualizar los datos:", error.message);
@@ -110,6 +106,46 @@ export default {
         const localUser = await supabase.auth.getSession();
         console.log(localUser.data.session.user.id);
         userId.value = localUser.data.session.user.id;
+
+        const { data: userDataFromDB, error: userError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('UID', userId.value)
+          .single();
+
+        userData.value = userDataFromDB;
+
+        // Asignar el valor de userData.nombre al campo Nombre_Completo si no está definido aún
+        if (!Nombre_Completo.value && userData.value.nombre) {
+          Nombre_Completo.value = userData.value.nombre;
+        }
+
+        // Asignar el valor de userData.nombre al campo Nombre_Completo si no está definido aún
+        if (!username.value && userData.value.username) {
+          username.value = userData.value.username;
+        }
+        // Asignar el valor de userData.correo al campo correo si no está definido aún
+        if (!correo.value && userData.value.correo) {
+          correo.value = userData.value.correo;
+        }
+
+        // Asignar el valor de userData.campus al campo campus si no está definido aún
+        if (!campus.value && userData.value.campus) {
+          campus.value = userData.value.campus;
+        }
+
+        // Asignar el valor de userData.campus al campo campus si no está definido aún
+        if (!gender.value && userData.value.gender) {
+          gender.value = userData.value.gender;
+        }
+
+       
+        
+        console.log("rol:", userData.value.rol);
+        console.log("nombre:", userData.value.nombre);
+        console.log("username:", userData.value.username);
+        console.log("genero:", userData.value.gender);
+        console.log("correo:", userData.value.correo);
         
       } catch (error) {
         console.error('Error al obtener la sesión:', error.message);
@@ -119,11 +155,11 @@ export default {
     // Llama a la función getUid cuando el componente se monta
     onMounted(getUid);
    
-
-    return { correo, Nombre_Completo, campus, gender, username, submitForm };
+    return { correo, Nombre_Completo, campus, gender, username, submitForm , userData, opcionesCampus};
   }
 };
 </script>
+
 
 <style scoped>
 * {
@@ -158,7 +194,7 @@ body {
   border: none;
   border-bottom: 2px solid #D1D1D4;
   background: none;
-  font-weight: 700;
+  font-size: 20px;
   transition: border-color 0.3s ease;
 }
 
@@ -170,6 +206,7 @@ body {
 .login__submit-container {
   text-align: center;
   margin-top: 20px;
+  padding-left: 30px;
 }
 
 .login__submit {
@@ -183,6 +220,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  justify-content: center;
 }
 
 .login__submit:hover {
@@ -192,22 +230,22 @@ body {
 /* Estilos para las imágenes */
 .left-image,
 .right-image {
-  position: fixed;
+  position: fixed; /* Fijar la imagen en la ventana gráfica */
   top: 25vh; /* Centrado verticalmente a media altura */
   height: 50vh; /* La mitad de la altura del viewport */
   width: auto;
 }
 
 .left-image {
-  left: 0; /* Alineado a la izquierda */
+  left: 20px; /* Alineado a la izquierda */
 }
 
 .right-image {
-  right: 0; /* Alineado a la derecha */
+  right: 20px; /* Alineado a la derecha */
 }
 
-/* Estilo adicional */
-.container {
-  position: relative; /* Asegura que las imágenes fijas estén dentro del contenedor */
+.login {
+  padding-top: 50px;
 }
+
 </style>

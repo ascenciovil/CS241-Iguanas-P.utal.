@@ -4,7 +4,6 @@
   <html lang="en" dir="ltr">
     <head>
       <meta charset="UTF-8">
-      <title> Responsive Registration Form | CodingLab </title>
       <link rel="stylesheet" href="style.css">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -28,7 +27,10 @@
               </div>
               <div class="input-box">
                 <span class="details">Campus</span>
-                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
+                <select id="campus" v-model="campus" required>
+                  <option disabled value="">Selecciona tu campus</option>
+                  <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+                </select>
               </div>
               <div class="input-box">
                 <span class="details">Contraseña</span>
@@ -60,8 +62,11 @@
               </div>
             </div>
             <div class="button">
-              <input type="submit" value="Registrarme">
+              <input type="submit" value="Registrarme" class="custom-button">
             </div>
+            <router-link to="/login" class="button">
+              <button class="custom-button">Inicia sesión aquí</button>
+            </router-link>
           </form>
         </div>
         <!-- Footer con imagen de banner -->
@@ -76,7 +81,7 @@
 <script setup>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
-
+import { onMounted } from "vue";
 
 // Define las variables reactivas para los campos del formulario
 let email = ref("");
@@ -86,7 +91,7 @@ let campus = ref("");
 let usernombre = ref("");
 let conpassword = ref("");
 let gender = ref(""); 
-
+let opcionesCampus = ref(["Curico", "Talca", "Santiago","Linares","Colchagua"]); // Agrega aquí tus opciones de campus
 
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
@@ -111,10 +116,7 @@ async function handleSubmit() {
   createAccount(tipoUsuario);
 }
 
-
-
 async function createAccount(tipoUsuario) {
-  
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
@@ -129,7 +131,6 @@ async function createAccount(tipoUsuario) {
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
     } else {
-     
       const userUID = data.user.id;
 
       console.log(tipoUsuario);
@@ -138,10 +139,7 @@ async function createAccount(tipoUsuario) {
         .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario, Baneado: false }]);
 
       console.log("Usuario creado correctamente:", data);
-
-      
       mostrarMensajeTipoUsuario(tipoUsuario);
-      
       alert('Usuario Registrado');
       email.value = "";
       password.value = "";
@@ -150,7 +148,6 @@ async function createAccount(tipoUsuario) {
       conpassword.value = "";
       usernombre.value = "";
       gender.value = ""; 
-      
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
@@ -176,7 +173,9 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   console.log(message); 
 }
 
-import { onMounted } from "vue";
+
+import { RouterLink } from "vue-router";
+
 
 onMounted(() => {
   const form = document.querySelector('form');
@@ -186,6 +185,7 @@ onMounted(() => {
   });
 });
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
@@ -202,7 +202,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 padding: 10px;
-background: linear-gradient(135deg, #71b7e6, #9b59b6);
+background: linear-gradient(135deg, #9b59b6, #71b7e6);
 font-family: 'Poppins', sans-serif;
 }
 
@@ -226,7 +226,7 @@ font-size: 60px; /* Aumenta el tamaño del texto */
 font-weight: 500;
 text-align: center; /* Alinea el texto al centro */
 position: absolute; /* Añade posicionamiento absoluto */
-top: 20%; /* Ajusta la posición verticalmente */
+top: 10%; /* Ajusta la posición verticalmente */
 left: 50%; /* Centra horizontalmente */
 transform: translateX(-50%); /* Centra horizontalmente */
 color: white; /* Cambia el color del texto a blanco */
@@ -374,4 +374,47 @@ footer img {
   height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
   max-height: 100%; /* La imagen no superará el 100% de la altura del footer */
 }
+
+.custom-button {
+  height: 45px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  text-decoration: none; /* Quita el subrayado */
+  display: block;
+  margin: 20px auto 0; /* Centro horizontalmente */
+}
+
+.custom-button:hover {
+  background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+
+.button {
+  text-decoration: none;
+}
+
+.user-details .input-box select {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.user-details .input-box select:focus,
+.user-details .input-box select:valid {
+  border-color: #9b59b6;
+}
+
 </style>
