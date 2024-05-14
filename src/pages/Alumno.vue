@@ -1,8 +1,15 @@
 <template>
-  <body>
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
     <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
+    <div class="campus-dropdown-container">
+      <div class="campus-dropdown">
+        <select v-model="campus" name="campus" class="login__input" required>
+          <option disabled value="">Selecciona tu campus</option>
+          <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+        </select>
+      </div>
+    </div>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -14,52 +21,53 @@
     <div class="table-responsive">
       <table class="table v-middle text-nowrap bg-transparent" v-if="showPropuestas">
         <thead class="bg-light">
-            <tr>
-              <th class="border-0">Título</th>
-              <th class="border-0">Autor</th>
-              <th class="border-0">Descripción</th>
-              <th class="border-0">Expiración</th>
-              <th class="border-0" colspan="2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
-              <td class="propuesta-titulo">{{ propuesta.titulo }}</td>
-              <td class="propuesta-autor">{{ propuesta.autor }}</td>
-              <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
-              <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
-              <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
-              <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
-            </tr>
-          </tbody>
+          <tr>
+            <th class="border-0">Título</th>
+            <th class="border-0">Autor</th>
+            <th class="border-0">Descripción</th>
+            <th class="border-0">Expiración</th>
+            <th class="border-0" colspan="2" v-if="campus === campusUsuarioLogeado">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
+            <td class="propuesta-titulo">{{ propuesta.titulo }}</td>
+            <td class="propuesta-autor">{{ propuesta.autor }}</td>
+            <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
+            <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
+            <td v-if="campus === campusUsuarioLogeado">
+              <button @click="votar(propuesta.id, 'up')" class="btn-thumb-up" :disabled="propuesta.campusAutor !== campusUsuarioLogeado">👍</button>
+            </td>
+            <td v-if="campus === campusUsuarioLogeado">
+              <button @click="votar(propuesta.id, 'down')" class="btn-thumb-down" :disabled="propuesta.campusAutor !== campusUsuarioLogeado">👎</button>
+            </td>
+          </tr>
+        </tbody>
       </table>
       <table class="table v-middle text-nowrap bg-transparent" v-if="showEventos">
         <thead class="bg-light">
-            <tr>
-              <th class="border-0">Título</th>
-              <th class="border-0">Autor</th>
-              <th class="border-0">Descripción</th>
-              <th class="border-0">Expiración</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="evento in eventos" :key="evento.id" class="evento">
-              <td class="evento-titulo">{{ evento.titulo }}</td>
-              <td class="evento-autor">{{ evento.autor }}</td>
-              <td class="evento-descripcion">{{ evento.evento }}</td>
-              <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
-            </tr>
-          </tbody>
+          <tr>
+            <th class="border-0">Título</th>
+            <th class="border-0">Autor</th>
+            <th class="border-0">Descripción</th>
+            <th class="border-0">Expiración</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="evento in eventos" :key="evento.id" class="evento">
+            <td class="evento-titulo">{{ evento.titulo }}</td>
+            <td class="evento-autor">{{ evento.autor }}</td>
+            <td class="evento-descripcion">{{ evento.evento }}</td>
+            <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
-  </body>
 </template>
 
-
 <script setup>
-
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { supabase } from "../clients/supabase";
 
 const propuestas = ref([]);
@@ -67,7 +75,9 @@ const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 const showPropuestas = ref(true);
 const eventos = ref([]);
 const showEventos = ref(false);
-const buttonClicked = ref([true, false]); 
+const buttonClicked = ref([true, false]);
+const campus = ref(campusUsuarioLogeado);
+const opcionesCampus = ref(["Curico", "Talca", "Santiago", "Linares", "Colchagua"]); 
 
 async function togglePropuestasYEventos(buttonIndex) {
   if (buttonIndex === 0) {
@@ -83,14 +93,13 @@ async function togglePropuestasYEventos(buttonIndex) {
   }
 }
 
-
-async function loadPropuestas() {
+async function loadPropuestas(campus) {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up') 
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up')
     .eq('Aprobado', true)
-    .eq('campusAutor', campusUsuarioLogeado);
+    .eq('campusAutor', campus);
 
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
@@ -178,12 +187,12 @@ async function reiniciarPropuestas() {
   alert('Todas las propuestas han sido reiniciadas.');
  }
 
-async function loadEventos() {
+async function loadEventos(campus) {
   const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
     .from('eventos')
     .select('id, usuario_id, titulo, evento, Fecha_expiracion')
-    .eq('campusAutor',campusUsuarioLogeado);
+    .eq('campusAutor', campus);
   
   if (eventosError) {
     console.error('Error cargando los eventos:', eventosError.message);
@@ -211,24 +220,40 @@ async function loadEventos() {
   eventos.value = eventosFiltrados;
 }
 
-
-
-
 onMounted(async () => {
-  await loadPropuestas();
+  await loadPropuestas(campusUsuarioLogeado);
+  await loadEventos(campusUsuarioLogeado);
 });
 
-onMounted(() => {
-  loadPropuestas();
+watch(campus, async (newCampus) => {
+  if (newCampus) {
+    await loadPropuestas(newCampus);
+    await loadEventos(newCampus);
+  }
 });
 
-onMounted(() => {
-  loadEventos();
-});
 </script>
 
 
 <style scoped>
+
+.campus-dropdown-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+}
+
+.campus-dropdown {
+  width: 200px;
+  text-align: right;
+}
+
+.campus-dropdown select {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: white;
+}
 
 .centered-title {
   text-align: center;
