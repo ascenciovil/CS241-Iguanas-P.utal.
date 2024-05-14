@@ -1,7 +1,8 @@
 <template>
   <body>
   <div class="propuestas">
-    <h1 class="centered-title">Listado</h1>
+    <h1>Listado de Propuestas</h1>
+    <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -29,6 +30,7 @@
               <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
               <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
               <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
+              <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
       </table>
@@ -45,8 +47,9 @@
             <tr v-for="evento in eventos" :key="evento.id" class="evento">
               <td class="evento-titulo">{{ evento.titulo }}</td>
               <td class="evento-autor">{{ evento.autor }}</td>
-              <td class="evento-descripcion">{{ evento.propuesta }}</td>
+              <td class="evento-descripcion">{{ evento.evento }}</td>
               <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
+              <td class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
       </table>
@@ -55,36 +58,43 @@
   </body>
 </template>
 
+
 <script setup>
 
 import { ref, onMounted } from 'vue';
 import { supabase } from "../clients/supabase";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const propuestas = ref([]);
 const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
-const showPropuestas = ref(false);
+const showPropuestas = ref(true);
 const eventos = ref([]);
 const showEventos = ref(false);
-const buttonClicked = ref([false, false]); 
+const buttonClicked = ref([true, false]); 
 
 async function togglePropuestasYEventos(buttonIndex) {
-  buttonClicked.value[buttonIndex] = true;
-  buttonClicked.value[1 - buttonIndex] = false;
   if (buttonIndex === 0) {
-    showPropuestas.value = !showPropuestas.value;
+    buttonClicked.value[0] = true;
+    buttonClicked.value[1] = false;
+    showPropuestas.value = true;
     showEventos.value = false;
   } else if (buttonIndex === 1) {
-    showEventos.value = !showEventos.value;
+    buttonClicked.value[1] = true;
+    buttonClicked.value[0] = false;
+    showEventos.value = true;
     showPropuestas.value = false;
   }
 }
+
 
 async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion')
-    .eq('campusAutor',campusUsuarioLogeado);
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up') 
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
+
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
     return;
@@ -102,19 +112,84 @@ async function loadPropuestas() {
       return { ...propuesta, autor: 'Desconocido' };
     }
 
-    return { ...propuesta, autor: autorData.nombre };
+    return { ...propuesta, autor: autorData.nombre, votosPositivos: 0, votosNegativos: 0 };
   }));
+
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+
 
   propuestas.value = propuestasConAutor;
   const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
 
   propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   propuestas.value = propuestasFiltradas;
 }
 
+onMounted(async () => {
+  await loadPropuestas();
+});
+
+async function verComentarios(propuestaId) {
+  await router.push({ path: `/comentarios/${propuestaId}` });
+}
+async function verComentariosEvento(eventoId) {
+  await router.push({ path: `/comentariosEvento/${eventoId}` });
+}
+
+async function votar(propuesta, voto) {
+  // Verificar si el usuario ya ha votado en esta propuesta
+  const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
+
+  // Si el usuario ya ha votado en esta propuesta, no hacer nada
+  if (usuarioYaVoto) {
+    alert('Ya has votado en esta propuesta.');
+    return;
+  }
+
+  // Incrementar o decrementar el valor de 'Me_gusta' según el voto
+  const nuevaCantidad = propuesta.Me_gusta + (voto === 'up' ? 1 : -1);
+
+  // Actualizar la columna 'Me_gusta' en la base de datos con el nuevo valor
+  await supabase
+    .from('propuestas')
+    .update({
+      Me_gusta: nuevaCantidad
+    })
+    .eq('id', propuesta.id);
+
+  // Guardar el nuevo voto del usuario en el localStorage
+  localStorage.setItem(`voto_${propuesta.id}`, true);
+
+  // Marcar que el usuario ya ha votado en esta propuesta
+  localStorage.setItem(`voto_tipo_${propuesta.id}`, voto);
+
+  // Mostrar un mensaje de confirmación
+  alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
+}
+
+async function reiniciarPropuestas() {
+  // Reiniciar todas las propuestas a cero en la base de datos
+  await supabase
+    .from('propuestas')
+    .update({ Me_gusta: 0 })
+    .eq('Aprobado', true)
+    .eq('campusAutor', campusUsuarioLogeado);
+
+  // Eliminar los votos de los usuarios en todas las propuestas
+  for (const propuesta of propuestas.value) {
+    localStorage.removeItem(`voto_${propuesta.id}`);
+  }
+
+  // Actualizar el estado local para mostrar los cambios
+  propuestas.value.forEach(propuesta => {
+    propuesta.Me_gusta = 0;
+  });
+
+  alert('Todas las propuestas han sido reiniciadas.');
+ }
+
 async function loadEventos() {
+  const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
     .from('eventos')
     .select('id, usuario_id, titulo, evento, Fecha_expiracion')
@@ -140,15 +215,14 @@ async function loadEventos() {
     return { ...evento, autor: autorData.nombre };
   }));
   eventosConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
   eventos.value = eventosConAutor;
+  const eventosFiltrados = eventosConAutor.filter(evento => new Date(evento.Fecha_expiracion) > currentDate);
+  eventosFiltrados.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+  eventos.value = eventosFiltrados;
 }
 
-async function votar(propuestaId, voto) {
-  // Lógica para registrar el voto en la base de datos
-  console.log(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-  alert(`Votaste ${voto} por la propuesta con ID ${propuestaId}`);
-}
+
+
 
 onMounted(async () => {
   await loadPropuestas();
@@ -273,4 +347,46 @@ h1 {
   font-size: 2.5rem;
 }
 
+.toggle-button {
+  width: 200px;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #4CAF50; /* Color de fondo */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #45a049; /* Cambio de color de fondo al pasar el mouse */
+}
+
+.toggle-button:disabled {
+  background-color: #cccccc; /* Color de fondo cuando está desactivado */
+  color: #666666; /* Color del texto cuando está desactivado */
+  cursor: not-allowed; /* Cursor no permitido cuando está desactivado */
+}
+.button-cell {
+  /* Ajusta el espaciado y el alineamiento del contenido */
+  padding: 5px 10px;
+  text-align: center;
+}
+
+.button-cell a {
+  /* Ajusta el aspecto del enlace para que se parezca a un botón */
+  display: inline-block;
+  background-color: #C0C0C0; /* Color de fondo del botón */
+  color: black; /* Color del texto del botón */
+  padding: 8px 16px; /* Espaciado interno del botón */
+  border-radius: 4px; /* Bordes redondeados */
+  text-decoration: none; /* Quita el subrayado del enlace */
+  transition: background-color 0.3s ease; /* Efecto de transición al pasar el ratón */
+}
+
+.button-cell a:hover {
+  background-color: #666666; /* Cambia el color de fondo al pasar el ratón */
+  color:white;
+}
 </style>

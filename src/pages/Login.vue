@@ -16,6 +16,9 @@
               <span class="button__text">Ingresa ahora</span>
               <i class="button__icon fas fa-chevron-right"></i>
             </button>
+            <router-link to="/registro" class="toRegistro">
+              <button class="button login__submit">Regístrate aquí</button>
+            </router-link>
           </form>
         </div>
         <div class="screen__background">
@@ -253,7 +256,7 @@ body {
 }
 
 .screen {
-  background: linear-gradient(90deg, #5D54A4, #7C78B8);
+  background: #7E7BB9;
   position: relative;
   height: 600px;
   width: 360px;
@@ -295,7 +298,7 @@ body {
 .screen__background__shape2 {
   height: 220px;
   width: 220px;
-  background: #6C63AC;
+  background: #7E7BB9;
   top: -172px;
   right: 0;
   border-radius: 32px;
@@ -304,7 +307,7 @@ body {
 .screen__background__shape3 {
   height: 540px;
   width: 190px;
-  background: linear-gradient(270deg, #5D54A4, #6A679E);
+  background: #7E7BB9;
   top: -24px;
   right: 0;
   border-radius: 32px;
@@ -372,8 +375,12 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Efecto de sombra */
   cursor: pointer;
   transition: .2s;
+  justify-content: center;
 }
 
+.button__text {
+  margin-left: auto;
+}
 
 .login__input:active,
 .login__input:focus,
@@ -439,8 +446,12 @@ body {
   margin-bottom: 30px;
 }
 .footer-image {
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 3));
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 5));
 }
 
+.toRegistro {
+  text-decoration: none;
+  display: block;
+}
 </style>
 

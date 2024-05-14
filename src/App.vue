@@ -6,11 +6,7 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
 
 <template>
   
-  <nav>
-    <span v-if="loginAux">
-      <RouterLink to="/login" @click="ocultarVentana()">Login</RouterLink> |
-      <RouterLink to="/Registro"@click="ocultarVentana()">Registro</RouterLink> |
-    </span>
+  <nav v-if="acercaDe">
     <span v-if="loginNopropuesta">
       <RouterLink to="/Editar">Editar perfil</RouterLink> |
       <RouterLink to="/Alumno">Alumno</RouterLink>
@@ -34,7 +30,7 @@ const props = defineProps(['loginEstudiante', 'loginProfesor', 'loginFederacion'
       <RouterLink to="/Aprobar">Evaluar Propuestas</RouterLink>
       <div><button @click="logout">Log Out</button></div>
     </span>
-    <div class="dropdown">
+    <div class="dropdown" v-if="acercaDe">
       <button class="acercaDe">Acerca de</button>
       <div class="dropdown-content">
         <a @click="abrirLineamientos()">Lineamientos</a>
@@ -114,6 +110,7 @@ const loginProfesor = ref(false);
 const loginFederacion = ref(false);
 const loginAux = ref(true);
 const loginNopropuesta = ref(false);
+const acercaDe = ref(false);
 // Función para actualizar el estado de loggedIn
 function updateLoginState(valueEstudiante,valueProfesor, valueFederacion, valueBaneadoNoPropuesta) {
     loginEstudiante.value = valueEstudiante;
@@ -121,8 +118,10 @@ function updateLoginState(valueEstudiante,valueProfesor, valueFederacion, valueB
     loginFederacion.value = valueFederacion;
     loginNopropuesta.value = valueBaneadoNoPropuesta;
     if(loginAux.value){
+      acercaDe.value=true;
       loginAux.value=false;
     }else{
+      acercaDe.value=false;
       loginAux.value=true;
     }
     console.log(loginAux.value);
@@ -321,7 +320,7 @@ nav button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 75vh;
+  height: 100vh;
   text-align: center;
   background: 
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
