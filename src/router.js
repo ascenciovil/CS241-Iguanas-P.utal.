@@ -10,6 +10,8 @@ import aprobar from './pages/Aprobar.vue'
 import admin from './pages/Admin.vue'
 import evento from './pages/Evento.vue'
 import app from './App.vue'
+import comentarios from './pages/Comentarios.vue'
+import ComentariosEvento from './pages/ComentariosEvento.vue'
 
 const routes = [
   { path: '/login', component: login },
@@ -22,6 +24,8 @@ const routes = [
   { path: '/Admin', component: admin },
   { path: '/Evento', component: evento },
   { path: '/Aprobar', component: aprobar },
+  { path: '/Comentarios/:id',name: 'Comentarios', component:comentarios,props: true},
+  { path: '/ComentariosEvento/:id',name: 'ComentariosEvento', component:ComentariosEvento,props: true},
 ]
 const router = createRouter({
   history: createMemoryHistory(),
