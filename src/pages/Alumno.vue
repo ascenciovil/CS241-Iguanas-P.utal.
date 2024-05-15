@@ -1,7 +1,15 @@
 <template>
-  <body>
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
+
+    <div class="campus-dropdown-container">
+      <div class="campus-dropdown">
+        <select v-model="campus" name="campus" class="login__input" required>
+          <option disabled value="">Selecciona tu campus</option>
+          <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+        </select>
+      </div>
+    </div>
 
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
@@ -20,7 +28,7 @@
             <th class="border-0">Descripción</th>
             <th class="border-0">Expiración</th>
             <th class="border-0">Aprobación</th>
-            <th class="border-0" colspan="2">Acciones</th>
+            <th class="border-0" colspan="2" v-if="campus === campusUsuarioLogeado">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -30,14 +38,19 @@
             <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
             <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
             <td>{{ propuesta.aprobacion }}%</td>
-            <td><button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">{{propuesta.up}} 👍</button></td>
-            <td><button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">{{propuesta.down}} 👎</button></td>
+            <td v-if="campus === campusUsuarioLogeado">
+            <button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">{{propuesta.up}} 👍</button>
+            </td>
+            <td v-if="campus === campusUsuarioLogeado">
+            <button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">{{propuesta.down}} 👎</button>
+            </td>
             <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
           </tr>
         </tbody>
       </table>
       <table class="table v-middle text-nowrap bg-transparent" v-if="showEventos">
         <thead class="bg-light">
+
             <tr>
               <th class="border-0">Título</th>
               <th class="border-0">Autor</th>
@@ -57,13 +70,10 @@
       </table>
     </div>
   </div>
-  </body>
 </template>
 
-
 <script setup>
-
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { supabase } from "../clients/supabase";
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -72,7 +82,9 @@ const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 const showPropuestas = ref(true);
 const eventos = ref([]);
 const showEventos = ref(false);
-const buttonClicked = ref([true, false]); 
+const buttonClicked = ref([true, false]);
+const campus = ref(campusUsuarioLogeado);
+const opcionesCampus = ref(["Curico", "Talca", "Santiago", "Linares", "Colchagua"]); 
 
 async function togglePropuestasYEventos(buttonIndex) {
   if (buttonIndex === 0) {
@@ -88,14 +100,13 @@ async function togglePropuestasYEventos(buttonIndex) {
   }
 }
 
-
-async function loadPropuestas() {
+async function loadPropuestas(campus) {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
     .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up, down')  // Incluye 'up' y 'down'
     .eq('Aprobado', true)
-    .eq('campusAutor', campusUsuarioLogeado);
+    .eq('campusAutor', campus);
 
   if (propuestasError) {
     console.error('Error cargando las propuestas:', propuestasError.message);
@@ -264,12 +275,12 @@ async function votarNegativo(propuestaId) {
   await loadPropuestas();
 }
 
-async function loadEventos() {
+async function loadEventos(campus) {
   const currentDate = new Date();
   const { data: eventosData, error: eventosError } = await supabase
     .from('eventos')
     .select('id, usuario_id, titulo, evento, Fecha_expiracion')
-    .eq('campusAutor',campusUsuarioLogeado);
+    .eq('campusAutor', campus);
   
   if (eventosError) {
     console.error('Error cargando los eventos:', eventosError.message);
@@ -302,26 +313,47 @@ function calculateApprovalPercentage(propuesta) {
     return (propuesta.votosPositivos / totalVotes) * 100;
   }
 
+
   function calculateRejectionPercentage(propuesta) {
     const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
     if (totalVotes === 0) return 0;
     return (propuesta.votosNegativos / totalVotes) * 100;
   }
+
 onMounted(async () => {
-  await loadPropuestas();
+  await loadPropuestas(campusUsuarioLogeado);
+  await loadEventos(campusUsuarioLogeado);
 });
 
-onMounted(() => {
-  loadPropuestas();
+watch(campus, async (newCampus) => {
+  if (newCampus) {
+    await loadPropuestas(newCampus);
+    await loadEventos(newCampus);
+  }
 });
 
-onMounted(() => {
-  loadEventos();
-});
 </script>
 
 
 <style scoped>
+
+.campus-dropdown-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+}
+
+.campus-dropdown {
+  width: 200px;
+  text-align: right;
+}
+
+.campus-dropdown select {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: white;
+}
 
 .centered-title {
   text-align: center;
