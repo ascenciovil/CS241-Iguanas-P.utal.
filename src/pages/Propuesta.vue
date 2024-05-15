@@ -14,6 +14,7 @@
       <div class="message-container">
         <div v-if="successMessage" class="message success">{{ successMessage }}</div>
         <div v-if="errorMessage" class="message error">{{ errorMessage }}</div>
+        <div v-if="invalidDateMessage" class="message error">{{ invalidDateMessage }}</div>
       </div>
     </div>
     <footer class="footer">
@@ -27,6 +28,7 @@
 import { supabase } from "../clients/supabase.js";
 const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 console.log(campusUsuarioLogeado);
+
 export default {
   data() {
     return {
@@ -38,16 +40,27 @@ export default {
       Aprobado: false,
       successMessage: '',
       errorMessage: '',
+      invalidDateMessage: '',
       campusAutor: '',
     }
   },
   computed: {
     submitButtonDisabled() {
-      return !(this.titulo.trim() && this.propuesta.trim() && this.birthday);
+      return !(this.titulo.trim() && this.propuesta.trim() && this.birthday && this.isFechaValida);
+    },
+    isFechaValida() {
+      if (!this.birthday) return false;
+      const today = new Date();
+      const selectedDate = new Date(this.birthday);
+      return selectedDate >= today;
     }
   },
   methods: {
     async enviarTituloYPropuesta() {
+      if (!this.isFechaValida) {
+        this.displayInvalidDateMessage('¡La fecha no puede ser pasada!');
+        return;
+      }
       try {
         const { data, error } = await supabase
           .from('propuestas')
@@ -68,6 +81,7 @@ export default {
           this.titulo = '';
           this.propuesta = '';
           this.fecha = '';
+          this.birthday = '';
           this.visibleParaProfesores = false;
         }
       } catch (error) {
@@ -84,6 +98,12 @@ export default {
       this.errorMessage = message;
       setTimeout(() => {
         this.errorMessage = '';
+      }, 5000);
+    },
+    displayInvalidDateMessage(message) {
+      this.invalidDateMessage = message;
+      setTimeout(() => {
+        this.invalidDateMessage = '';
       }, 5000);
     }
   }
