@@ -30,6 +30,7 @@
               <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
               <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
               <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
+              <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
       </table>
@@ -48,6 +49,7 @@
               <td class="evento-autor">{{ evento.autor }}</td>
               <td class="evento-descripcion">{{ evento.evento }}</td>
               <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
+              <td class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
       </table>
@@ -61,7 +63,8 @@
 
 import { ref, onMounted } from 'vue';
 import { supabase } from "../clients/supabase";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const propuestas = ref([]);
 const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 const showPropuestas = ref(true);
@@ -125,6 +128,13 @@ async function loadPropuestas() {
 onMounted(async () => {
   await loadPropuestas();
 });
+
+async function verComentarios(propuestaId) {
+  await router.push({ path: `/comentarios/${propuestaId}` });
+}
+async function verComentariosEvento(eventoId) {
+  await router.push({ path: `/comentariosEvento/${eventoId}` });
+}
 
 async function votar(propuesta, voto) {
   // Verificar si el usuario ya ha votado en esta propuesta
@@ -357,5 +367,26 @@ h1 {
   background-color: #cccccc; /* Color de fondo cuando está desactivado */
   color: #666666; /* Color del texto cuando está desactivado */
   cursor: not-allowed; /* Cursor no permitido cuando está desactivado */
+}
+.button-cell {
+  /* Ajusta el espaciado y el alineamiento del contenido */
+  padding: 5px 10px;
+  text-align: center;
+}
+
+.button-cell a {
+  /* Ajusta el aspecto del enlace para que se parezca a un botón */
+  display: inline-block;
+  background-color: #C0C0C0; /* Color de fondo del botón */
+  color: black; /* Color del texto del botón */
+  padding: 8px 16px; /* Espaciado interno del botón */
+  border-radius: 4px; /* Bordes redondeados */
+  text-decoration: none; /* Quita el subrayado del enlace */
+  transition: background-color 0.3s ease; /* Efecto de transición al pasar el ratón */
+}
+
+.button-cell a:hover {
+  background-color: #666666; /* Cambia el color de fondo al pasar el ratón */
+  color:white;
 }
 </style>
