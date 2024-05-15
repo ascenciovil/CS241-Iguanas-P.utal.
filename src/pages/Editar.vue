@@ -194,7 +194,7 @@ body {
   border: none;
   border-bottom: 2px solid #D1D1D4;
   background: none;
-  font-weight: 700;
+  font-size: 20px;
   transition: border-color 0.3s ease;
 }
 
@@ -206,6 +206,7 @@ body {
 .login__submit-container {
   text-align: center;
   margin-top: 20px;
+  padding-left: 30px;
 }
 
 .login__submit {
@@ -219,6 +220,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  justify-content: center;
 }
 
 .login__submit:hover {
@@ -228,22 +230,22 @@ body {
 /* Estilos para las imágenes */
 .left-image,
 .right-image {
-  position: fixed;
+  position: fixed; /* Fijar la imagen en la ventana gráfica */
   top: 25vh; /* Centrado verticalmente a media altura */
   height: 50vh; /* La mitad de la altura del viewport */
   width: auto;
 }
 
 .left-image {
-  left: 0; /* Alineado a la izquierda */
+  left: 20px; /* Alineado a la izquierda */
 }
 
 .right-image {
-  right: 0; /* Alineado a la derecha */
+  right: 20px; /* Alineado a la derecha */
 }
 
-/* Estilo adicional */
-.container {
-  position: relative; /* Asegura que las imágenes fijas estén dentro del contenedor */
+.login {
+  padding-top: 50px;
 }
+
 </style>

@@ -4,7 +4,6 @@
   <html lang="en" dir="ltr">
     <head>
       <meta charset="UTF-8">
-      <title> Responsive Registration Form | CodingLab </title>
       <link rel="stylesheet" href="style.css">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -64,9 +63,14 @@
               </div>
             </div>
             <div class="button">
+
               <input type="submit" value="Registrarme">
               <p>¿Ya tienes una cuenta? <a href="../pages/Login.vue">Iniciar sesión</a></p>
+
             </div>
+            <router-link to="/login" class="button">
+              <button class="custom-button">Inicia sesión aquí</button>
+            </router-link>
           </form>
         </div>
         <!-- Footer con imagen de banner -->
@@ -178,6 +182,10 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   console.log(message); 
 }
 
+
+import { RouterLink } from "vue-router";
+
+
 onMounted(() => {
   const form = document.querySelector('form');
   form.addEventListener('submit', async (event) => {
@@ -200,6 +208,7 @@ onMounted(() => {
 /* Estilos para el cuerpo de la página */
 
 body {
+
   width: 100%;
   height: 100%; /* Establece la altura del cuerpo al 100% del viewport */
   display: flex; /* Utiliza un modelo de caja flexible */
@@ -210,6 +219,7 @@ body {
   font-family: 'Poppins', sans-serif; /* Establece la fuente de texto */
   padding-bottom: 12vh;
   padding-top: 10vh;
+
 }
 
 /* Estilos para el contenedor principal */
@@ -230,6 +240,7 @@ body {
 /* Estilos para el título */
 
 .container .title {
+
   font-size: 30px; /* Establece el tamaño del texto */
   font-weight: 750; /* Establece el grosor del texto */
   text-align: left; /* Alinea el texto al centro */
@@ -238,6 +249,7 @@ body {
   left: 18%;
   color: black; /* Establece el color del texto */
   padding: 1px; /* Añade relleno alrededor del texto */
+
 }
 
 
@@ -462,4 +474,47 @@ form .button input:hover {
 .button a {
   color: #5237ac;
 }
+
+.custom-button {
+  height: 45px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  text-decoration: none; /* Quita el subrayado */
+  display: block;
+  margin: 20px auto 0; /* Centro horizontalmente */
+}
+
+.custom-button:hover {
+  background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+
+.button {
+  text-decoration: none;
+}
+
+.user-details .input-box select {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.user-details .input-box select:focus,
+.user-details .input-box select:valid {
+  border-color: #9b59b6;
+}
+
 </style>

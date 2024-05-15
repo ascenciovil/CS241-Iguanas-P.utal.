@@ -50,6 +50,7 @@ export default {
           .from('eventos')
           .insert([{ 
             usuario_id: (await supabase.auth.getUser()).data.user.id, 
+            campusAutor: localStorage.getItem('campusUsuarioLogeado'),
             titulo: this.titulo, 
             evento: this.evento, 
             Fecha_expiracion: this.birthday, 
