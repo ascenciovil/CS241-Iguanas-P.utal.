@@ -29,10 +29,10 @@
               </div>
               <div class="input-box">
               
-                <select id="campus" v-model="campus" required>
-                  <option disabled value="">Selecciona tu campus</option>
-                  <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
-                </select>
+                <select id="campus" v-model="campus" required class="input-box">
+  <option disabled value="">Selecciona tu campus</option>
+  <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+</select>
               </div>
               <div class="input-box">
               
@@ -40,7 +40,7 @@
               </div>
               <div class="input-box">
          
-                <input type="password" id="conpassword" v-model="conpassword" placeholder="Contraseña" required>
+                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirmar contraseña" required>
               </div>
             </div>
             <div class="gender-details">
@@ -65,6 +65,7 @@
             </div>
             <div class="button">
               <input type="submit" value="Registrarme">
+              <p>¿Ya tienes una cuenta? <a href="../pages/Login.vue">Iniciar sesión</a></p>
             </div>
           </form>
         </div>
@@ -216,12 +217,13 @@ body {
 .container {
   display: relative; /* Utiliza un modelo de caja flexible */
   align-items: center; /* Centra el contenido verticalmente */
-  width: 60%;
-  height: 10%;
+  width: 920px;
+  height: 487px;
   justify-content: center; /* Centra el contenido horizontalmente */
   min-height: 100%; /* Establece la altura mínima del contenedor al 100% del viewport */
   background: linear-gradient(135deg, #fefffe, #fefffe); /* Establece un fondo de gradiente lineal */
   border-radius: 40px; /* Agrega bordes redondeados */
+  /*border: 2px solid #512ca6;  Agrega un borde sólido */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Agrega una sombra al borde */
 }
 
@@ -233,7 +235,7 @@ body {
   text-align: left; /* Alinea el texto al centro */
   position: relative; /* Establece una posición absoluta */
   top: -190px; /* Mueve el título hacia arriba */
-  left: -7%;
+  left: 18%;
   color: black; /* Establece el color del texto */
   padding: 1px; /* Añade relleno alrededor del texto */
 }
@@ -247,7 +249,7 @@ body {
   width: 250%; /* Ancho del contenedor */
   flex-direction: column; /* Coloca los elementos en una columna */
   margin-bottom: 10%; /* Añade un margen inferior */
-  margin-left: -90%; /* Traslada el contenedor a la izquierda */
+  margin-left: -25%; /* Traslada el contenedor a la izquierda */
   gap: 10px; /* Agrega espacio entre cada columna */
 }
 
@@ -293,7 +295,7 @@ form .input-box span.details {
   font-size: 13px; /* Establece el tamaño del texto */
   position: relative; /* Establece una posición absoluta */ 
   top: -20px; /* Ajusta la posición verticalmente */
-  left: -42%;
+  left: 24%;
   color: black; /* Establece el color del texto */
 }
 
@@ -304,7 +306,7 @@ form .category {
   margin-top: -10px; /* Añade un margen superior */
   margin-bottom: 10px; /* Añade un margen inferior */
   font-family: 'Montserrat', sans-serif;
-  margin-left: -83%;
+  margin-left: -18%;
   font-size: 12px;
 }
 
@@ -362,7 +364,7 @@ form .button input {
   background: linear-gradient(135deg, #512ca6, #512ca6); /* Establece un fondo de gradiente lineal */
   margin-top: 10px; /* Ajusta la distancia hacia arriba */
   margin-bottom: 20px;
-  margin-left: -62%; /* Ajusta la distancia hacia la izquierda */
+  margin-left: 1%; /* Ajusta la distancia hacia la izquierda */
 }
 
 
@@ -409,24 +411,55 @@ form .button input:hover {
 
 .toggle{
     height: 100%;
-    background: linear-gradient(to right, #5c6bc0, #512da8);
+    /*background: linear-gradient(to right, #502fa9, #502fa9);*/
     color: #fff;
     position: relative;
     width: 100%;
     transform: translateX(0);
     transition: all 0.6s ease-in-out;
-    border-radius: 15px; /* Agrega bordes redondeados */
+    border-radius: 20px; /* Agrega bordes redondeados */
     padding-left: 1%;
-    padding-top: 1%;
-    padding-bottom: 1%;
 }
 
 .toggle-panel img {
-  width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
-  height: 100%; /* Ajusta la altura automáticamente para mantener la proporción */
+  width: 450px; /* Ajusta el ancho de la imagen al 100% del contenedor */
+  height: 485px; /* Ajusta la altura automáticamente para mantener la proporción */
   border-radius: 30px; /* Agrega bordes redondeados */
   object-fit: cover; /* Ajusta el tamaño y recorta la imagen para que llene el contenedor */
+  margin-bottom: -7px;
+  margin-top: -2px;
 }
 
+.input-box select {
+  height: 35px; /* Establece la altura del campo de selección */
+  outline: none; /* Elimina el contorno del campo de selección al hacer clic */
+  font-size: 13px; /* Establece el tamaño del texto */
+  border-radius: 10px; /* Agrega bordes redondeados */
+  padding-left: 15px; /* Añade relleno a la izquierda */
+  border: 1px solid #ccc; /* Establece el borde del campo de selección */
+  border-bottom-width: 2px; /* Establece el ancho del borde inferior */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+  background-color: #efeeef;
+  color: #939090;
+  font-family: 'Montserrat', sans-serif;
+}
 
+.input-box select:focus {
+  border-color: #5237ac; /* Cambia el color del borde cuando el campo está enfocado */
+  color: black;
+  width: 90%;
+}
+
+.button p {
+  font-size: 11px;
+  color: #6e6e6e;
+  margin-top: -18px; 
+  padding-top: 5px;
+  padding-bottom: 15px;
+  margin-left: 12px;
+}
+
+.button a {
+  color: #5237ac;
+}
 </style>
