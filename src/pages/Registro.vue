@@ -29,7 +29,7 @@
               <div class="input-box">
               
                 <select id="campus" v-model="campus" required class="input-box">
-  <option disabled value="">Selecciona tu campus</option>
+  <option disabled value="">Campus</option>
   <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
 </select>
               </div>
@@ -68,9 +68,6 @@
               <p>¿Ya tienes una cuenta? <a href="../pages/Login.vue">Iniciar sesión</a></p>
 
             </div>
-            <router-link to="/login" class="button">
-              <button class="custom-button">Inicia sesión aquí</button>
-            </router-link>
           </form>
         </div>
         <!-- Footer con imagen de banner -->
@@ -210,7 +207,7 @@ onMounted(() => {
 body {
 
   width: 100%;
-  height: 100%; /* Establece la altura del cuerpo al 100% del viewport */
+  height: 732px; /* Establece la altura del cuerpo al 100% del viewport */
   display: flex; /* Utiliza un modelo de caja flexible */
   justify-content: center; /* Centra el contenido horizontalmente */
   align-items: center; /* Centra el contenido verticalmente */
@@ -245,7 +242,7 @@ body {
   font-weight: 750; /* Establece el grosor del texto */
   text-align: left; /* Alinea el texto al centro */
   position: relative; /* Establece una posición absoluta */
-  top: -190px; /* Mueve el título hacia arriba */
+  top: -40%; /* Mueve el título hacia arriba */
   left: 18%;
   color: black; /* Establece el color del texto */
   padding: 1px; /* Añade relleno alrededor del texto */
@@ -435,7 +432,7 @@ form .button input:hover {
 
 .toggle-panel img {
   width: 450px; /* Ajusta el ancho de la imagen al 100% del contenedor */
-  height: 485px; /* Ajusta la altura automáticamente para mantener la proporción */
+  height: 570px; /* Ajusta la altura automáticamente para mantener la proporción */
   border-radius: 30px; /* Agrega bordes redondeados */
   object-fit: cover; /* Ajusta el tamaño y recorta la imagen para que llene el contenedor */
   margin-bottom: -7px;
@@ -465,7 +462,7 @@ form .button input:hover {
 .button p {
   font-size: 11px;
   color: #6e6e6e;
-  margin-top: -18px; 
+  margin-top: -10px; 
   padding-top: 5px;
   padding-bottom: 15px;
   margin-left: 12px;
@@ -501,20 +498,26 @@ form .button input:hover {
 }
 
 .user-details .input-box select {
-  height: 45px;
-  width: 100%;
+  height: 36px;
+  width: 30%;
   outline: none;
-  font-size: 16px;
-  border-radius: 5px;
+  font-size: 13px;
+  border-radius: 10px;
   padding-left: 15px;
   border: 1px solid #ccc;
   border-bottom-width: 2px;
   transition: all 0.3s ease;
 }
 
-.user-details .input-box select:focus,
+.user-details .input-box select:focus {
+  border-color: #9b59b6;
+  width: 90%;
+}
+
 .user-details .input-box select:valid {
   border-color: #9b59b6;
+  width: 90%;
+  color: black;
 }
 
 </style>
