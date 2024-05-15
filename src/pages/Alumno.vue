@@ -2,7 +2,6 @@
   <body>
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
-    <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -14,25 +13,27 @@
     <div class="table-responsive">
       <table class="table v-middle text-nowrap bg-transparent" v-if="showPropuestas">
         <thead class="bg-light">
-            <tr>
-              <th class="border-0">Título</th>
-              <th class="border-0">Autor</th>
-              <th class="border-0">Descripción</th>
-              <th class="border-0">Expiración</th>
-              <th class="border-0" colspan="2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
-              <td class="propuesta-titulo">{{ propuesta.titulo }}</td>
-              <td class="propuesta-autor">{{ propuesta.autor }}</td>
-              <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
-              <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
-              <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
-              <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
-              <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
-            </tr>
-          </tbody>
+          <tr>
+            <th class="border-0">Título</th>
+            <th class="border-0">Autor</th>
+            <th class="border-0">Descripción</th>
+            <th class="border-0">Expiración</th>
+            <th class="border-0">Aprobación</th>
+            <th class="border-0" colspan="2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
+            <td class="propuesta-titulo">{{ propuesta.titulo }}</td>
+            <td class="propuesta-autor">{{ propuesta.autor }}</td>
+            <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
+            <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
+            <td>{{ propuesta.aprobacion }}%</td>
+            <td><button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">{{propuesta.up}} 👍</button></td>
+            <td><button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">{{propuesta.down}} 👎</button></td>
+            <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
+          </tr>
+        </tbody>
       </table>
       <table class="table v-middle text-nowrap bg-transparent" v-if="showEventos">
         <thead class="bg-light">
@@ -91,7 +92,7 @@ async function loadPropuestas() {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
     .from('propuestas')
-    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up') 
+    .select('id, usuario_id, titulo, propuesta, Fecha_expiracion, up, down')  // Incluye 'up' y 'down'
     .eq('Aprobado', true)
     .eq('campusAutor', campusUsuarioLogeado);
 
@@ -112,17 +113,24 @@ async function loadPropuestas() {
       return { ...propuesta, autor: 'Desconocido' };
     }
 
-    return { ...propuesta, autor: autorData.nombre, votosPositivos: 0, votosNegativos: 0 };
+    // Calcular los porcentajes de aprobación y rechazo
+    const totalVotos = propuesta.up + propuesta.down;
+    const aprobacion = totalVotos > 0 ? Math.round((propuesta.up / totalVotos) * 100) : 0;
+    const rechazo = totalVotos > 0 ? Math.round((propuesta.down / totalVotos) * 100) : 0;
+
+    return { 
+      ...propuesta, 
+      autor: autorData.nombre, 
+      votosPositivos: propuesta.up, 
+      votosNegativos: propuesta.down,
+      aprobacion,  // Porcentaje de aprobación
+      rechazo  // Porcentaje de rechazo
+    };
   }));
 
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
 
-
-  propuestas.value = propuestasConAutor;
-  const propuestasFiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
-
-  propuestasFiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-  propuestas.value = propuestasFiltradas;
+  propuestas.value = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
 }
 
 onMounted(async () => {
@@ -136,57 +144,124 @@ async function verComentariosEvento(eventoId) {
   await router.push({ path: `/comentariosEvento/${eventoId}` });
 }
 
-async function votar(propuesta, voto) {
-  // Verificar si el usuario ya ha votado en esta propuesta
-  const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
+async function votarPositivo(propuestaId) {
+  const localUser = await supabase.auth.getSession();
+  const userUID = localUser.data.session.user.id;
 
-  // Si el usuario ya ha votado en esta propuesta, no hacer nada
-  if (usuarioYaVoto) {
+  const { data: existingVote, error: voteError } = await supabase
+    .from('votos')
+    .select()
+    .eq('uid_user', userUID)
+    .eq('id_propuesta', propuestaId);
+
+  if (voteError) {
+    console.error('Error verificando el voto:', voteError.message);
+    return;
+  }
+
+  if (existingVote.length > 0) {
     alert('Ya has votado en esta propuesta.');
     return;
   }
 
-  // Incrementar o decrementar el valor de 'Me_gusta' según el voto
-  const nuevaCantidad = propuesta.Me_gusta + (voto === 'up' ? 1 : -1);
+  const { error: insertError } = await supabase
+    .from('votos')
+    .insert([{ uid_user: userUID, id_propuesta: propuestaId, voto: true }]);
 
-  // Actualizar la columna 'Me_gusta' en la base de datos con el nuevo valor
-  await supabase
-    .from('propuestas')
-    .update({
-      Me_gusta: nuevaCantidad
-    })
-    .eq('id', propuesta.id);
-
-  // Guardar el nuevo voto del usuario en el localStorage
-  localStorage.setItem(`voto_${propuesta.id}`, true);
-
-  // Marcar que el usuario ya ha votado en esta propuesta
-  localStorage.setItem(`voto_tipo_${propuesta.id}`, voto);
-
-  // Mostrar un mensaje de confirmación
-  alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
-}
-
-async function reiniciarPropuestas() {
-  // Reiniciar todas las propuestas a cero en la base de datos
-  await supabase
-    .from('propuestas')
-    .update({ Me_gusta: 0 })
-    .eq('Aprobado', true)
-    .eq('campusAutor', campusUsuarioLogeado);
-
-  // Eliminar los votos de los usuarios en todas las propuestas
-  for (const propuesta of propuestas.value) {
-    localStorage.removeItem(`voto_${propuesta.id}`);
+  if (insertError) {
+    console.error('Error registrando el voto:', insertError.message);
+    return;
   }
 
-  // Actualizar el estado local para mostrar los cambios
-  propuestas.value.forEach(propuesta => {
-    propuesta.Me_gusta = 0;
-  });
+  const { data: propuestaData, error: propuestaError } = await supabase
+    .from('propuestas')
+    .select('up, down')
+    .eq('id', propuestaId)
+    .single();
 
-  alert('Todas las propuestas han sido reiniciadas.');
- }
+  if (propuestaError) {
+    console.error('Error obteniendo la propuesta:', propuestaError.message);
+    return;
+  }
+
+  const {up} = propuestaData;
+
+  const { error: updateError } = await supabase
+    .from('propuestas')
+    .update({ up: up + 1 })
+    .eq('id', propuestaId);
+
+  if (updateError) {
+    console.error('Error actualizando la propuesta:', updateError.message);
+    return;
+  }
+
+  alert(`Votaste 👍 por la propuesta con ID ${propuestaId}`);
+
+  // Actualizar los datos de las propuestas en la interfaz
+  await loadPropuestas();
+}
+
+async function votarNegativo(propuestaId) {
+  const localUser = await supabase.auth.getSession();
+  const userUID = localUser.data.session.user.id;
+
+  // Verificar si el usuario ya ha votado en esta propuesta
+  const { data: existingVote, error: voteError } = await supabase
+    .from('votos')
+    .select()
+    .eq('uid_user', userUID)
+    .eq('id_propuesta', propuestaId);
+
+  if (voteError) {
+    console.error('Error verificando el voto:', voteError.message);
+    return;
+  }
+
+  if (existingVote.length > 0) {
+    alert('Ya has votado en esta propuesta.');
+    return;
+  }
+
+  // Registrar el voto del usuario en la base de datos
+  const { error: insertError } = await supabase
+    .from('votos')
+    .insert([{ uid_user: userUID, id_propuesta: propuestaId, voto: false }]);
+
+  if (insertError) {
+    console.error('Error registrando el voto:', insertError.message);
+    return;
+  }
+
+  // Obtener el valor actual de 'down'
+  const { data: propuestaData, error: propuestaError } = await supabase
+    .from('propuestas')
+    .select('down')
+    .eq('id', propuestaId)
+    .single();
+
+  if (propuestaError) {
+    console.error('Error obteniendo la propuesta:', propuestaError.message);
+    return;
+  }
+
+  const { down } = propuestaData;
+
+  // Actualizar el valor de 'down' en la base de datos
+  const { error: updateError } = await supabase
+    .from('propuestas')
+    .update({ down: down + 1 })
+    .eq('id', propuestaId);
+
+  if (updateError) {
+    console.error('Error actualizando la propuesta:', updateError.message);
+    return;
+  }
+
+  alert(`Votaste 👎 por la propuesta con ID ${propuestaId}`);
+
+  await loadPropuestas();
+}
 
 async function loadEventos() {
   const currentDate = new Date();
@@ -220,10 +295,17 @@ async function loadEventos() {
   eventosFiltrados.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
   eventos.value = eventosFiltrados;
 }
+function calculateApprovalPercentage(propuesta) {
+    const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
+    if (totalVotes === 0) return 0;
+    return (propuesta.votosPositivos / totalVotes) * 100;
+  }
 
-
-
-
+  function calculateRejectionPercentage(propuesta) {
+    const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
+    if (totalVotes === 0) return 0;
+    return (propuesta.votosNegativos / totalVotes) * 100;
+  }
 onMounted(async () => {
   await loadPropuestas();
 });
