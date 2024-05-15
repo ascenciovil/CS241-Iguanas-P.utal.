@@ -136,35 +136,62 @@ async function verComentariosEvento(eventoId) {
   await router.push({ path: `/comentariosEvento/${eventoId}` });
 }
 
-async function votar(propuesta, voto) {
+async function votar(propuestaId, voto) {
+  const localUser = await supabase.auth.getSession();
+  const userUID = localUser.data.session.user.id;
   // Verificar si el usuario ya ha votado en esta propuesta
-  const usuarioYaVoto = localStorage.getItem(`voto_${propuesta.id}`);
-
-  // Si el usuario ya ha votado en esta propuesta, no hacer nada
-  if (usuarioYaVoto) {
+  const { data: existingVote, error: voteError } = await supabase
+    .from('votos')
+    .select()
+    .eq('uid_user', userUID)
+    .eq('id_propuesta', propuestaId);
+  if (voteError) {
+    console.error('Error verificando el voto:', voteError.message);
+    return;
+  }
+  if (existingVote.length > 0) {
     alert('Ya has votado en esta propuesta.');
     return;
   }
+  // Registrar el voto del usuario en la base de datos
+  const { error: insertError } = await supabase
+    .from('votos')
+    .insert([{ uid_user: userUID, id_propuesta: propuestaId, voto: true }]);
 
-  // Incrementar o decrementar el valor de 'Me_gusta' según el voto
-  const nuevaCantidad = propuesta.Me_gusta + (voto === 'up' ? 1 : -1);
-
-  // Actualizar la columna 'Me_gusta' en la base de datos con el nuevo valor
-  await supabase
+  if (insertError) {
+    console.error('Error registrando el voto:', insertError.message);
+    return;
+  }
+  console.log(propuestaId);
+  // Incrementar o decrementar el valor de 'up' o 'down' según el voto
+  const { data: propuestaData, error: propuestaError } = await supabase
     .from('propuestas')
-    .update({
-      Me_gusta: nuevaCantidad
-    })
-    .eq('id', propuesta.id);
-
-  // Guardar el nuevo voto del usuario en el localStorage
-  localStorage.setItem(`voto_${propuesta.id}`, true);
-
-  // Marcar que el usuario ya ha votado en esta propuesta
-  localStorage.setItem(`voto_tipo_${propuesta.id}`, voto);
-
-  // Mostrar un mensaje de confirmación
-  alert(`Votaste ${voto} por la propuesta con ID ${propuesta.id}`);
+    .select('up', 'down')
+    .eq('id', propuestaId)
+    .single();
+  if (propuestaError) {
+    console.error('Error obteniendo la propuesta:', propuestaError.message);
+    return;
+  }
+  if (!propuestaData) {
+    console.error('La propuesta no existe.');
+    return;
+  }
+  const { up, down } = propuestaData;
+  // Actualizar los valores de 'up' o 'down' en la base de datos
+  const updateData = {
+    up: voto ? up + 1 : up,
+    down: !voto ? down + 1 : down
+  };
+  const { error: updateError } = await supabase
+    .from('propuestas')
+    .update(updateData)
+    .eq('id', propuestaId);
+  if (updateError) {
+    console.error('Error actualizando la propuesta:', updateError.message);
+    return;
+  }
+  alert(`Votaste ${voto ? '👍' : '👎'} por la propuesta con ID ${propuestaId}`);
 }
 
 async function reiniciarPropuestas() {

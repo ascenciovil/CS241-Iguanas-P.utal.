@@ -82,8 +82,6 @@ async function createAccount() {
   if (error) {
     console.error("Error: ", error.message);
     alert('No eres un usuario, ahora sufriras las consecuencias');
-    //easter egg
-    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
   } else {
     console.log("Usuario autenticado:", data.user);
 
