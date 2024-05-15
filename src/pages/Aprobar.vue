@@ -59,6 +59,24 @@ async function confirmarBaneo(usuario_id, propuesta_id) {
     const confirmacion = window.confirm('¿Estás seguro de que quieres banear al usuario por 1 semana?');
     if (confirmacion) {
       try {
+        // Verificar si el usuario ya está baneado por la misma propuesta
+        const { data: banData, error: banError } = await supabase
+          .from('Ban')
+          .select('*')
+          .eq('uid_user', usuario_id)
+          .eq('id_propuesta', propuesta_id)
+          .single();
+
+        if (banError && banError.code !== 'PGRST116') { // Ignorar error si no encuentra registros
+          console.error('Error al verificar el baneo existente:', banError.message);
+          return;
+        }
+
+        if (banData) {
+          window.alert('El usuario ya está baneado por esta propuesta.');
+          return;
+        }
+
         // Calcular la fecha de desbaneo sumando una semana a la fecha actual
         const fechaDesban = new Date();
         fechaDesban.setDate(fechaDesban.getDate() + 7);
