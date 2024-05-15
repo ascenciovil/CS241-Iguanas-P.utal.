@@ -2,6 +2,7 @@
   <body>
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
+
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
