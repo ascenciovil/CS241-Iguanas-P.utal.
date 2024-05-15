@@ -33,6 +33,7 @@
               <td class="propuesta-autor">{{ propuesta.autor }}</td>
               <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
               <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
+              <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
       </table>
@@ -51,6 +52,7 @@
               <td class="evento-autor">{{ evento.autor }}</td>
               <td class="evento-descripcion">{{ evento.evento }}</td>
               <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
+              <td class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
       </table>
@@ -61,7 +63,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { supabase } from "../clients/supabase";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const propuestas = ref([]);
 const campusUsuarioLogeado = localStorage.getItem('campusUsuarioLogeado');
 const showPropuestas = ref(true);
@@ -84,7 +87,12 @@ async function togglePropuestasYEventos(buttonIndex) {
     showPropuestas.value = false;
   }
 }
-
+async function verComentarios(propuestaId) {
+  await router.push({ path: `/comentarios/${propuestaId}` });
+}
+async function verComentariosEvento(eventoId) {
+  await router.push({ path: `/comentariosEvento/${eventoId}` });
+}
 async function loadPropuestas(campus) {
   const currentDate = new Date();
   const { data: propuestasData, error: propuestasError } = await supabase
