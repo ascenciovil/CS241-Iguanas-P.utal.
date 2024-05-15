@@ -2,7 +2,6 @@
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
     <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
-    <ul>
     <h1 class="centered-title">Listado</h1>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
