@@ -2,7 +2,6 @@
   <body>
   <div class="propuestas">
     <h1>Listado de Propuestas</h1>
-    <button @click="reiniciarPropuestas" class="btn-reiniciar">Reiniciar todas las propuestas</button>
     <div class="button-container">
       <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
         {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
@@ -28,8 +27,8 @@
               <td class="propuesta-autor">{{ propuesta.autor }}</td>
               <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
               <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
-              <td><button @click="votar(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
-              <td><button @click="votar(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
+              <td><button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
+              <td><button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
               <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
             </tr>
           </tbody>
@@ -136,23 +135,27 @@ async function verComentariosEvento(eventoId) {
   await router.push({ path: `/comentariosEvento/${eventoId}` });
 }
 
-async function votar(propuestaId, voto) {
+async function votarPositivo(propuestaId) {
   const localUser = await supabase.auth.getSession();
   const userUID = localUser.data.session.user.id;
+
   // Verificar si el usuario ya ha votado en esta propuesta
   const { data: existingVote, error: voteError } = await supabase
     .from('votos')
     .select()
     .eq('uid_user', userUID)
     .eq('id_propuesta', propuestaId);
+
   if (voteError) {
     console.error('Error verificando el voto:', voteError.message);
     return;
   }
+
   if (existingVote.length > 0) {
     alert('Ya has votado en esta propuesta.');
     return;
   }
+
   // Registrar el voto del usuario en la base de datos
   const { error: insertError } = await supabase
     .from('votos')
@@ -162,58 +165,93 @@ async function votar(propuestaId, voto) {
     console.error('Error registrando el voto:', insertError.message);
     return;
   }
-  console.log(propuestaId);
-  // Incrementar o decrementar el valor de 'up' o 'down' según el voto
+
+  // Obtener el valor actual de 'up'
   const { data: propuestaData, error: propuestaError } = await supabase
     .from('propuestas')
-    .select('up', 'down')
+    .select('up')
     .eq('id', propuestaId)
     .single();
+
   if (propuestaError) {
     console.error('Error obteniendo la propuesta:', propuestaError.message);
     return;
   }
-  if (!propuestaData) {
-    console.error('La propuesta no existe.');
-    return;
-  }
-  const { up, down } = propuestaData;
-  // Actualizar los valores de 'up' o 'down' en la base de datos
-  const updateData = {
-    up: voto ? up + 1 : up,
-    down: !voto ? down + 1 : down
-  };
+
+  const { up } = propuestaData;
+
+  // Actualizar el valor de 'up' en la base de datos
   const { error: updateError } = await supabase
     .from('propuestas')
-    .update(updateData)
+    .update({ up: up + 1 })
     .eq('id', propuestaId);
+
   if (updateError) {
     console.error('Error actualizando la propuesta:', updateError.message);
     return;
   }
-  alert(`Votaste ${voto ? '👍' : '👎'} por la propuesta con ID ${propuestaId}`);
+
+  alert(`Votaste 👍 por la propuesta con ID ${propuestaId}`);
 }
 
-async function reiniciarPropuestas() {
-  // Reiniciar todas las propuestas a cero en la base de datos
-  await supabase
-    .from('propuestas')
-    .update({ Me_gusta: 0 })
-    .eq('Aprobado', true)
-    .eq('campusAutor', campusUsuarioLogeado);
+async function votarNegativo(propuestaId) {
+  const localUser = await supabase.auth.getSession();
+  const userUID = localUser.data.session.user.id;
 
-  // Eliminar los votos de los usuarios en todas las propuestas
-  for (const propuesta of propuestas.value) {
-    localStorage.removeItem(`voto_${propuesta.id}`);
+  // Verificar si el usuario ya ha votado en esta propuesta
+  const { data: existingVote, error: voteError } = await supabase
+    .from('votos')
+    .select()
+    .eq('uid_user', userUID)
+    .eq('id_propuesta', propuestaId);
+
+  if (voteError) {
+    console.error('Error verificando el voto:', voteError.message);
+    return;
   }
 
-  // Actualizar el estado local para mostrar los cambios
-  propuestas.value.forEach(propuesta => {
-    propuesta.Me_gusta = 0;
-  });
+  if (existingVote.length > 0) {
+    alert('Ya has votado en esta propuesta.');
+    return;
+  }
 
-  alert('Todas las propuestas han sido reiniciadas.');
- }
+  // Registrar el voto del usuario en la base de datos
+  const { error: insertError } = await supabase
+    .from('votos')
+    .insert([{ uid_user: userUID, id_propuesta: propuestaId, voto: false }]);
+
+  if (insertError) {
+    console.error('Error registrando el voto:', insertError.message);
+    return;
+  }
+
+  // Obtener el valor actual de 'down'
+  const { data: propuestaData, error: propuestaError } = await supabase
+    .from('propuestas')
+    .select('down')
+    .eq('id', propuestaId)
+    .single();
+
+  if (propuestaError) {
+    console.error('Error obteniendo la propuesta:', propuestaError.message);
+    return;
+  }
+
+  const { down } = propuestaData;
+
+  // Actualizar el valor de 'down' en la base de datos
+  const { error: updateError } = await supabase
+    .from('propuestas')
+    .update({ down: down + 1 })
+    .eq('id', propuestaId);
+
+  if (updateError) {
+    console.error('Error actualizando la propuesta:', updateError.message);
+    return;
+  }
+
+  alert(`Votaste 👎 por la propuesta con ID ${propuestaId}`);
+}
 
 async function loadEventos() {
   const currentDate = new Date();
@@ -247,10 +285,17 @@ async function loadEventos() {
   eventosFiltrados.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
   eventos.value = eventosFiltrados;
 }
+function calculateApprovalPercentage(propuesta) {
+    const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
+    if (totalVotes === 0) return 0;
+    return (propuesta.votosPositivos / totalVotes) * 100;
+  }
 
-
-
-
+  function calculateRejectionPercentage(propuesta) {
+    const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
+    if (totalVotes === 0) return 0;
+    return (propuesta.votosNegativos / totalVotes) * 100;
+  }
 onMounted(async () => {
   await loadPropuestas();
 });
