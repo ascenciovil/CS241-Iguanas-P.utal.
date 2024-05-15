@@ -139,15 +139,12 @@ async function loadPropuestas(campus) {
       rechazo  // Porcentaje de rechazo
     };
   }));
-
   propuestasConAutor.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
-
-  propuestas.value = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
+  propuestas.value = propuestasConAutor;
+  const propuestafiltradas = propuestasConAutor.filter(propuesta => new Date(propuesta.Fecha_expiracion) > currentDate);
+  propuestafiltradas.sort((a, b) => new Date(a.Fecha_expiracion) - new Date(b.Fecha_expiracion));
+  propuestas.value = propuestafiltradas;
 }
-
-onMounted(async () => {
-  await loadPropuestas();
-});
 
 async function verComentarios(propuestaId) {
   await router.push({ path: `/comentarios/${propuestaId}` });
