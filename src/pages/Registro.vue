@@ -74,7 +74,7 @@
             <div class="toggle-panel toggle-left">
               <h1>Bienvenido</h1>
               <p>Crea tu cuenta</p>
-              <img src="../assets/img/" alt="Imagen de ejemplo">
+              <img src="../assets/img/foto.jpeg" alt="Imagen de ejemplo">
             </div>
           </div>
         </div>
