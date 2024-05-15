@@ -29,7 +29,7 @@
               <div class="input-box">
               
                 <select id="campus" v-model="campus" required class="input-box">
-  <option disabled value="">Selecciona tu campus</option>
+  <option disabled value="">Campus</option>
   <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
 </select>
               </div>
