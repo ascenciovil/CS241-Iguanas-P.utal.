@@ -72,9 +72,7 @@
         <div class="toggle-container">
           <div class="toggle">
             <div class="toggle-panel toggle-left">
-              <h1>Bienvenido</h1>
-              <p>Crea tu cuenta</p>
-              <img src="../assets/img/foto.jpeg" alt="Imagen de ejemplo">
+              <img src="../assets/img/Ingenieria.jpg" alt="Imagen de ejemplo">
             </div>
           </div>
         </div>
@@ -410,21 +408,24 @@ form .button input:hover {
 
 
 .toggle{
-    background-color: #512da8;
     height: 100%;
     background: linear-gradient(to right, #5c6bc0, #512da8);
     color: #fff;
     position: relative;
-    left: -100%;
-    height: 100%;
-    width: 200%;
+    width: 100%;
     transform: translateX(0);
     transition: all 0.6s ease-in-out;
+    border-radius: 15px; /* Agrega bordes redondeados */
+    padding-left: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }
 
 .toggle-panel img {
   width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
-  height: 100px; /* Ajusta la altura automáticamente para mantener la proporción */
+  height: 100%; /* Ajusta la altura automáticamente para mantener la proporción */
+  border-radius: 30px; /* Agrega bordes redondeados */
+  object-fit: cover; /* Ajusta el tamaño y recorta la imagen para que llene el contenedor */
 }
 
 
