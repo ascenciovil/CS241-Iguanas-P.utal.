@@ -19,7 +19,6 @@
             <th class="border-0">Descripción</th>
             <th class="border-0">Expiración</th>
             <th class="border-0">Aprobación</th>
-            <th class="border-0">Rechazo</th>
             <th class="border-0" colspan="2">Acciones</th>
           </tr>
         </thead>
@@ -30,9 +29,8 @@
             <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
             <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
             <td>{{ propuesta.aprobacion }}%</td>
-            <td>{{ propuesta.rechazo }}%</td>
-            <td><button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">👍</button></td>
-            <td><button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">👎</button></td>
+            <td><button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">{{propuesta.up}} 👍</button></td>
+            <td><button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">{{propuesta.down}} 👎</button></td>
             <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
           </tr>
         </tbody>
