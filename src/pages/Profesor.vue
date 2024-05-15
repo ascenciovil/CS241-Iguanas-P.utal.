@@ -1,4 +1,5 @@
 <template>
+
   <body>
     <div class="propuestas">
       <h1 class="centered-title">Listado</h1>
@@ -16,12 +17,14 @@
             <h2 class="propuesta-titulo">{{ propuesta.titulo }}</h2>
             <div class="propuesta-info">
               <p class="propuesta-autor">Autor: <strong>{{ propuesta.autor }}</strong></p>
-              <p class="propuesta-expiracion">Fecha límite: <strong>{{ formatDate(propuesta.Fecha_expiracion) }}</strong></p>
+              <p class="propuesta-expiracion">Fecha límite: <strong>{{ formatDate(propuesta.Fecha_expiracion)
+                  }}</strong></p>
             </div>
             <p class="propuesta-descripcion">{{ propuesta.propuesta }}</p>
-
-            <p class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver
-                comentarios</button></p>
+            <div class="comentarios">
+              <p class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver
+                  comentarios</button></p>
+            </div>
           </div>
         </div>
       </div>
@@ -31,11 +34,14 @@
             <h2 class="evento-titulo">{{ evento.titulo }}</h2>
             <div class="propuesta-info">
               <p class="evento-autor">Autor: <strong>{{ evento.autor }}</strong></p>
-              <p class="propuesta-expiracion">Fecha límite: <strong>{{ formatDate(evento.Fecha_expiracion) }}</strong></p>
+              <p class="propuesta-expiracion">Fecha límite: <strong>{{ formatDate(evento.Fecha_expiracion) }}</strong>
+              </p>
             </div>
             <p class="evento-descripcion">{{ evento.evento }}</p>
-            <p class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver
-                comentarios</button></p>
+            <div class="comentarios">
+              <p class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver
+                  comentarios</button></p>
+            </div>
           </div>
         </div>
       </div>
@@ -233,13 +239,14 @@ body {
 }
 
 .post {
-  border: 1px solid black;
   margin-bottom: 20px;
   padding: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   margin-left: 100px;
   margin-right: 100px;
+  background-color: #7875B5;
+  color: white;
 }
 
 .post h2 {
@@ -275,5 +282,16 @@ body {
 h1 {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.propuesta-expiracion,
+.evento-expiracion {
+  font-style: italic;
+  color: white;
+}
+
+.comentarios {
+  display: flex;
+  justify-content: right;
 }
 </style>

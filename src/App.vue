@@ -213,7 +213,9 @@ function cerrarLogOut() {
   background-color: #333; /* Change this to the color of your navbar */
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  padding: 12px 16px;
+  padding: 0;
+  margin-top: 0;
+  top: 25px;
   z-index: 1;
 }
 
@@ -230,7 +232,7 @@ function cerrarLogOut() {
 
 .dropdown-content a:hover {
   color: #FFFFFF;
-  background-color: #00cccc;
+  background-color: #7875B5;
 }
 
 .ventana {
