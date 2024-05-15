@@ -11,6 +11,7 @@
     <body>
       <div class="container">
         <div class="title">Registro</div>
+        <div class="image"></div>
         <div class="content">
           <form action="#" @submit.prevent="handleSubmit">
             <div class="user-details">
@@ -68,8 +69,17 @@
           </form>
         </div>
         <!-- Footer con imagen de banner -->
-     
-      </div>
+        <div class="toggle-container">
+          <div class="toggle">
+            <div class="toggle-panel toggle-left">
+              <h1>Bienvenido</h1>
+              <p>Crea tu cuenta</p>
+              <img src="../assets/img/" alt="Imagen de ejemplo">
+            </div>
+          </div>
+        </div>
+      </div>  
+      
     </body>
   </html>
 </template>
@@ -191,101 +201,120 @@ onMounted(() => {
 /* Estilos para el cuerpo de la página */
 
 body {
+  width: 100%;
   height: 100%; /* Establece la altura del cuerpo al 100% del viewport */
   display: flex; /* Utiliza un modelo de caja flexible */
   justify-content: center; /* Centra el contenido horizontalmente */
   align-items: center; /* Centra el contenido verticalmente */
-  padding: 100px; /* Añade relleno alrededor del cuerpo */
+  padding: 1%; /* Añade relleno alrededor del cuerpo */
   background: linear-gradient(135deg, #e0e1e2, #cad7fc); /* Establece un fondo de gradiente lineal */
   font-family: 'Poppins', sans-serif; /* Establece la fuente de texto */
+  padding-bottom: 12vh;
+  padding-top: 10vh;
 }
 
 /* Estilos para el contenedor principal */
 
 .container {
-  display: flex; /* Utiliza un modelo de caja flexible */
+  display: relative; /* Utiliza un modelo de caja flexible */
   align-items: center; /* Centra el contenido verticalmente */
-  width: 70%;
+  width: 60%;
+  height: 10%;
   justify-content: center; /* Centra el contenido horizontalmente */
-  min-height: 70vh; /* Establece la altura mínima del contenedor al 100% del viewport */
+  min-height: 100%; /* Establece la altura mínima del contenedor al 100% del viewport */
   background: linear-gradient(135deg, #fefffe, #fefffe); /* Establece un fondo de gradiente lineal */
   border-radius: 40px; /* Agrega bordes redondeados */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Agrega una sombra al borde */
 }
 
-
-
 /* Estilos para el título */
 
 .container .title {
-  font-size: 50px; /* Establece el tamaño del texto */
+  font-size: 30px; /* Establece el tamaño del texto */
   font-weight: 750; /* Establece el grosor del texto */
   text-align: left; /* Alinea el texto al centro */
-  position: absolute; /* Establece una posición absoluta */
-  top: 22%; /* Ajusta la posición verticalmente */
-  left: 35%; /* Centra horizontalmente */
+  position: relative; /* Establece una posición absoluta */
+  top: -190px; /* Mueve el título hacia arriba */
+  left: -7%;
   color: black; /* Establece el color del texto */
   padding: 1px; /* Añade relleno alrededor del texto */
 }
 
-/* Estilos para el contenido del formulario */
+
 .content form .user-details {
-  margin-top: 10%;
+  margin-top: 25%;
   align-items: left; /* Alinea los elementos a la izquierda */
   display: flex; /* Utiliza un modelo de caja flexible */
   flex-wrap: nowrap; /* Evita que los elementos se envuelvan */
-  width: 300%; /* Ancho del contenedor */
+  width: 250%; /* Ancho del contenedor */
   flex-direction: column; /* Coloca los elementos en una columna */
   margin-bottom: 10%; /* Añade un margen inferior */
-  margin-left: -100%; /* Traslada el contenedor a la izquierda */
-  gap: 20px; /* Agrega espacio entre cada columna */
+  margin-left: -90%; /* Traslada el contenedor a la izquierda */
+  gap: 10px; /* Agrega espacio entre cada columna */
 }
-
-
-
 
 /* Estilos para los detalles del usuario */
 
 form .user-details .input-box {
-  width: 48%; /* Establece el ancho del contenedor */
+  width: 50%; /* Establece el ancho del contenedor */
 }
 
 form .input-box span.details {
-  font-weight: 500; /* Establece el grosor del texto */
-  margin-bottom: 5px; /* Añade un margen inferior */
+  font-weight: 700; /* Establece el grosor del texto */
+  margin-bottom: 10%; /* Añade un margen inferior */
   display: block; /* Hace que el elemento sea un bloque */
 }
 
 .user-details .input-box input {
-  height: 45px; /* Establece la altura del campo de entrada */
-  width: 100%; /* Establece el ancho del campo de entrada */
+  height: 35px; /* Establece la altura del campo de entrada */
+  width: 90%; /* Establece el ancho del campo de entrada */
   outline: none; /* Elimina el contorno del campo de entrada al hacer clic */
-  font-size: 16px; /* Establece el tamaño del texto */
-  border-radius: 5px; /* Agrega bordes redondeados */
+  font-size: 13px; /* Establece el tamaño del texto */
+  border-radius: 10px; /* Agrega bordes redondeados */
   padding-left: 15px; /* Añade relleno a la izquierda */
   border: 1px solid #ccc; /* Establece el borde del campo de entrada */
   border-bottom-width: 2px; /* Establece el ancho del borde inferior */
   transition: all 0.3s ease; /* Agrega una transición suave */
+  background-color: #efeeef;
+  color: #9a9898;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .user-details .input-box input:focus,
 .user-details .input-box input:valid {
-  border-color: #9b59b6; /* Cambia el color del borde cuando el campo está enfocado o válido */
+  border-color: #5237ac; /* Cambia el color del borde cuando el campo está enfocado o válido */
+  color: black;
 }
 
+
+
 /* Estilos para las categorías (por ejemplo, género) */
+
+/* Estilos para el título de género */
+.gender-title {
+  font-size: 13px; /* Establece el tamaño del texto */
+  position: relative; /* Establece una posición absoluta */ 
+  top: -20px; /* Ajusta la posición verticalmente */
+  left: -42%;
+  color: black; /* Establece el color del texto */
+}
 
 form .category {
   display: flex; /* Utiliza un modelo de caja flexible */
   flex-wrap: wrap; /* Permite que los elementos se envuelvan */
-  gap: 10px; /* Establece el espacio entre los elementos */
-  margin-bottom: 20px; /* Añade un margen inferior */
+  gap: 20px; /* Establece el espacio entre los elementos */
+  margin-top: -10px; /* Añade un margen superior */
+  margin-bottom: 10px; /* Añade un margen inferior */
+  font-family: 'Montserrat', sans-serif;
+  margin-left: -83%;
+  font-size: 12px;
 }
+
 
 form .category label {
   display: flex; /* Utiliza un modelo de caja flexible */
-  align-items: center; /* Alinea los elementos verticalmente */
-  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  align-items: left; /* Alinea los elementos verticalmente */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */ 
 }
 
 form .category label .dot {
@@ -293,9 +322,11 @@ form .category label .dot {
   width: 18px; /* Establece el ancho del punto */
   border-radius: 50%; /* Hace que el punto sea circular */
   margin-right: 10px; /* Añade un margen a la derecha */
-  background: #d9d9d9; /* Establece el color de fondo del punto */
+  background: #efeeef; /* Establece el color de fondo del punto */
   border: 5px solid transparent; /* Establece el borde del punto */
   transition: all 0.3s ease; /* Agrega una transición suave */
+  font-family: 'Montserrat', sans-serif;
+  
 }
 
 /* Estilos para los puntos de categoría seleccionados */
@@ -303,7 +334,8 @@ form .category label .dot {
 #dot-1:checked ~ .category label .one,
 #dot-2:checked ~ .category label .two,
 #dot-3:checked ~ .category label .three {
-  background: #9b59b6; /* Cambia el color de fondo del punto */
+  font-family: 'Montserrat', sans-serif;
+  background: #502fa9; /* Cambia el color de fondo del punto */
   border-color: #d9d9d9; /* Cambia el color del borde del punto */
 }
 
@@ -314,25 +346,31 @@ form input[type="radio"] {
 /* Estilos para el botón */
 
 form .button {
-  text-align: center; /* Centra el botón */
+  text-align: left; /* Centra el botón */
 }
 
 form .button input {
+  position: relative;
   height: 45px; /* Establece la altura del botón */
   width: 200px; /* Establece el ancho del botón */
-  border-radius: 5px; /* Agrega bordes redondeados */
+  border-radius: 10px; /* Agrega bordes redondeados */
   border: none; /* Elimina el borde */
-  color: #fff; /* Establece el color del texto */
-  font-size: 18px; /* Establece el tamaño del texto */
-  font-weight: 500; /* Establece el grosor del texto */
+  color: #ffffff; /* Establece el color del texto */
+  font-size: 13px; /* Establece el tamaño del texto */
+  font-weight: 501; /* Establece el grosor del texto */
   letter-spacing: 1px; /* Establece el espaciado entre letras */
   cursor: pointer; /* Cambia el cursor al pasar por encima */
   transition: all 0.3s ease; /* Agrega una transición suave */
-  background: linear-gradient(135deg, #71b7e6, #9b59b6); /* Establece un fondo de gradiente lineal */
+  background: linear-gradient(135deg, #512ca6, #512ca6); /* Establece un fondo de gradiente lineal */
+  margin-top: 10px; /* Ajusta la distancia hacia arriba */
+  margin-bottom: 20px;
+  margin-left: -62%; /* Ajusta la distancia hacia la izquierda */
 }
 
+
+
 form .button input:hover {
-  background: linear-gradient(-135deg, #71b7e6, #9b59b6); /* Cambia el fondo del botón al pasar el ratón */
+  background: linear-gradient(-135deg, #7a5cbd, #512ca6); /* Cambia el fondo del botón al pasar el ratón */
 }
 
 /* Estilos para pantallas pequeñas (max-width: 584px) */
@@ -369,23 +407,25 @@ form .button input:hover {
   }
 }
 
-/* Estilos para el pie de página */
 
-footer {
-  position: fixed; /* Establece una posición fija */
-  left: 0; /* Establece la posición desde la izquierda */
-  bottom: 0; /* Establece la posición desde la parte inferior */
-  width: 100%; /* Establece el ancho al 100% */
-  height: 20%; /* Establece la altura al 20% */
-  background-color: #333; /* Establece el color de fondo */
-  color: white; /* Establece el color del texto */
-  text-align: center; /* Centra el texto horizontalmente */
-  padding: 10px 0; /* Añade relleno */
+
+.toggle{
+    background-color: #512da8;
+    height: 100%;
+    background: linear-gradient(to right, #5c6bc0, #512da8);
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
 }
 
-footer img {
-  width: 100%; /* Establece el ancho de la imagen al 100% */
-  height: auto; /* Establece la altura automáticamente */
-  max-height: 100%; /* Establece la altura máxima al 100% del pie de página */
+.toggle-panel img {
+  width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
+  height: 100px; /* Ajusta la altura automáticamente para mantener la proporción */
 }
+
+
 </style>
