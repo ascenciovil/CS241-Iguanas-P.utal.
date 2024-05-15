@@ -331,7 +331,7 @@ nav button {
 }
 .login-button, .register-button {
   font-size: 20px;
-  padding: 15px 30px;
+  padding: 15px;
   margin-top: 20px;
   background-color: #4CAF50;
   color: white;
@@ -339,6 +339,11 @@ nav button {
   border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.login-button{
+  padding-right: 58px;
+  padding-left: 58px;
 }
 
 .login-button:hover, .register-button:hover {
