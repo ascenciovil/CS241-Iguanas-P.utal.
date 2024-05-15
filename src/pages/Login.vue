@@ -16,6 +16,9 @@
               <span class="button__text">Ingresa ahora</span>
               <i class="button__icon fas fa-chevron-right"></i>
             </button>
+            <router-link to="/registro" class="toRegistro">
+              <button class="button login__submit">Regístrate aquí</button>
+            </router-link>
           </form>
         </div>
         <div class="screen__background">
@@ -52,6 +55,13 @@
       <RouterLink to="/Admin" @click="cerrarAdmin()">Cerrar</RouterLink>
     </div>
   </div>
+
+  <div id="ventanaBanPropuesta" class="ventana">
+    <div class="contenido">
+      <h2>Ha iniciado sesión correctamente, pero no podrá subir propuestas por su comportamiento inadecuado</h2>
+      <RouterLink to="/Alumno" @click="CerrarAlumnoBanPropuesta()">Cerrar</RouterLink>
+    </div>
+  </div>
 </template>
 
 
@@ -72,8 +82,6 @@ async function createAccount() {
   if (error) {
     console.error("Error: ", error.message);
     alert('No eres un usuario, ahora sufriras las consecuencias');
-    //easter egg
-    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
   } else {
     console.log("Usuario autenticado:", data.user);
 
@@ -83,62 +91,86 @@ async function createAccount() {
     // Consultar la tabla de usuarios para obtener el rol
     const { data: userData, error: userError } = await supabase
       .from('usuarios')
-      .select('rol')
+      .select('rol, campus, Baneado, Fecha_Desban')
       .eq('UID', userId)
       .single();
 
+    var Finban='si';
+    console.log(userData.Baneado);
+    if(userData.Baneado){
+      const fechaDesbanUsuario = new Date(userData.Fecha_Desban);
+      // Comparar las fechas
+      if (Date.now() < fechaDesbanUsuario.getTime()) {
+        Finban='no';
+      }else{
+        const { data, error } = await supabase
+                .from('usuarios')
+                .update({ Baneado: false})
+                .eq('UID', userId);
+      }
+    }
     if (userError) {
       console.error("Error al obtener la información del usuario:", userError.message);
     } else {
       console.log("Rol del usuario:", userData.rol);
-      mostrarInterfaces(userData.rol);
+console.log("Campus del usuario:", userData.campus);
+      console.log(Finban);
+      mostrarInterfaces(userData.rol,Finban);
+
+      // Después de obtener la información del usuario autenticado
+      const campusUsuarioLogeado = userData.campus; // Asumiendo que userData.campus contiene el campus del usuario
+      localStorage.setItem('campusUsuarioLogeado', campusUsuarioLogeado); // Almacenar el campus en el almacenamiento local
     }
     // Redireccionar según el rol del usuario
-    // Tambien probe con useRouter().push("/Alumno"); pero useRouter sale que es undefined
-    // Gaste casi una hora intentando solucionar ese error asi que ten en cuenta eso (Felipe)
-    if (userData.rol == 'estudiante') {
-      console.log("estudiante");
-      abrirAlumno();
-      //window.location.href = '/Alumno'; //por algun motivo esta redireccionando al App.vue en vez de Alumno.vue
-    } else if (userData.rol == 'profesor') {
-      console.log("profesor");
-      abrirProfesor();
-      //window.location.href = '/Profesor';
-    }else if (userData.rol == 'admin') {
-      console.log("admin");
-      abrirAdmin();
-      //window.location.href = '/Profesor';
-    } else if(userData.rol == 'federacion'){
-      console.log("federacion");
-      //window.location.href = '/Federacion';
-    }
-    else {
-      console.log("ninguno");
+    if(Finban == 'si'){
+      if (userData.rol == 'estudiante') {
+        console.log("estudiante");
+        abrirAlumno();
+      } else if (userData.rol == 'profesor') {
+        console.log("profesor");
+        abrirProfesor();
+      } else if (userData.rol == 'admin') {
+        console.log("admin");
+        abrirAdmin();
+      } else if(userData.rol == 'federacion'){
+        console.log("federacion");
+      }
+      else {
+        console.log("ninguno");
+      }
+    }else{
+      console.log("Alumno que no puede ver propuestas");
+      AbrirAlumnoBanPropuesta();
     }
   }
 
 
 }
 
-function mostrarInterfaces(tipoUsuario) {
+function mostrarInterfaces(tipoUsuario, Findesban) {
   var message = "";
-  switch (tipoUsuario) {
-    case "estudiante":
-      message = "¡Bienvenido estudiante!";
-      updateLoginState(true, false, false);
-      break;
-    case "profesor":
-      message = "¡Bienvenido profesor!";
-      updateLoginState(false, true, false);
-      break;
-    case "admin":
-      message = "¡Bienvenido admin!"; //pa q wea sirve esto
-    case "federacion":
-      message = "¡Bienvenido miembro de la federación!";
-      updateLoginState(false, false, true);
-      break;
-    default:
-      message = "Tipo de usuario desconocido";
+  if(Findesban=='si'){
+    switch (tipoUsuario) {
+      case "estudiante":
+        message = "¡Bienvenido estudiante!";
+        updateLoginState(true, false, false, false);
+        break;
+      case "profesor":
+        message = "¡Bienvenido profesor!";
+        updateLoginState(false, true, false, false);
+        break;
+      case "admin":
+        message = "¡Bienvenido admin!"; //pa q wea sirve esto
+      case "federacion":
+        message = "¡Bienvenido miembro de la federación!";
+        updateLoginState(false, false, true, false);
+        break;
+      default:
+        message = "Tipo de usuario desconocido";
+    }
+  }else{
+    updateLoginState(false, false, false, true);
+    message = "usuario no puede subir propuestas";
   }
   console.log(message);
 }
@@ -149,9 +181,21 @@ function abrirAlumno() {
     elemento.style.display = "block";
   }
 }
-
 function cerrarAlumno() {
   var elemento = document.getElementById("ventanaAlumno");
+  if (elemento != null) {
+    elemento.style.display = "none";
+  }
+}
+
+function AbrirAlumnoBanPropuesta() {
+  var elemento = document.getElementById("ventanaBanPropuesta");
+  if (elemento != null) {
+    elemento.style.display = "block";
+  }
+}
+function CerrarAlumnoBanPropuesta() {
+  var elemento = document.getElementById("ventanaBanPropuesta");
   if (elemento != null) {
     elemento.style.display = "none";
   }
@@ -210,7 +254,7 @@ body {
 }
 
 .screen {
-  background: linear-gradient(90deg, #5D54A4, #7C78B8);
+  background: #7E7BB9;
   position: relative;
   height: 600px;
   width: 360px;
@@ -252,7 +296,7 @@ body {
 .screen__background__shape2 {
   height: 220px;
   width: 220px;
-  background: #6C63AC;
+  background: #7E7BB9;
   top: -172px;
   right: 0;
   border-radius: 32px;
@@ -261,7 +305,7 @@ body {
 .screen__background__shape3 {
   height: 540px;
   width: 190px;
-  background: linear-gradient(270deg, #5D54A4, #6A679E);
+  background: #7E7BB9;
   top: -24px;
   right: 0;
   border-radius: 32px;
@@ -329,8 +373,12 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Efecto de sombra */
   cursor: pointer;
   transition: .2s;
+  justify-content: center;
 }
 
+.button__text {
+  margin-left: auto;
+}
 
 .login__input:active,
 .login__input:focus,
@@ -396,8 +444,12 @@ body {
   margin-bottom: 30px;
 }
 .footer-image {
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 3));
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 5));
 }
 
+.toRegistro {
+  text-decoration: none;
+  display: block;
+}
 </style>
 

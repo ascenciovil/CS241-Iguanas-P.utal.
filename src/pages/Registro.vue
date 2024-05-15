@@ -10,32 +10,36 @@
     <body>
       <div class="container">
         <div class="title">Registro</div>
+        <div class="image"></div>
         <div class="content">
           <form action="#" @submit.prevent="handleSubmit">
             <div class="user-details">
               <div class="input-box">
-                <span class="details">Nombre Completo</span>
-                <input type="text" id="Nombre" v-model="Nombre" placeholder="Ingresa tu nombre" required>
+                
+                <input type="text" id="Nombre" v-model="Nombre" placeholder="Nombre" required>
               </div>
               <div class="input-box">
-                <span class="details">Nombre de usuario</span>
-                <input type="text" id="usernombre" v-model="usernombre" placeholder="Ingresa tu usuario" required>
+                
+                <input type="text" id="usernombre" v-model="usernombre" placeholder="Usuario" required>
               </div>
               <div class="input-box">
-                <span class="details">Email</span>
-                <input type="email" id="email" v-model="email" placeholder="Ingresa tu Correo instuticional" required>
+              
+                <input type="email" id="email" v-model="email" placeholder="Correo instuticional" required>
               </div>
               <div class="input-box">
-                <span class="details">Campus</span>
-                <input type="text" id="campus" v-model="campus" placeholder="Ingresa tu campus" required>
+              
+                <select id="campus" v-model="campus" required class="input-box">
+  <option disabled value="">Selecciona tu campus</option>
+  <option v-for="opcion in opcionesCampus" :value="opcion">{{ opcion }}</option>
+</select>
               </div>
               <div class="input-box">
-                <span class="details">Contraseña</span>
-                <input type="password" id="password" v-model="password" placeholder="Ingresa tu contraseña" required>
+              
+                <input type="password" id="password" v-model="password" placeholder="Contraseña" required>
               </div>
               <div class="input-box">
-                <span class="details">Confirmar contraseña</span>
-                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirma tu contraseña" required>
+         
+                <input type="password" id="conpassword" v-model="conpassword" placeholder="Confirmar contraseña" required>
               </div>
             </div>
             <div class="gender-details">
@@ -59,15 +63,26 @@
               </div>
             </div>
             <div class="button">
+
               <input type="submit" value="Registrarme">
+              <p>¿Ya tienes una cuenta? <a href="../pages/Login.vue">Iniciar sesión</a></p>
+
             </div>
+            <router-link to="/login" class="button">
+              <button class="custom-button">Inicia sesión aquí</button>
+            </router-link>
           </form>
         </div>
         <!-- Footer con imagen de banner -->
-        <footer>
-          <img src="../assets/img/footer.png" alt="Banner">
-        </footer>
-      </div>
+        <div class="toggle-container">
+          <div class="toggle">
+            <div class="toggle-panel toggle-left">
+              <img src="../assets/img/Ingenieria.jpg" alt="Imagen de ejemplo">
+            </div>
+          </div>
+        </div>
+      </div>  
+      
     </body>
   </html>
 </template>
@@ -75,7 +90,7 @@
 <script setup>
 import { ref } from "vue";
 import { supabase } from "../clients/supabase";
-
+import { onMounted } from "vue";
 
 // Define las variables reactivas para los campos del formulario
 let email = ref("");
@@ -85,7 +100,7 @@ let campus = ref("");
 let usernombre = ref("");
 let conpassword = ref("");
 let gender = ref(""); 
-
+let opcionesCampus = ref(["Curico", "Talca", "Santiago","Linares","Colchagua"]); // Agrega aquí tus opciones de campus
 
 // Función para validar el dominio del correo electrónico
 function validarDominio(correo) {
@@ -110,10 +125,7 @@ async function handleSubmit() {
   createAccount(tipoUsuario);
 }
 
-
-
 async function createAccount(tipoUsuario) {
-  
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
@@ -121,25 +133,22 @@ async function createAccount(tipoUsuario) {
       campus: campus.value,
       nombre: Nombre.value,
       gender: gender.value,
-      rol: tipoUsuario
+      rol: tipoUsuario,
+      Baneado : false
     });
 
     if (error) {
       console.error("Error al crear la cuenta:", error.message);
     } else {
-     
       const userUID = data.user.id;
 
       console.log(tipoUsuario);
       const { data: userData, error: userError } = await supabase
         .from('usuarios')
-        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario }]);
+        .insert([{ nombre: Nombre.value, correo: email.value, UID: userUID, campus: campus.value, username: usernombre.value, gender: gender.value, rol:tipoUsuario, Baneado: false }]);
 
       console.log("Usuario creado correctamente:", data);
-
-      
       mostrarMensajeTipoUsuario(tipoUsuario);
-      
       alert('Usuario Registrado');
       email.value = "";
       password.value = "";
@@ -148,7 +157,6 @@ async function createAccount(tipoUsuario) {
       conpassword.value = "";
       usernombre.value = "";
       gender.value = ""; 
-      
     }
   } catch (error) {
     console.error("Error al crear la cuenta:", error.message);
@@ -174,7 +182,9 @@ function mostrarMensajeTipoUsuario(tipoUsuario) {
   console.log(message); 
 }
 
-import { onMounted } from "vue";
+
+import { RouterLink } from "vue-router";
+
 
 onMounted(() => {
   const form = document.querySelector('form');
@@ -185,191 +195,326 @@ onMounted(() => {
 });
 </script>
 
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
 * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+/* Estilos para el cuerpo de la página */
 
 body {
-height: 100vh;
-display: flex;
-justify-content: center;
-align-items: center;
-padding: 10px;
-background: linear-gradient(135deg, #9b59b6, #71b7e6);
-font-family: 'Poppins', sans-serif;
+
+  width: 100%;
+  height: 100%; /* Establece la altura del cuerpo al 100% del viewport */
+  display: flex; /* Utiliza un modelo de caja flexible */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center; /* Centra el contenido verticalmente */
+  padding: 1%; /* Añade relleno alrededor del cuerpo */
+  background: linear-gradient(135deg, #e0e1e2, #cad7fc); /* Establece un fondo de gradiente lineal */
+  font-family: 'Poppins', sans-serif; /* Establece la fuente de texto */
+  padding-bottom: 12vh;
+  padding-top: 10vh;
+
 }
+
+/* Estilos para el contenedor principal */
 
 .container {
-display: flex;
-align-items: center;
-justify-content: center;
-min-height: 100vh;
-background: linear-gradient(135deg, #9b59b6, #71b7e6); /* Cambia los colores para obtener el tono morado */
+  display: relative; /* Utiliza un modelo de caja flexible */
+  align-items: center; /* Centra el contenido verticalmente */
+  width: 920px;
+  height: 487px;
+  justify-content: center; /* Centra el contenido horizontalmente */
+  min-height: 100%; /* Establece la altura mínima del contenedor al 100% del viewport */
+  background: linear-gradient(135deg, #fefffe, #fefffe); /* Establece un fondo de gradiente lineal */
+  border-radius: 40px; /* Agrega bordes redondeados */
+  /*border: 2px solid #512ca6;  Agrega un borde sólido */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Agrega una sombra al borde */
 }
 
-.screen {
-background: linear-gradient(90deg, #5D54A4, #7C78B8);
-position: relative;
-height: 600px;
-width: 360px;
-box-shadow: 0px 0px 24px #5C5696;
-}
+/* Estilos para el título */
+
 .container .title {
-font-size: 60px; /* Aumenta el tamaño del texto */
-font-weight: 500;
-text-align: center; /* Alinea el texto al centro */
-position: absolute; /* Añade posicionamiento absoluto */
-top: 20%; /* Ajusta la posición verticalmente */
-left: 50%; /* Centra horizontalmente */
-transform: translateX(-50%); /* Centra horizontalmente */
-color: white; /* Cambia el color del texto a blanco */
 
-padding: 10px ; /* Añade un espacio alrededor del texto */
-border-radius: 10px; /* Agrega bordes redondeados al fondo */
+  font-size: 30px; /* Establece el tamaño del texto */
+  font-weight: 750; /* Establece el grosor del texto */
+  text-align: left; /* Alinea el texto al centro */
+  position: relative; /* Establece una posición absoluta */
+  top: -190px; /* Mueve el título hacia arriba */
+  left: 18%;
+  color: black; /* Establece el color del texto */
+  padding: 1px; /* Añade relleno alrededor del texto */
+
 }
-
 
 
 .content form .user-details {
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
-margin-bottom: 20px; /* Agregué un margen inferior */
+  margin-top: 25%;
+  align-items: left; /* Alinea los elementos a la izquierda */
+  display: flex; /* Utiliza un modelo de caja flexible */
+  flex-wrap: nowrap; /* Evita que los elementos se envuelvan */
+  width: 250%; /* Ancho del contenedor */
+  flex-direction: column; /* Coloca los elementos en una columna */
+  margin-bottom: 10%; /* Añade un margen inferior */
+  margin-left: -25%; /* Traslada el contenedor a la izquierda */
+  gap: 10px; /* Agrega espacio entre cada columna */
 }
 
+/* Estilos para los detalles del usuario */
+
 form .user-details .input-box {
-width: 48%; /* Cambié el ancho para que quepan dos elementos en una fila */
+  width: 50%; /* Establece el ancho del contenedor */
 }
 
 form .input-box span.details {
-font-weight: 500;
-margin-bottom: 5px;
-display: block;
+  font-weight: 700; /* Establece el grosor del texto */
+  margin-bottom: 10%; /* Añade un margen inferior */
+  display: block; /* Hace que el elemento sea un bloque */
 }
 
 .user-details .input-box input {
-height: 45px;
-width: 100%;
-outline: none;
-font-size: 16px;
-border-radius: 5px;
-padding-left: 15px;
-border: 1px solid #ccc;
-border-bottom-width: 2px;
-transition: all 0.3s ease;
+  height: 35px; /* Establece la altura del campo de entrada */
+  width: 90%; /* Establece el ancho del campo de entrada */
+  outline: none; /* Elimina el contorno del campo de entrada al hacer clic */
+  font-size: 13px; /* Establece el tamaño del texto */
+  border-radius: 10px; /* Agrega bordes redondeados */
+  padding-left: 15px; /* Añade relleno a la izquierda */
+  border: 1px solid #ccc; /* Establece el borde del campo de entrada */
+  border-bottom-width: 2px; /* Establece el ancho del borde inferior */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+  background-color: #efeeef;
+  color: #9a9898;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .user-details .input-box input:focus,
 .user-details .input-box input:valid {
-border-color: #9b59b6;
+  border-color: #5237ac; /* Cambia el color del borde cuando el campo está enfocado o válido */
+  color: black;
+}
+
+
+
+/* Estilos para las categorías (por ejemplo, género) */
+
+/* Estilos para el título de género */
+.gender-title {
+  font-size: 13px; /* Establece el tamaño del texto */
+  position: relative; /* Establece una posición absoluta */ 
+  top: -20px; /* Ajusta la posición verticalmente */
+  left: 24%;
+  color: black; /* Establece el color del texto */
 }
 
 form .category {
-display: flex;
-flex-wrap: wrap;
-gap: 10px; /* Espacio entre los elementos */
-margin-bottom: 20px; /* Margen inferior para separarlo del siguiente grupo */
+  display: flex; /* Utiliza un modelo de caja flexible */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+  gap: 20px; /* Establece el espacio entre los elementos */
+  margin-top: -10px; /* Añade un margen superior */
+  margin-bottom: 10px; /* Añade un margen inferior */
+  font-family: 'Montserrat', sans-serif;
+  margin-left: -18%;
+  font-size: 12px;
 }
 
+
 form .category label {
-display: flex;
-align-items: center;
-cursor: pointer;
+  display: flex; /* Utiliza un modelo de caja flexible */
+  align-items: left; /* Alinea los elementos verticalmente */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */ 
 }
 
 form .category label .dot {
-height: 18px;
-width: 18px;
-border-radius: 50%;
-margin-right: 10px;
-background: #d9d9d9;
-border: 5px solid transparent;
-transition: all 0.3s ease;
+  height: 18px; /* Establece la altura del punto */
+  width: 18px; /* Establece el ancho del punto */
+  border-radius: 50%; /* Hace que el punto sea circular */
+  margin-right: 10px; /* Añade un margen a la derecha */
+  background: #efeeef; /* Establece el color de fondo del punto */
+  border: 5px solid transparent; /* Establece el borde del punto */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+  font-family: 'Montserrat', sans-serif;
+  
 }
+
+/* Estilos para los puntos de categoría seleccionados */
 
 #dot-1:checked ~ .category label .one,
 #dot-2:checked ~ .category label .two,
 #dot-3:checked ~ .category label .three {
-background: #9b59b6;
-border-color: #d9d9d9;
+  font-family: 'Montserrat', sans-serif;
+  background: #502fa9; /* Cambia el color de fondo del punto */
+  border-color: #d9d9d9; /* Cambia el color del borde del punto */
 }
 
 form input[type="radio"] {
-display: none;
+  display: none; /* Oculta los botones de radio */
 }
 
+/* Estilos para el botón */
+
 form .button {
-text-align: center; /* Centra el botón */
+  text-align: left; /* Centra el botón */
 }
 
 form .button input {
-height: 45px;
-width: 200px; /* Ancho del botón */
-border-radius: 5px;
-border: none;
-color: #fff;
-font-size: 18px;
-font-weight: 500;
-letter-spacing: 1px;
-cursor: pointer;
-transition: all 0.3s ease;
-background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  position: relative;
+  height: 45px; /* Establece la altura del botón */
+  width: 200px; /* Establece el ancho del botón */
+  border-radius: 10px; /* Agrega bordes redondeados */
+  border: none; /* Elimina el borde */
+  color: #ffffff; /* Establece el color del texto */
+  font-size: 13px; /* Establece el tamaño del texto */
+  font-weight: 501; /* Establece el grosor del texto */
+  letter-spacing: 1px; /* Establece el espaciado entre letras */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+  background: linear-gradient(135deg, #512ca6, #512ca6); /* Establece un fondo de gradiente lineal */
+  margin-top: 10px; /* Ajusta la distancia hacia arriba */
+  margin-bottom: 20px;
+  margin-left: 1%; /* Ajusta la distancia hacia la izquierda */
 }
+
+
 
 form .button input:hover {
-background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+  background: linear-gradient(-135deg, #7a5cbd, #512ca6); /* Cambia el fondo del botón al pasar el ratón */
 }
+
+/* Estilos para pantallas pequeñas (max-width: 584px) */
 
 @media(max-width: 584px) {
-.container {
-  max-width: 100%;
+  .container {
+    max-width: 100%; /* Establece el ancho máximo al 100% del viewport */
+  }
+
+  form .user-details .input-box {
+    margin-bottom: 15px; /* Añade un margen inferior */
+    width: 100%; /* Establece el ancho al 100% */
+  }
+
+  form .category {
+    width: 100%; /* Establece el ancho al 100% */
+  }
+
+  .content form .user-details {
+    max-height: 300px; /* Establece la altura máxima */
+    overflow-y: scroll; /* Añade una barra de desplazamiento vertical */
+  }
+
+  .user-details::-webkit-scrollbar {
+    width: 5px; /* Establece el ancho de la barra de desplazamiento */
+  }
 }
 
-form .user-details .input-box {
-  margin-bottom: 15px;
-  width: 100%;
-}
-
-form .category {
-  width: 100%;
-}
-
-.content form .user-details {
-  max-height: 300px;
-  overflow-y: scroll;
-}
-
-.user-details::-webkit-scrollbar {
-  width: 5px;
-}
-}
+/* Estilos para pantallas aún más pequeñas (max-width: 459px) */
 
 @media(max-width: 459px) {
-.container .content .category {
-  flex-direction: column;
-}
-}
-
-footer {
-  position: fixed; /* Lo fija en la parte inferior */
-  left: 0;
-  bottom: 0;
-  width: 100%; /* Ancho completo */
-  height: 20%;
-  background-color: #333; /* Color de fondo */
-  color: white; /* Color de texto */
-  text-align: center; /* Centrado horizontal */
-  padding: 10px 0; /* Espaciado interno */
+  .container .content .category {
+    flex-direction: column; /* Cambia la dirección de los elementos a columnas */
+  }
 }
 
-footer img {
-  width: 100%; /* La imagen ocupa todo el ancho */
-  height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
-  max-height: 100%; /* La imagen no superará el 100% de la altura del footer */
+
+
+.toggle{
+    height: 100%;
+    /*background: linear-gradient(to right, #502fa9, #502fa9);*/
+    color: #fff;
+    position: relative;
+    width: 100%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+    border-radius: 20px; /* Agrega bordes redondeados */
+    padding-left: 1%;
 }
+
+.toggle-panel img {
+  width: 450px; /* Ajusta el ancho de la imagen al 100% del contenedor */
+  height: 485px; /* Ajusta la altura automáticamente para mantener la proporción */
+  border-radius: 30px; /* Agrega bordes redondeados */
+  object-fit: cover; /* Ajusta el tamaño y recorta la imagen para que llene el contenedor */
+  margin-bottom: -7px;
+  margin-top: -2px;
+}
+
+.input-box select {
+  height: 35px; /* Establece la altura del campo de selección */
+  outline: none; /* Elimina el contorno del campo de selección al hacer clic */
+  font-size: 13px; /* Establece el tamaño del texto */
+  border-radius: 10px; /* Agrega bordes redondeados */
+  padding-left: 15px; /* Añade relleno a la izquierda */
+  border: 1px solid #ccc; /* Establece el borde del campo de selección */
+  border-bottom-width: 2px; /* Establece el ancho del borde inferior */
+  transition: all 0.3s ease; /* Agrega una transición suave */
+  background-color: #efeeef;
+  color: #939090;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.input-box select:focus {
+  border-color: #5237ac; /* Cambia el color del borde cuando el campo está enfocado */
+  color: black;
+  width: 90%;
+}
+
+.button p {
+  font-size: 11px;
+  color: #6e6e6e;
+  margin-top: -18px; 
+  padding-top: 5px;
+  padding-bottom: 15px;
+  margin-left: 12px;
+}
+
+.button a {
+  color: #5237ac;
+}
+
+.custom-button {
+  height: 45px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  text-decoration: none; /* Quita el subrayado */
+  display: block;
+  margin: 20px auto 0; /* Centro horizontalmente */
+}
+
+.custom-button:hover {
+  background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+
+.button {
+  text-decoration: none;
+}
+
+.user-details .input-box select {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.user-details .input-box select:focus,
+.user-details .input-box select:valid {
+  border-color: #9b59b6;
+}
+
 </style>
