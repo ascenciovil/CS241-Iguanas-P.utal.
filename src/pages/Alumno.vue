@@ -55,8 +55,10 @@
               <p class="evento-expiracion">Fecha límite: <strong>{{ evento.Fecha_expiracion }}</strong></p>
             </div>
             <p class="evento-descripcion">{{ evento.evento }}</p>
+            <div class="evento-info">
             <p class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver
                 comentarios</button></p>
+              </div>
           </div>
         </div>
       </div>
@@ -436,6 +438,12 @@ body {
   margin-bottom: 5px;
   text-align: justify;
   /* Espaciado entre descripción y nombre de usuario */
+}
+
+.evento-info {
+  display: flex;
+  justify-content: right;
+  /* Alinear los elementos al principio y al final del contenedor */
 }
 
 .propuesta-info {
