@@ -134,6 +134,7 @@ console.log("Campus del usuario:", userData.campus);
         abrirAdmin();
       } else if(userData.rol == 'federacion'){
         console.log("federacion");
+        abrirAlumno();
       }
       else {
         console.log("ninguno");

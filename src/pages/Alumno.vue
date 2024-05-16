@@ -1,8 +1,9 @@
 <template>
-  <div class="propuestas">
-    <h1>Listado de Propuestas</h1>
 
-    <div class="campus-dropdown-container">
+  <body>
+    <div class="propuestas">
+      <h1>Listado de Propuestas</h1>
+      <div class="campus-dropdown-container">
       <div class="campus-dropdown">
         <select v-model="campus" name="campus" class="login__input" required>
           <option disabled value="">Selecciona tu campus</option>
@@ -10,66 +11,58 @@
         </select>
       </div>
     </div>
-
-    <div class="button-container">
-      <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
-        {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
-      </button>
-      <button @click="togglePropuestasYEventos(1)" class="toggle-button" :disabled="buttonClicked[1]">
-        {{ showEventos ? 'Eventos' : 'Eventos' }}
-      </button>
-    </div>
-    <div class="table-responsive">
-      <table class="table v-middle text-nowrap bg-transparent" v-if="showPropuestas">
-        <thead class="bg-light">
-          <tr>
-            <th class="border-0">Título</th>
-            <th class="border-0">Autor</th>
-            <th class="border-0">Descripción</th>
-            <th class="border-0">Expiración</th>
-            <th class="border-0">Aprobación</th>
-            <th class="border-0" colspan="2" v-if="campus === campusUsuarioLogeado">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
-            <td class="propuesta-titulo">{{ propuesta.titulo }}</td>
-            <td class="propuesta-autor">{{ propuesta.autor }}</td>
-            <td class="propuesta-descripcion">{{ propuesta.propuesta }}</td>
-            <td class="propuesta-expiracion">{{ propuesta.Fecha_expiracion }}</td>
-            <td>{{ propuesta.aprobacion }}%</td>
+    
+      <div class="button-container">
+        <button @click="togglePropuestasYEventos(0)" class="toggle-button" :disabled="buttonClicked[0]">
+          {{ showPropuestas ? 'Propuestas' : 'Propuestas' }}
+        </button>
+        <button @click="togglePropuestasYEventos(1)" class="toggle-button" :disabled="buttonClicked[1]">
+          {{ showEventos ? 'Eventos' : 'Eventos' }}
+        </button>
+      </div>
+      <div v-if="showPropuestas">
+        <div v-for="propuesta in propuestas" :key="propuesta.id" class="propuesta">
+          <div class="post">
+            <h2 class="propuesta-titulo">{{ propuesta.titulo }}</h2>
+            <div class="propuesta-info">
+              <p class="propuesta-autor">Autor: <strong>{{ propuesta.autor }}</strong></p>
+              <p class="propuesta-expiracion">Fecha límite: <strong>{{ propuesta.Fecha_expiracion }}</strong></p>
+            </div>
+            <p class="propuesta-descripcion">{{ propuesta.propuesta }}</p>
+            <p>Porcentaje aprobación: <strong>{{ propuesta.aprobacion }}%</strong></p>
+            <div class="propuesta-info2">
+              <div class="propuesta-info3">
+                <td>{{ propuesta.aprobacion }}%</td>
             <td v-if="campus === campusUsuarioLogeado">
             <button @click="votarPositivo(propuesta.id, 'up')" class="btn-thumb-up">{{propuesta.up}} 👍</button>
             </td>
             <td v-if="campus === campusUsuarioLogeado">
             <button @click="votarNegativo(propuesta.id, 'down')" class="btn-thumb-down">{{propuesta.down}} 👎</button>
             </td>
-            <td class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="table v-middle text-nowrap bg-transparent" v-if="showEventos">
-        <thead class="bg-light">
-
-            <tr>
-              <th class="border-0">Título</th>
-              <th class="border-0">Autor</th>
-              <th class="border-0">Descripción</th>
-              <th class="border-0">Expiración</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="evento in eventos" :key="evento.id" class="evento">
-              <td class="evento-titulo">{{ evento.titulo }}</td>
-              <td class="evento-autor">{{ evento.autor }}</td>
-              <td class="evento-descripcion">{{ evento.evento }}</td>
-              <td class="evento-expiracion">{{ evento.Fecha_expiracion }}</td>
-              <td class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver comentarios</button></td>
-            </tr>
-          </tbody>
-      </table>
+              </div>
+              <p class="button-cell"><button @click="verComentarios(propuesta.id)" class="btn-ver-comentarios">Ver
+                  comentarios</button></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showEventos">
+        <div v-for="evento in eventos" :key="evento.id" class="evento">
+          <div class="post">
+            <h2 class="evento-titulo">{{ evento.titulo }}</h2>
+            <div class="propuesta-info">
+              <p class="evento-autor">Autor: <strong>{{ evento.autor }}</strong></p>
+              <p class="evento-expiracion">Fecha límite: <strong>{{ evento.Fecha_expiracion }}</strong></p>
+            </div>
+            <p class="evento-descripcion">{{ evento.evento }}</p>
+            <p class="button-cell"><button @click="verComentariosEvento(evento.id)" class="btn-ver-comentarios">Ver
+                comentarios</button></p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </body>
+
 </template>
 
 <script setup>
@@ -130,10 +123,10 @@ async function loadPropuestas(campus) {
     const aprobacion = totalVotos > 0 ? Math.round((propuesta.up / totalVotos) * 100) : 0;
     const rechazo = totalVotos > 0 ? Math.round((propuesta.down / totalVotos) * 100) : 0;
 
-    return { 
-      ...propuesta, 
-      autor: autorData.nombre, 
-      votosPositivos: propuesta.up, 
+    return {
+      ...propuesta,
+      autor: autorData.nombre,
+      votosPositivos: propuesta.up,
       votosNegativos: propuesta.down,
       aprobacion,  // Porcentaje de aprobación
       rechazo  // Porcentaje de rechazo
@@ -193,7 +186,7 @@ async function votarPositivo(propuestaId) {
     return;
   }
 
-  const {up} = propuestaData;
+  const { up } = propuestaData;
 
   const { error: updateError } = await supabase
     .from('propuestas')
@@ -305,17 +298,17 @@ async function loadEventos(campus) {
   eventos.value = eventosFiltrados;
 }
 function calculateApprovalPercentage(propuesta) {
-    const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
-    if (totalVotes === 0) return 0;
-    return (propuesta.votosPositivos / totalVotes) * 100;
-  }
+  const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
+  if (totalVotes === 0) return 0;
+  return (propuesta.votosPositivos / totalVotes) * 100;
+}
 
 
-  function calculateRejectionPercentage(propuesta) {
-    const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
-    if (totalVotes === 0) return 0;
-    return (propuesta.votosNegativos / totalVotes) * 100;
-  }
+function calculateRejectionPercentage(propuesta) {
+  const totalVotes = propuesta.votosPositivos + propuesta.votosNegativos;
+  if (totalVotes === 0) return 0;
+  return (propuesta.votosNegativos / totalVotes) * 100;
+}
 
 onMounted(async () => {
   await loadPropuestas(campusUsuarioLogeado);
@@ -333,6 +326,11 @@ watch(campus, async (newCampus) => {
 
 
 <style scoped>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
 .campus-dropdown-container {
   display: flex;
@@ -361,39 +359,33 @@ watch(campus, async (newCampus) => {
   font-family: Arial, sans-serif;
 }
 
-.propuesta, .evento {
+.propuesta,
+.evento {
   margin-bottom: 20px;
   padding: 10px;
-  border: 1px solid black;
 }
 
-.propuesta-titulo, .evento-titulo {
+.propuesta-titulo,
+.evento-titulo {
   font-size: 20px;
   margin-bottom: 5px;
 }
 
-.propuesta-autor, .evento-autor {
+.propuesta-autor,
+.evento-autor {
   font-style: italic;
   margin-bottom: 5px;
 }
 
-.propuesta-descripcion, .evento-descripcion {
+.propuesta-descripcion,
+.evento-descripcion {
   margin-bottom: 10px;
 }
 
-.propuesta-expiracion, .evento-expiracion {
+.propuesta-expiracion,
+.evento-expiracion {
   font-style: italic;
   color: black;
-}
-
-.acciones {
-  margin-top: 10px;
-}
-
-.btn-thumb-up, .btn-thumb-down {
-  font-size: 18px;
-  cursor: pointer;
-  margin-right: 10px;
 }
 
 .button-container {
@@ -407,98 +399,89 @@ watch(campus, async (newCampus) => {
   font-size: 1.5rem;
   padding: 10px 20px;
   margin: 0 10px;
-}
-
-.bg-light {
-  background-color: #f8f9fa!important;
-  font-size: 1.5rem;
-}
-
-* {
-  outline: none;
-}
-
-*, :after, :before {
-  box-sizing: border-box;
-}
-
-.text-nowrap {
-  white-space: nowrap!important;
-}
-
-.table {
-  width: 100%;
-  margin-bottom: 1rem;
-  color: black;
-}
-
-table {
-  border-collapse: collapse;
-}
-
-body {
-  margin: 0;
-  font-family: Nunito Sans, sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: black;
-  text-align: left;
-  background-color: #00aae4;
-}
-
-.propuesta-titulo{
-  font-size: 1.5rem;
-}
-
-.evento-titulo{
-  font-size: 1.5rem;
-}
-
-h1 {
-  font-size: 2.5rem;
-}
-
-.toggle-button {
-  width: 200px;
-  font-size: 1.5rem;
-  padding: 10px 20px;
-  margin: 0 10px;
-  background-color: #4CAF50; /* Color de fondo */
-  color: white; /* Color del texto */
-  border: none; /* Sin borde */
-  border-radius: 5px; /* Bordes redondeados */
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .toggle-button:hover {
-  background-color: #45a049; /* Cambio de color de fondo al pasar el mouse */
+  background-color: #45a049;
 }
 
 .toggle-button:disabled {
-  background-color: #cccccc; /* Color de fondo cuando está desactivado */
-  color: #666666; /* Color del texto cuando está desactivado */
-  cursor: not-allowed; /* Cursor no permitido cuando está desactivado */
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
 }
-.button-cell {
-  /* Ajusta el espaciado y el alineamiento del contenido */
+
+.post {
+  margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  margin-left: 100px;
+  margin-right: 100px;
+  background-color: #7875B5;
+  color: white;
+}
+
+.post h2 {
+  margin-bottom: 10px;
+  /* Espaciado entre título y descripción */
+}
+
+.post p {
+  margin-bottom: 5px;
+  text-align: justify;
+  /* Espaciado entre descripción y nombre de usuario */
+}
+
+.propuesta-info {
+  display: flex;
+  justify-content: space-between;
+  /* Alinear los elementos al principio y al final del contenedor */
+}
+
+.propuesta-info2 {
+  display: flex;
+  justify-content: space-between;
+  /* Alinear los elementos al principio y al final del contenedor */
+}
+
+.propuesta-info3 {
+  display: flex;
+  justify-content: left;
+  /* Alinear los elementos al principio y al final del contenedor */
+}
+
+.propuesta-info3,
+button {
+  margin-right: 10px;
+}
+
+.btn-ver-comentarios {
+  background-color: #0079d3;
+  color: white;
+  border: none;
   padding: 5px 10px;
-  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.button-cell a {
-  /* Ajusta el aspecto del enlace para que se parezca a un botón */
-  display: inline-block;
-  background-color: #C0C0C0; /* Color de fondo del botón */
-  color: black; /* Color del texto del botón */
-  padding: 8px 16px; /* Espaciado interno del botón */
-  border-radius: 4px; /* Bordes redondeados */
-  text-decoration: none; /* Quita el subrayado del enlace */
-  transition: background-color 0.3s ease; /* Efecto de transición al pasar el ratón */
+.btn-ver-comentarios:hover {
+  background-color: #005ea8;
 }
 
-.button-cell a:hover {
-  background-color: #666666; /* Cambia el color de fondo al pasar el ratón */
-  color:white;
+h1 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.propuesta-expiracion,
+.evento-expiracion {
+  font-style: italic;
+  color: white;
 }
 </style>
