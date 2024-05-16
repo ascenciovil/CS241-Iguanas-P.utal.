@@ -14,7 +14,6 @@
       <div class="message-container">
         <div v-if="successMessage" class="message success">{{ successMessage }}</div>
         <div v-if="errorMessage" class="message error">{{ errorMessage }}</div>
-        <div v-if="invalidDateMessage" class="message error">{{ invalidDateMessage }}</div>
       </div>
     </div>
     <footer class="footer">
@@ -40,7 +39,6 @@ export default {
       Aprobado: false,
       successMessage: '',
       errorMessage: '',
-      invalidDateMessage: '',
       campusAutor: '',
     }
   },
@@ -55,12 +53,22 @@ export default {
       return selectedDate >= today;
     }
   },
+  watch: {
+    birthday: {
+      immediate: false,
+      handler(newVal, oldVal) {
+        if (newVal !== null && newVal !== undefined) {
+          if (!this.isFechaValida) {
+            this.displayErrorMessage('¡La fecha no puede ser pasada!');
+          } else {
+            this.errorMessage = '';
+          }
+        }
+      }
+    }
+  },
   methods: {
     async enviarTituloYPropuesta() {
-      if (!this.isFechaValida) {
-        this.displayInvalidDateMessage('¡La fecha no puede ser pasada!');
-        return;
-      }
       try {
         const { data, error } = await supabase
           .from('propuestas')
@@ -81,7 +89,7 @@ export default {
           this.titulo = '';
           this.propuesta = '';
           this.fecha = '';
-          this.birthday = '';
+          this.birthday = null;
           this.visibleParaProfesores = false;
         }
       } catch (error) {
@@ -92,19 +100,13 @@ export default {
       this.successMessage = message;
       setTimeout(() => {
         this.successMessage = '';
-      }, 5000);
+      }, 6000);
     },
     displayErrorMessage(message) {
       this.errorMessage = message;
       setTimeout(() => {
         this.errorMessage = '';
-      }, 5000);
-    },
-    displayInvalidDateMessage(message) {
-      this.invalidDateMessage = message;
-      setTimeout(() => {
-        this.invalidDateMessage = '';
-      }, 5000);
+      }, 6000);
     }
   }
 }
