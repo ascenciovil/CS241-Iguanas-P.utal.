@@ -8,10 +8,8 @@
         <div class="screen__background__shape screen__background__shape4"></div>
       </div>
       <div class="screen__content">
-        <!-- Imagen a la izquierda -->
-        <img src="../assets/img/editar.jpg" alt="Imagen Izquierda" class="left-image">
-        
         <div class="login">
+          <h2 class="profile-title">Mi Perfil</h2>
           <form @submit.prevent="submitForm">
             <div class="login__field">
               <input v-model="correo" type="email" name="correo" class="login__input" placeholder="Correo" required>
@@ -37,13 +35,12 @@
             </div>
             <!-- Agrega más campos de entrada aquí -->
             <div class="login__submit-container">
-              <input type="submit" class="login__submit" value="Submit">
+              <input type="submit" class="login__submit" value="Actualizar">
             </div>
           </form>
         </div>
         
-        <!-- Imagen a la derecha -->
-        <img src="../assets/img/editar2.jpg" alt="Imagen Derecha" class="right-image">
+       
       </div>
     </div>
   </div>
@@ -162,59 +159,64 @@ export default {
 
 
 <style scoped>
+/* Configuración global para todos los elementos */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box; /* Utiliza el modelo de caja border-box para todos los elementos */
+  margin: 0; /* Elimina el margen predeterminado */
+  padding: 0; /* Elimina el relleno predeterminado */
 }
 
+/* Estilos para el cuerpo del documento */
 body {
-  font-family: 'Raleway', sans-serif;
-  background: linear-gradient(90deg, #C7C5F4, #776BCC);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  font-family: 'Montserrat', sans-serif; /* Establece la fuente del texto en el cuerpo */
+  display: flex; /* Flexbox para alinear contenido */
+  justify-content: center; /* Centra horizontalmente*/
+  align-items: center; /* Centra verticalmente */
+  height: 100vh; /* 100% de la altura de la ventana gráfica */
 }
 
+/* Estilos para el contenedor principal */
 .container {
+  font-family: 'Montserrat', sans-serif;
   position: relative;
-  background: linear-gradient(90deg, #5D54A4, #7C78B8);
-  box-shadow: 0px 0px 24px #5C5696;
-  border-radius: 20px;
-  width: 480px;
-  padding: 40px;
-  margin: auto; /* Centrar horizontalmente */
+  width: 80%; /* Ancho del contenedor */
+  max-width: 600px; /* Ancho máximo */
+  height: auto; /* Altura automática */
+  padding: 19px;
+  margin: auto;
 }
 
+/* Estilos para los campos de entrada del formulario */
 .login__input {
-  width: 100%;
+  width: calc(100% - 22px); /* Ancho total menos el padding y el borde */
   padding: 10px;
-  margin-bottom: 20px;
-  border: none;
-  border-bottom: 2px solid #D1D1D4;
-  background: none;
-  font-size: 20px;
+  margin-bottom: -10px;
+  margin-top: 5%;
+  border-bottom: 2px solid #502ea7;
+  background: #fefffe;
+  font-size: 13px;
   transition: border-color 0.3s ease;
+  margin-left: 10px;
 }
 
-.login__input:focus {
-  outline: none;
-  border-bottom-color: #6A679E;
-}
-
+/* Estilos para el contenedor del botón de enviar */
 .login__submit-container {
+  width: 200px;
+  margin-left: 20%;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
   padding-left: 30px;
 }
 
+/* Estilos para el botón de enviar */
 .login__submit {
+  margin-top: 35%;
+  width: 200px; /* Ancho del botón */
+  height: 40px; /* Altura del botón */
   background: #fff;
-  color: #4C489D;
-  font-size: 14px;
-  padding: 16px 20px;
-  border-radius: 26px;
+  color: #502fa9;
+  font-size: 13px;
+  border-radius: 16px;
   border: 1px solid #D4D3E8;
   text-transform: uppercase;
   font-weight: 700;
@@ -223,29 +225,23 @@ body {
   justify-content: center;
 }
 
-.login__submit:hover {
-  background-color: #F1F0F7;
+/* Estilos para el título del perfil */
+.profile-title {
+  text-align: center;
+  font-family: 'Comic Sans MS'; /* Cambia la fuente del texto a Comic Sans MS */
+  color: #5230aa; /* Cambia el color del texto a blanco */
+  padding-top: 20px;
 }
 
-/* Estilos para las imágenes */
-.left-image,
-.right-image {
-  position: fixed; /* Fijar la imagen en la ventana gráfica */
-  top: 25vh; /* Centrado verticalmente a media altura */
-  height: 50vh; /* La mitad de la altura del viewport */
-  width: auto;
-}
-
-.left-image {
-  left: 20px; /* Alineado a la izquierda */
-}
-
-.right-image {
-  right: 20px; /* Alineado a la derecha */
-}
-
+/* Estilos para el formulario de inicio de sesión */
 .login {
-  padding-top: 50px;
+  border-radius: 3%;
+  margin-top: 0px;
+  padding-top: 100px;
+  background-color: #efeeef;
+  height: 600px;
+  width: 450px;
+  padding-top: 50px; /* Espaciado superior */
 }
 
 </style>
