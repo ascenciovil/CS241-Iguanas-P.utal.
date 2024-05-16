@@ -289,10 +289,11 @@ body {
 }
 
 .login__input {
+  border-radius: 5%;
   border: none;
   border-bottom: 2px solid #D1D1D4;
-  background: none;
   padding: 10px;
+  background-color:white;
   padding-left: 24px;
   font-weight: 700;
   width: 100%; /* Ajuste del ancho del campo de entrada */
