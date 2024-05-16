@@ -40,7 +40,27 @@ export default {
   },
   computed: {
     submitButtonDisabled() {
-      return !(this.titulo.trim() && this.evento.trim() && this.birthday);
+      return !(this.titulo.trim() && this.evento.trim() && this.isFechaValida);
+    },
+    isFechaValida() {
+      if (!this.birthday) return false;
+      const today = new Date();
+      const selectedDate = new Date(this.birthday);
+      return selectedDate >= today;
+    }
+  },
+  watch: {
+    birthday: {
+      immediate: false,
+      handler(newVal, oldVal) {
+        if (newVal !== null && newVal !== undefined) {
+          if (!this.isFechaValida) {
+            this.displayErrorMessage('¡La fecha no puede ser pasada!');
+          } else {
+            this.errorMessage = '';
+          }
+        }
+      }
     }
   },
   methods: {
@@ -65,6 +85,7 @@ export default {
           this.titulo = '';
           this.evento = '';
           this.fecha = '';
+          this.birthday = null;
           this.visibleParaProfesores = false;
         }
       } catch (error) {
@@ -75,13 +96,13 @@ export default {
       this.successMessage = message;
       setTimeout(() => {
         this.successMessage = '';
-      }, 5000);
+      }, 6000);
     },
     displayErrorMessage(message) {
       this.errorMessage = message;
       setTimeout(() => {
         this.errorMessage = '';
-      }, 5000);
+      }, 6000);
     }
   }
 }
